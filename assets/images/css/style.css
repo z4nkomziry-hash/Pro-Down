@@ -1,0 +1,78 @@
+/* ==========================================================================
+   ProDown - Main Custom Stylesheet
+   Path: assets/css/style.css
+   ========================================================================== */
+
+/* --- Base Rules & Font Setup --- */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+    --bg-main: #0b0b0d;
+    --orange-primary: #f97316;
+    --orange-glow: rgba(249, 115, 22, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: #ffffff;
+    scroll-behavior: smooth;
+}
+
+/* --- Glassmorphism Cards --- */
+.glass-card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* --- Glow Effects & Shadows --- */
+.orange-glow-box {
+    box-shadow: 0 0 35px rgba(249, 115, 22, 0.15);
+}
+
+.orange-glow-btn {
+    box-shadow: 0 4px 20px var(--orange-glow);
+    transition: all 0.3s ease;
+}
+
+.orange-glow-btn:hover {
+    box-shadow: 0 6px 25px rgba(249, 115, 22, 0.6);
+    transform: translateY(-1px);
+}
+
+.orange-glow-btn:active {
+    transform: translateY(0);
+}
+
+/* --- Tabs Styling --- */
+.tab-btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.tab-btn.active {
+    background: var(--orange-primary) !important;
+    color: #ffffff !important;
+    border-color: var(--orange-primary) !important;
+}
+
+/* --- Custom Scrollbar --- */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0b0b0d;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1f1f24;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--orange-primary);
+}
