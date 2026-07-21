@@ -1,0 +1,136 @@
+/* ==========================================================================
+   ProDown - Main Custom Stylesheet
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+    --bg-main: #0b0b0d;
+    --orange-primary: #f97316;
+    --orange-glow: rgba(249, 115, 22, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: #ffffff;
+    scroll-behavior: smooth;
+}
+
+/* --- Glassmorphism Cards --- */
+.glass-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.02) 100%);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+/* --- Glow Effects --- */
+.orange-glow-box { box-shadow: 0 0 40px rgba(249,115,22,0.18); }
+
+.orange-glow-btn {
+    box-shadow: 0 4px 22px var(--orange-glow);
+    transition: all 0.25s ease;
+}
+.orange-glow-btn:hover {
+    box-shadow: 0 6px 28px rgba(249,115,22,0.65);
+    transform: translateY(-1px);
+}
+.orange-glow-btn:active { transform: translateY(0); }
+
+/* --- Tabs --- */
+.tab-btn { transition: all 0.2s ease-in-out; }
+.tab-btn.active {
+    background: var(--orange-primary) !important;
+    color: #ffffff !important;
+    border-color: var(--orange-primary) !important;
+}
+
+/* --- Progress Bar --- */
+.progress-bar-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f97316, #fbbf24);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+}
+
+/* --- Skeleton Loader --- */
+.skeleton {
+    background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+@keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* --- Alert Toast --- */
+#alertToast {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+#alertToast.hidden {
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+}
+
+/* --- AdSense Placeholder Slots --- */
+.ad-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed rgba(249,115,22,0.18);
+    border-radius: 12px;
+    color: rgba(255,255,255,0.15);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    overflow: hidden;
+}
+.ad-slot-banner  { width: 100%; height: 90px; }
+.ad-slot-inline  { width: 100%; height: 100px; }
+.ad-slot-cta     { width: 100%; height: 80px; }
+
+/* --- Share Menu --- */
+#shareMenu {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+#shareMenu.hidden {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+    pointer-events: none;
+    display: none !important;
+}
+
+/* --- Custom Scrollbar --- */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #0b0b0d; }
+::-webkit-scrollbar-thumb { background: #1f1f24; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--orange-primary); }
+
+/* --- Pulse dot --- */
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.6; transform: scale(1.15); }
+}
+.pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+/* --- Legal pages --- */
+.legal-content h2 { font-size: 1.1rem; font-weight: 800; color: #f97316; margin: 1.5rem 0 0.5rem; }
+.legal-content p, .legal-content li { font-size: 0.8rem; color: #94a3b8; line-height: 1.7; }
+.legal-content ul { list-style: disc; padding-left: 1.25rem; }
+.legal-content a { color: #f97316; text-decoration: underline; }

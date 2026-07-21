@@ -3,86 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProDown - Fast Social Media Video Downloader</title>
-    
-    <!-- Tailwind CSS CDN -->
+
+    <!-- Primary SEO -->
+    <title>ProDown — Free Social Media Video Downloader | No Watermark, HD Quality</title>
+    <meta name="description" content="Download TikTok, Instagram Reels, Facebook Videos, YouTube Shorts, and Snapchat Spotlights for free. No watermark, HD/4K quality, zero signup required.">
+    <meta name="keywords" content="TikTok downloader, Instagram Reels downloader, Facebook video downloader, YouTube Shorts downloader, Snapchat video downloader, no watermark, free, HD, ProDown">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://pro-down.netlify.app/">
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="https://pro-down.netlify.app/">
+    <meta property="og:title"       content="ProDown — Free Social Media Video Downloader">
+    <meta property="og:description" content="Download TikTok, Instagram, Facebook, YouTube & Snapchat videos instantly. No watermark, HD quality, completely free.">
+    <meta property="og:image"       content="https://pro-down.netlify.app/assets/images/logo.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="ProDown — Free Social Media Video Downloader">
+    <meta name="twitter:description" content="Download TikTok, Instagram, Facebook, YouTube & Snapchat videos instantly. No watermark, HD quality, completely free.">
+    <meta name="twitter:image"       content="https://pro-down.netlify.app/assets/images/logo.png">
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: '#f97316'
-                    }
-                }
-            }
+            theme: { extend: { colors: { brand: '#f97316' } } }
         }
     </script>
-    
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Custom CSS File -->
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Google AdSense (replace ca-pub-XXXXXXXXXXXXXXXX with your publisher ID) -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "ProDown",
+        "url": "https://pro-down.netlify.app/",
+        "description": "Free social media video downloader supporting TikTok, Instagram, Facebook, YouTube, and Snapchat with no watermark and HD quality.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+    </script>
 </head>
-<body class="min-h-screen flex flex-col justify-between items-center antialiased bg-[#0b0b0d] text-white selection:bg-orange-500 selection:text-white">
+<body class="min-h-screen flex flex-col items-center antialiased bg-[#0b0b0d] text-white selection:bg-orange-500 selection:text-white">
 
-    <!-- NAVIGATION HEADER -->
-    <header class="w-full max-w-2xl px-5 py-4 flex justify-between items-center border-b border-white/5 sticky top-0 bg-[#0b0b0d]/90 backdrop-blur-md z-40">
-        <div class="flex items-center gap-3">
-            <img src="assets/images/logo.png" alt="ProDown Logo" class="w-10 h-10 object-contain" onerror="this.src='https://ui-avatars.com/api/?name=PD&background=f97316&color=fff'">
-            <span class="text-xl font-black tracking-tight text-white">Pro<span class="text-orange-500">Down</span></span>
+    <!-- ALERT TOAST -->
+    <div id="alertToast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl text-xs font-bold text-white shadow-2xl flex items-center gap-2 max-w-xs text-center bg-orange-500/90"></div>
+
+    <!-- ── TOP BANNER AD SLOT ─────────────────────────────────────── -->
+    <div class="w-full max-w-2xl px-4 pt-3">
+        <div class="ad-slot ad-slot-banner" id="adSlotTop">
+            <!-- ProDown AdSense: Top Banner -->
+            <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+            <span>Advertisement</span>
         </div>
-        
-        <button onclick="toggleMobileMenu()" class="w-10 h-10 rounded-xl glass-card flex items-center justify-center text-slate-300 hover:text-white transition-all">
-            <i class="fa-solid fa-bars text-lg"></i>
-        </button>
-    </header>
-
-    <!-- MOBILE NAVIGATION MENU DROPDOWN -->
-    <div id="mobileMenu" class="hidden fixed inset-x-0 top-[65px] bg-[#0b0b0d]/95 backdrop-blur-xl border-b border-white/10 p-5 z-30 space-y-3 max-w-2xl mx-auto shadow-2xl">
-        <a href="#downloader" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200"><i class="fa-solid fa-download mr-2 text-orange-500"></i> Downloader</a>
-        <a href="#developer" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200"><i class="fa-solid fa-code mr-2 text-orange-500"></i> Developer</a>
-        <a href="#contact" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200"><i class="fa-solid fa-headset mr-2 text-orange-500"></i> Contact Support</a>
-        <a href="#support" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200"><i class="fa-solid fa-heart mr-2 text-pink-500"></i> Support Me</a>
     </div>
 
-    <!-- MAIN APP CONTAINER -->
-    <main class="w-full max-w-2xl px-4 py-6 space-y-8" id="downloader">
+    <!-- ── NAVIGATION ────────────────────────────────────────────── -->
+    <header class="w-full max-w-2xl px-5 py-4 flex justify-between items-center border-b border-white/5 sticky top-0 bg-[#0b0b0d]/90 backdrop-blur-md z-40">
+        <a href="/" class="flex items-center gap-3">
+            <img src="assets/images/logo.png" alt="ProDown Logo" class="w-10 h-10 object-contain"
+                 onerror="this.src='https://ui-avatars.com/api/?name=PD&background=f97316&color=fff'">
+            <span class="text-xl font-black tracking-tight text-white">Pro<span class="text-orange-500">Down</span></span>
+        </a>
 
-        <!-- HERO SECTION -->
+        <div class="flex items-center gap-2">
+            <!-- Share Button -->
+            <div class="relative">
+                <button id="shareBtn" onclick="toggleShareMenu()" class="w-9 h-9 rounded-xl glass-card flex items-center justify-center text-slate-300 hover:text-orange-400 transition-all" title="Share ProDown">
+                    <i class="fa-solid fa-share-nodes text-sm"></i>
+                </button>
+                <!-- Share Menu -->
+                <div id="shareMenu" class="hidden absolute right-0 top-12 glass-card border border-white/10 rounded-2xl p-3 w-48 space-y-1 shadow-2xl z-50">
+                    <p class="text-[10px] font-black text-orange-400 uppercase tracking-wider px-2 pb-1">Share ProDown</p>
+                    <button onclick="shareVia('whatsapp')" class="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 text-xs font-semibold text-slate-200 transition-all">
+                        <i class="fa-brands fa-whatsapp text-emerald-400 w-4"></i> WhatsApp
+                    </button>
+                    <button onclick="shareVia('telegram')" class="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 text-xs font-semibold text-slate-200 transition-all">
+                        <i class="fa-brands fa-telegram text-sky-400 w-4"></i> Telegram
+                    </button>
+                    <button onclick="shareVia('facebook')" class="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 text-xs font-semibold text-slate-200 transition-all">
+                        <i class="fa-brands fa-facebook text-blue-400 w-4"></i> Facebook
+                    </button>
+                    <button onclick="shareVia('twitter')" class="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 text-xs font-semibold text-slate-200 transition-all">
+                        <i class="fa-brands fa-x-twitter text-slate-200 w-4"></i> X (Twitter)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Hamburger -->
+            <button id="menuBtn" onclick="toggleMobileMenu()" class="w-9 h-9 rounded-xl glass-card flex items-center justify-center text-slate-300 hover:text-white transition-all">
+                <i class="fa-solid fa-bars text-sm"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MOBILE DROPDOWN -->
+    <div id="mobileMenu" class="hidden fixed inset-x-0 top-[65px] bg-[#0b0b0d]/97 backdrop-blur-xl border-b border-white/10 p-5 z-30 space-y-2 max-w-2xl mx-auto shadow-2xl">
+        <a href="/" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
+            <i class="fa-solid fa-download mr-2 text-orange-500"></i> Downloader
+        </a>
+        <a href="/about.html" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
+            <i class="fa-solid fa-circle-info mr-2 text-orange-500"></i> About
+        </a>
+        <a href="/contact.html" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
+            <i class="fa-solid fa-headset mr-2 text-orange-500"></i> Contact
+        </a>
+        <a href="/privacy-policy.html" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
+            <i class="fa-solid fa-shield-halved mr-2 text-orange-500"></i> Privacy Policy
+        </a>
+        <a href="/terms-of-service.html" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
+            <i class="fa-solid fa-file-contract mr-2 text-orange-500"></i> Terms of Service
+        </a>
+    </div>
+
+    <!-- ── MAIN CONTENT ──────────────────────────────────────────── -->
+    <main class="w-full max-w-2xl px-4 py-6 space-y-8 flex-1" id="downloader">
+
+        <!-- HERO / DOWNLOADER CARD -->
         <div class="relative overflow-hidden glass-card rounded-3xl p-6 md:p-8 orange-glow-box space-y-5 border border-white/10 shadow-2xl">
-            
+
             <!-- Badge -->
             <div class="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 px-3.5 py-1.5 rounded-full">
                 <i class="fa-solid fa-bolt text-orange-500 text-xs"></i>
-                <span class="text-xs font-bold text-orange-400 tracking-wide">No Watermark • Direct Extraction • HD Quality</span>
+                <span class="text-xs font-bold text-orange-400 tracking-wide">No Watermark &bull; HD/4K Quality &bull; 100% Free</span>
             </div>
 
-            <!-- Title & Description -->
+            <!-- Headline -->
             <h1 class="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight text-white">
-                Download <span class="text-orange-500">Social Videos</span> Direct & Fast
+                Download <span class="text-orange-500">Social Videos</span><br>Fast &amp; Directly
             </h1>
             <p class="text-slate-400 text-xs md:text-sm font-normal leading-relaxed">
-                Download TikTok, Instagram Reels, Facebook Videos, YouTube Shorts, & Snapchat Spotlights directly to your device.
+                Save TikTok, Instagram Reels, Facebook Videos, YouTube Shorts, and Snapchat Spotlights directly to your device — no watermarks, no signups, no cost.
             </p>
 
-            <!-- PLATFORM SELECTOR TABS -->
-            <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-                <button onclick="selectTab('all')" id="tab-all" class="tab-btn active px-3.5 py-2 rounded-xl font-bold border border-white/10 transition-all flex items-center gap-1.5 flex-shrink-0">
+            <!-- PLATFORM TABS -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs scrollbar-hide">
+                <button onclick="selectTab('all')"  id="tab-all"  class="tab-btn active px-3.5 py-2 rounded-xl font-bold border border-white/10 transition-all flex items-center gap-1.5 flex-shrink-0">
                     <i class="fa-solid fa-globe"></i> All 5
                 </button>
-                <button onclick="selectTab('tt')" id="tab-tt" class="tab-btn px-3.5 py-2 rounded-xl font-bold border border-white/10 bg-white/5 transition-all flex items-center gap-1.5 flex-shrink-0 text-slate-300">
+                <button onclick="selectTab('tt')"   id="tab-tt"   class="tab-btn px-3.5 py-2 rounded-xl font-bold border border-white/10 bg-white/5 transition-all flex items-center gap-1.5 flex-shrink-0 text-slate-300">
                     <i class="fa-brands fa-tiktok"></i> TikTok
                 </button>
-                <button onclick="selectTab('ig')" id="tab-ig" class="tab-btn px-3.5 py-2 rounded-xl font-bold border border-white/10 bg-white/5 transition-all flex items-center gap-1.5 flex-shrink-0 text-slate-300">
+                <button onclick="selectTab('ig')"   id="tab-ig"   class="tab-btn px-3.5 py-2 rounded-xl font-bold border border-white/10 bg-white/5 transition-all flex items-center gap-1.5 flex-shrink-0 text-slate-300">
                     <i class="fa-brands fa-instagram text-pink-500"></i> Instagram
                 </button>
-                <button onclick="selectTab('fb')" id="tab-fb" class="tab-btn px-3.5 py-2 rounded-xl font-bold border border-white/10 bg-white/5 transition-all flex items-center gap-1.5 flex-shrink-0 text-slate-300">
+                <button onclick="selectTab('fb')"   id="tab-fb"   class="tab-btn px-3.5 py-2 rounded-xl font-bold border border-white/10 bg-white/5 transition-all flex items-center gap-1.5 flex-shrink-0 text-slate-300">
                     <i class="fa-brands fa-facebook text-blue-500"></i> Facebook
                 </button>
-                <button onclick="selectTab('yt')" id="tab-yt" class="tab-btn px-3.5 py-2 rounded-xl font-bold border border-white/10 bg-white/5 transition-all flex items-center gap-1.5 flex-shrink-0 text-slate-300">
+                <button onclick="selectTab('yt')"   id="tab-yt"   class="tab-btn px-3.5 py-2 rounded-xl font-bold border border-white/10 bg-white/5 transition-all flex items-center gap-1.5 flex-shrink-0 text-slate-300">
                     <i class="fa-brands fa-youtube text-red-500"></i> YouTube
                 </button>
                 <button onclick="selectTab('snap')" id="tab-snap" class="tab-btn px-3.5 py-2 rounded-xl font-bold border border-white/10 bg-white/5 transition-all flex items-center gap-1.5 flex-shrink-0 text-slate-300">
@@ -90,20 +170,20 @@
                 </button>
             </div>
 
-            <!-- INPUT DOWNLOAD BOX -->
+            <!-- INPUT BOX -->
             <div class="relative flex flex-col sm:flex-row gap-2 bg-[#141418] border border-white/10 rounded-2xl p-2 transition-all focus-within:border-orange-500/60">
                 <div class="flex items-center pl-3 py-2 sm:py-0 flex-1">
-                    <i class="fa-solid fa-link text-slate-500 mr-3 text-sm"></i>
-                    <input 
-                        type="url" 
+                    <i class="fa-solid fa-link text-slate-500 mr-3 text-sm flex-shrink-0"></i>
+                    <input
+                        type="url"
                         id="inputUrl"
-                        placeholder="Paste link (TikTok, Instagram, Facebook, YouTube, Snapchat)..." 
+                        placeholder="Paste a TikTok, Instagram, Facebook, YouTube, or Snapchat link…"
                         class="w-full bg-transparent text-sm text-white placeholder-slate-500 focus:outline-none"
-                        autocomplete="off"
+                        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                     >
                 </div>
-                <button 
-                    onclick="processDownload()" 
+                <button
+                    onclick="processDownload()"
                     class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black px-6 py-3.5 rounded-xl text-sm transition-all orange-glow-btn flex items-center justify-center gap-2 shadow-lg"
                 >
                     <i class="fa-solid fa-cloud-arrow-down text-base"></i>
@@ -111,131 +191,204 @@
                 </button>
             </div>
 
-            <!-- RESULT DISPLAY / DOWNLOAD OPTIONS -->
+            <!-- PROGRESS BAR -->
+            <div id="progressWrap" class="progress-bar-track hidden">
+                <div id="progressFill" class="progress-bar-fill" style="width:0%"></div>
+            </div>
+
+            <!-- ── IN-CONTENT AD SLOT (between input and results) ── -->
+            <div class="ad-slot ad-slot-inline" id="adSlotInline">
+                <!-- ProDown AdSense: In-Content Slot -->
+                <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins> -->
+                <span>Advertisement</span>
+            </div>
+
+            <!-- RESULT BOX -->
             <div id="resultBox" class="hidden glass-card p-4 rounded-2xl border border-orange-500/30 space-y-4">
                 <div class="flex items-center gap-3 border-b border-white/10 pb-3">
-                    <div class="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-500 text-xl font-bold" id="resultIcon">
+                    <div class="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-500 text-xl">
                         <i class="fa-solid fa-file-video"></i>
                     </div>
-                    <div class="flex-1 truncate">
+                    <div class="flex-1 min-w-0">
                         <h4 class="text-xs font-bold text-white truncate" id="resultTitle">Processing Media</h4>
                         <p class="text-[10px] text-slate-400" id="resultPlatform">ProDown Extraction Engine</p>
                     </div>
                 </div>
-
                 <div class="space-y-2 text-xs" id="downloadOptions">
-                    <!-- Dynamic Download Button Injected Here -->
+                    <!-- Download buttons injected here -->
                 </div>
             </div>
 
+        </div>
+
+        <!-- HOW IT WORKS -->
+        <div class="space-y-3 text-center">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">How It Works</h2>
+            <div class="grid grid-cols-3 gap-3">
+                <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col items-center gap-2 text-center">
+                    <div class="w-9 h-9 rounded-xl bg-orange-500/15 flex items-center justify-center text-orange-400">
+                        <i class="fa-solid fa-copy text-sm"></i>
+                    </div>
+                    <p class="text-[10px] font-bold text-white">1. Copy Link</p>
+                    <p class="text-[9px] text-slate-400 leading-relaxed">Copy the video URL from any supported platform.</p>
+                </div>
+                <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col items-center gap-2 text-center">
+                    <div class="w-9 h-9 rounded-xl bg-orange-500/15 flex items-center justify-center text-orange-400">
+                        <i class="fa-solid fa-paste text-sm"></i>
+                    </div>
+                    <p class="text-[10px] font-bold text-white">2. Paste &amp; Go</p>
+                    <p class="text-[9px] text-slate-400 leading-relaxed">Paste it above and hit Download — auto-paste supported.</p>
+                </div>
+                <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col items-center gap-2 text-center">
+                    <div class="w-9 h-9 rounded-xl bg-orange-500/15 flex items-center justify-center text-orange-400">
+                        <i class="fa-solid fa-cloud-arrow-down text-sm"></i>
+                    </div>
+                    <p class="text-[10px] font-bold text-white">3. Download</p>
+                    <p class="text-[9px] text-slate-400 leading-relaxed">Save the HD video or MP3 directly to your device.</p>
+                </div>
+            </div>
         </div>
 
         <!-- SUPPORTED PLATFORMS GRID -->
         <div class="space-y-3 text-center">
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Supported Platforms</h3>
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Supported Platforms</h2>
             <div class="grid grid-cols-5 gap-2">
-                <div class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md">
+                <a href="#tiktok-downloader" class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md hover:border-orange-500/30 transition-all">
                     <i class="fa-brands fa-tiktok text-xl text-white"></i>
                     <span class="text-[9px] font-semibold text-slate-300">TikTok</span>
-                </div>
-                <div class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md">
+                </a>
+                <a href="#instagram-downloader" class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md hover:border-pink-500/30 transition-all">
                     <i class="fa-brands fa-instagram text-xl text-pink-500"></i>
                     <span class="text-[9px] font-semibold text-slate-300">Instagram</span>
-                </div>
-                <div class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md">
+                </a>
+                <a href="#facebook-downloader" class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md hover:border-blue-500/30 transition-all">
                     <i class="fa-brands fa-facebook text-xl text-blue-500"></i>
                     <span class="text-[9px] font-semibold text-slate-300">Facebook</span>
-                </div>
-                <div class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md">
+                </a>
+                <a href="#youtube-downloader" class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md hover:border-red-500/30 transition-all">
                     <i class="fa-brands fa-youtube text-xl text-red-500"></i>
                     <span class="text-[9px] font-semibold text-slate-300">YouTube</span>
-                </div>
-                <div class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md">
+                </a>
+                <a href="#snapchat-downloader" class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md hover:border-yellow-400/30 transition-all">
                     <i class="fa-brands fa-snapchat text-xl text-yellow-400"></i>
                     <span class="text-[9px] font-semibold text-slate-300">Snapchat</span>
-                </div>
+                </a>
             </div>
         </div>
 
-        <!-- DEVELOPER PROFILE CARD -->
-        <div class="glass-card rounded-3xl p-6 relative border border-orange-500/20 space-y-4 shadow-2xl" id="developer">
-            <div class="flex items-center gap-4">
-                <div class="relative">
-                    <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-orange-500 p-0.5 bg-black">
-                        <img src="assets/images/image.jpeg" alt="Developer Avatar" class="w-full h-full object-cover rounded-xl" onerror="this.src='https://ui-avatars.com/api/?name=Zaniyar+Developer&background=f97316&color=fff'">
-                    </div>
-                    <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-black"></span>
+        <!-- SEO LANDING SECTIONS -->
+        <div class="space-y-6">
+
+            <section id="tiktok-downloader" class="glass-card rounded-3xl p-6 border border-white/5">
+                <div class="flex items-center gap-3 mb-3">
+                    <i class="fa-brands fa-tiktok text-2xl text-white"></i>
+                    <h2 class="text-base font-extrabold text-white">TikTok Downloader — No Watermark</h2>
                 </div>
-                <div>
-                    <span class="text-[10px] font-black uppercase text-orange-400 tracking-wider">Lead Developer</span>
-                    <h3 class="text-base font-extrabold text-white">Zaniyar Dildar</h3>
-                    <p class="text-[11px] text-slate-400">Software Engineer & Platform Architect</p>
+                <p class="text-xs text-slate-400 leading-relaxed">Download any TikTok video without the TikTok watermark in original HD quality. Works with all TikTok video types including Duets, Stitches, Slideshows, and Stories. Simply paste the TikTok video link above and hit Download.</p>
+            </section>
+
+            <section id="instagram-downloader" class="glass-card rounded-3xl p-6 border border-white/5">
+                <div class="flex items-center gap-3 mb-3">
+                    <i class="fa-brands fa-instagram text-2xl text-pink-500"></i>
+                    <h2 class="text-base font-extrabold text-white">Instagram Reels Downloader</h2>
                 </div>
-            </div>
-            <p class="text-xs text-slate-300 leading-relaxed bg-black/40 p-3 rounded-2xl border border-white/5">
-                Passionate web developer specializing in high-performance web applications, media downloader systems, and SaaS platforms.
-            </p>
-            <div class="flex items-center gap-3 pt-1">
-                <a href="https://github.com" target="_blank" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-orange-500 hover:text-white flex items-center justify-center text-slate-300 transition-all"><i class="fa-brands fa-github text-sm"></i></a>
-                <a href="https://t.me/z_14x" target="_blank" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-orange-500 hover:text-white flex items-center justify-center text-slate-300 transition-all"><i class="fa-brands fa-telegram text-sm"></i></a>
-                <a href="https://instagram.com" target="_blank" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-orange-500 hover:text-white flex items-center justify-center text-slate-300 transition-all"><i class="fa-brands fa-instagram text-sm"></i></a>
-            </div>
+                <p class="text-xs text-slate-400 leading-relaxed">Save Instagram Reels, photos, carousels, and IGTV videos directly to your device. No Instagram account required. Works on iOS, Android, and desktop browsers.</p>
+            </section>
+
+            <section id="facebook-downloader" class="glass-card rounded-3xl p-6 border border-white/5">
+                <div class="flex items-center gap-3 mb-3">
+                    <i class="fa-brands fa-facebook text-2xl text-blue-500"></i>
+                    <h2 class="text-base font-extrabold text-white">Facebook Video Downloader</h2>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">Download public Facebook videos, Reels, and Watch content in HD or SD quality. Paste the Facebook video link above — no login, no extension needed.</p>
+            </section>
+
+            <section id="youtube-downloader" class="glass-card rounded-3xl p-6 border border-white/5">
+                <div class="flex items-center gap-3 mb-3">
+                    <i class="fa-brands fa-youtube text-2xl text-red-500"></i>
+                    <h2 class="text-base font-extrabold text-white">YouTube Shorts Downloader</h2>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">Save YouTube Shorts and regular YouTube videos as MP4 or extract MP3 audio — completely free. Paste any YouTube or youtu.be link above to get started.</p>
+            </section>
+
+            <section id="snapchat-downloader" class="glass-card rounded-3xl p-6 border border-white/5">
+                <div class="flex items-center gap-3 mb-3">
+                    <i class="fa-brands fa-snapchat text-2xl text-yellow-400"></i>
+                    <h2 class="text-base font-extrabold text-white">Snapchat Spotlight Downloader</h2>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">Download Snapchat Spotlight videos and public Snaps directly to your phone or computer. Just paste the Snapchat link above and click Download.</p>
+            </section>
+
         </div>
 
-        <!-- CONTACT US & SUPPORT BUTTONS SECTION -->
+        <!-- CONTACT & SUPPORT -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="contact">
-            <a href="https://t.me/z_14x" target="_blank" class="glass-card p-4 rounded-2xl border border-white/10 flex items-center justify-between hover:border-orange-500/50 transition-all group shadow-lg">
+            <a href="/contact.html" class="glass-card p-4 rounded-2xl border border-white/10 flex items-center justify-between hover:border-orange-500/50 transition-all group shadow-lg">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
                         <i class="fa-solid fa-headset text-lg"></i>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold text-white">Contact Us</h4>
+                        <h3 class="text-xs font-bold text-white">Contact Support</h3>
                         <p class="text-[10px] text-slate-400">Get 24/7 technical help</p>
                     </div>
                 </div>
                 <i class="fa-solid fa-chevron-right text-xs text-slate-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all"></i>
             </a>
 
-            <a href="#support" onclick="toggleSupportBox()" class="glass-card p-4 rounded-2xl border border-white/10 flex items-center justify-between hover:border-pink-500/50 transition-all group shadow-lg" id="support">
+            <button onclick="toggleSupportBox()" class="glass-card p-4 rounded-2xl border border-white/10 flex items-center justify-between hover:border-pink-500/50 transition-all group shadow-lg text-left w-full" id="support">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-pink-500/10 text-pink-400 flex items-center justify-center">
                         <i class="fa-solid fa-heart text-lg"></i>
                     </div>
                     <div>
-                        <h4 class="text-xs font-bold text-white">Support Me</h4>
+                        <h3 class="text-xs font-bold text-white">Support Us</h3>
                         <p class="text-[10px] text-slate-400">Keep ProDown free forever</p>
                     </div>
                 </div>
                 <i class="fa-solid fa-chevron-down text-xs text-slate-500 group-hover:text-pink-400 transition-all"></i>
-            </a>
+            </button>
         </div>
 
-        <!-- SUPPORT PAYMENT METHODS EXPANDABLE BOX -->
+        <!-- SUPPORT PAYMENT EXPANDABLE -->
         <div id="supportBox" class="hidden glass-card rounded-3xl p-5 space-y-3 border border-pink-500/30 shadow-2xl">
             <h4 class="text-xs font-black text-pink-400 uppercase tracking-wider flex items-center gap-2">
                 <i class="fa-solid fa-gem"></i> Support Gateways
             </h4>
             <div class="space-y-2 text-xs">
                 <div class="bg-black/50 p-3 rounded-2xl flex justify-between items-center border border-white/5">
-                    <span class="font-bold text-slate-200">FastPay: <b class="text-white">+964 750 604 5491</b></span>
-                    <button onclick="navigator.clipboard.writeText('+9647506045491')" class="bg-white/10 hover:bg-pink-500 hover:text-white px-3 py-1 rounded-xl text-[10px] font-bold transition-all">Copy</button>
+                    <span class="font-bold text-slate-200">FastPay: <strong class="text-white">+964 750 604 5491</strong></span>
+                    <button onclick="navigator.clipboard.writeText('+9647506045491').then(()=>showAlert('Copied!','success'))"
+                        class="bg-white/10 hover:bg-pink-500 hover:text-white px-3 py-1 rounded-xl text-[10px] font-bold transition-all">Copy</button>
                 </div>
                 <div class="bg-black/50 p-3 rounded-2xl flex justify-between items-center border border-white/5">
-                    <span class="font-bold text-slate-200">FIB: <b class="text-white">+964 750 604 5491</b></span>
-                    <button onclick="navigator.clipboard.writeText('+9647506045491')" class="bg-white/10 hover:bg-amber-500 hover:text-black px-3 py-1 rounded-xl text-[10px] font-bold transition-all">Copy</button>
+                    <span class="font-bold text-slate-200">FIB: <strong class="text-white">+964 750 604 5491</strong></span>
+                    <button onclick="navigator.clipboard.writeText('+9647506045491').then(()=>showAlert('Copied!','success'))"
+                        class="bg-white/10 hover:bg-amber-500 hover:text-black px-3 py-1 rounded-xl text-[10px] font-bold transition-all">Copy</button>
                 </div>
             </div>
         </div>
 
     </main>
 
-    <!-- FOOTER -->
-    <footer class="w-full max-w-2xl text-center py-6 border-t border-white/5 text-[11px] text-slate-500 space-y-1">
-        <p>&copy; 2026 ProDown. All rights reserved.</p>
+    <!-- ── FOOTER ────────────────────────────────────────────────── -->
+    <footer class="w-full max-w-2xl px-5 py-8 border-t border-white/5 space-y-4">
+        <div class="flex flex-wrap justify-center gap-4 text-[11px] text-slate-400">
+            <a href="/about.html"          class="hover:text-orange-400 transition-colors">About</a>
+            <a href="/contact.html"        class="hover:text-orange-400 transition-colors">Contact</a>
+            <a href="/privacy-policy.html" class="hover:text-orange-400 transition-colors">Privacy Policy</a>
+            <a href="/terms-of-service.html" class="hover:text-orange-400 transition-colors">Terms of Service</a>
+        </div>
+        <p class="text-center text-[11px] text-slate-500">
+            &copy; 2026 ProDown. All rights reserved. ProDown is not affiliated with TikTok, Instagram, Facebook, YouTube, or Snapchat.
+        </p>
+        <p class="text-center text-[10px] text-slate-600">
+            By using ProDown you agree to our <a href="/terms-of-service.html" class="underline hover:text-slate-400">Terms of Service</a> and <a href="/privacy-policy.html" class="underline hover:text-slate-400">Privacy Policy</a>.
+            Only download content you own or have explicit permission to download.
+        </p>
     </footer>
 
-    <!-- Custom JavaScript File -->
+    <!-- Custom JS -->
     <script src="assets/js/app.js"></script>
 </body>
 </html>

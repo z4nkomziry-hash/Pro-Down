@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact ProDown — Support &amp; Feedback</title>
+    <meta name="description" content="Get in touch with the ProDown team. Report a broken link, request a feature, or just say hello.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://pro-down.netlify.app/contact.html">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { brand: '#f97316' } } } }</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="min-h-screen flex flex-col items-center antialiased bg-[#0b0b0d] text-white">
+
+    <header class="w-full max-w-2xl px-5 py-4 flex justify-between items-center border-b border-white/5 sticky top-0 bg-[#0b0b0d]/90 backdrop-blur-md z-40">
+        <a href="/" class="flex items-center gap-3">
+            <img src="assets/images/logo.png" alt="ProDown" class="w-8 h-8 object-contain" onerror="this.src='https://ui-avatars.com/api/?name=PD&background=f97316&color=fff'">
+            <span class="text-lg font-black text-white">Pro<span class="text-orange-500">Down</span></span>
+        </a>
+        <a href="/" class="text-xs text-slate-400 hover:text-orange-400 transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[10px]"></i> Back to App
+        </a>
+    </header>
+
+    <main class="w-full max-w-2xl px-4 py-8 flex-1 space-y-5">
+
+        <div class="glass-card rounded-3xl p-6 md:p-8 orange-glow-box border border-white/10 space-y-2">
+            <h1 class="text-2xl font-extrabold text-white">Contact &amp; Support</h1>
+            <p class="text-sm text-slate-400 leading-relaxed">Having trouble with a download? Found a bug? Want to suggest a feature? We're here to help — reach out through any of the channels below.</p>
+        </div>
+
+        <!-- Contact Channels -->
+        <div class="space-y-3">
+
+            <a href="https://t.me/z_14x" target="_blank" rel="noopener"
+               class="glass-card flex items-center gap-4 p-5 rounded-2xl border border-white/8 hover:border-sky-500/40 transition-all group">
+                <div class="w-12 h-12 rounded-2xl bg-sky-500/15 flex items-center justify-center text-sky-400 flex-shrink-0">
+                    <i class="fa-brands fa-telegram text-xl"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-bold text-white">Telegram (Fastest)</p>
+                    <p class="text-[11px] text-slate-400">DM us @z_14x for the quickest response. Typically reply within a few hours.</p>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-500 group-hover:text-sky-400 transition-colors"></i>
+            </a>
+
+            <div class="glass-card flex items-center gap-4 p-5 rounded-2xl border border-white/8">
+                <div class="w-12 h-12 rounded-2xl bg-orange-500/15 flex items-center justify-center text-orange-400 flex-shrink-0">
+                    <i class="fa-solid fa-envelope text-xl"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-bold text-white">Email Support</p>
+                    <p class="text-[11px] text-slate-400">Send detailed bug reports or feature requests. We aim to respond within 24–48 hours.</p>
+                    <p class="text-[11px] text-orange-400 font-semibold mt-1">support@pro-down.netlify.app</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FAQ -->
+        <div class="glass-card rounded-3xl p-6 border border-white/5 space-y-4">
+            <h2 class="text-base font-extrabold text-white">Frequently Asked Questions</h2>
+
+            <div class="space-y-3">
+                <div class="bg-black/30 rounded-2xl p-4 border border-white/5">
+                    <p class="text-xs font-bold text-white mb-1">Why isn't my video downloading?</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">The video may be set to private, or the platform may have updated its API. Make sure the video is public, then try again. If the issue persists, let us know via Telegram.</p>
+                </div>
+                <div class="bg-black/30 rounded-2xl p-4 border border-white/5">
+                    <p class="text-xs font-bold text-white mb-1">Is ProDown safe to use?</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Yes. ProDown runs entirely in your browser. We don't store your video URLs or personal data. See our <a href="/privacy-policy.html" class="text-orange-400 underline">Privacy Policy</a> for full details.</p>
+                </div>
+                <div class="bg-black/30 rounded-2xl p-4 border border-white/5">
+                    <p class="text-xs font-bold text-white mb-1">Why is there a watermark on my download?</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Some platforms embed watermarks directly in the video stream. ProDown attempts to find the watermark-free version first. If unavailable, the platform-watermarked version is provided as a fallback.</p>
+                </div>
+                <div class="bg-black/30 rounded-2xl p-4 border border-white/5">
+                    <p class="text-xs font-bold text-white mb-1">Is it legal to download social media videos?</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">You may only download content you own or have explicit permission to download. Downloading copyrighted content without authorization may violate applicable laws and platform terms of service. See our <a href="/terms-of-service.html" class="text-orange-400 underline">Terms of Service</a>.</p>
+                </div>
+            </div>
+        </div>
+
+        <a href="/" class="block w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-4 rounded-2xl text-center text-sm transition-all orange-glow-btn shadow-lg">
+            <i class="fa-solid fa-cloud-arrow-down mr-2"></i> Go Back &amp; Download
+        </a>
+
+    </main>
+
+    <footer class="w-full max-w-2xl px-5 py-6 border-t border-white/5 text-center space-y-2">
+        <div class="flex flex-wrap justify-center gap-4 text-[11px] text-slate-400">
+            <a href="/"                       class="hover:text-orange-400 transition-colors">Home</a>
+            <a href="/about.html"             class="hover:text-orange-400 transition-colors">About</a>
+            <a href="/privacy-policy.html"    class="hover:text-orange-400 transition-colors">Privacy Policy</a>
+            <a href="/terms-of-service.html"  class="hover:text-orange-400 transition-colors">Terms of Service</a>
+        </div>
+        <p class="text-[11px] text-slate-500">&copy; 2026 ProDown. All rights reserved.</p>
+    </footer>
+</body>
+</html>
