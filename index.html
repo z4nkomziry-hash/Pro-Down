@@ -42,6 +42,15 @@
     <!-- Google AdSense (replace ca-pub-XXXXXXXXXXXXXXXX with your publisher ID) -->
     <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
 
+    <!-- PWA Manifest & Theme -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#f97316">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ProDown">
+    <link rel="apple-touch-icon" href="assets/images/logo.png">
+
     <!-- Structured Data -->
     <script type="application/ld+json">
     {
@@ -79,6 +88,11 @@
         </a>
 
         <div class="flex items-center gap-2">
+            <!-- PWA Install Button (hidden until browser fires beforeinstallprompt) -->
+            <button id="installPwaBtn" class="hidden w-9 h-9 rounded-xl glass-card flex items-center justify-center text-slate-300 hover:text-orange-400 transition-all" title="Install ProDown App">
+                <i class="fa-solid fa-mobile-screen-button text-sm"></i>
+            </button>
+
             <!-- Share Button -->
             <div class="relative">
                 <button id="shareBtn" onclick="toggleShareMenu()" class="w-9 h-9 rounded-xl glass-card flex items-center justify-center text-slate-300 hover:text-orange-400 transition-all" title="Share ProDown">
@@ -356,16 +370,37 @@
                 <i class="fa-solid fa-gem"></i> Support Gateways
             </h4>
             <div class="space-y-2 text-xs">
-                <div class="bg-black/50 p-3 rounded-2xl flex justify-between items-center border border-white/5">
-                    <span class="font-bold text-slate-200">FastPay: <strong class="text-white">+964 750 604 5491</strong></span>
-                    <button onclick="navigator.clipboard.writeText('+9647506045491').then(()=>showAlert('Copied!','success'))"
-                        class="bg-white/10 hover:bg-pink-500 hover:text-white px-3 py-1 rounded-xl text-[10px] font-bold transition-all">Copy</button>
+
+                <!-- FastPay Deep Link -->
+                <div class="bg-black/50 p-3 rounded-2xl border border-white/5 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-200">FastPay: <strong class="text-white">+964 750 604 5491</strong></span>
+                        <button onclick="navigator.clipboard.writeText('+9647506045491').then(()=>showAlert('Copied!','success'))"
+                            class="bg-white/10 hover:bg-pink-500 hover:text-white px-3 py-1 rounded-xl text-[10px] font-bold transition-all">Copy</button>
+                    </div>
+                    <!-- Deep link: tries fastpay:// app scheme first, falls back to web -->
+                    <a href="fastpay://send?phone=9647506045491"
+                       onclick="setTimeout(()=>window.open('https://fastpay.iq','_blank','noopener,noreferrer'),1200)"
+                       class="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold px-4 py-2.5 rounded-xl text-[11px] transition-all shadow-md">
+                        <i class="fa-solid fa-mobile-screen-button"></i> Open FastPay App
+                    </a>
                 </div>
-                <div class="bg-black/50 p-3 rounded-2xl flex justify-between items-center border border-white/5">
-                    <span class="font-bold text-slate-200">FIB: <strong class="text-white">+964 750 604 5491</strong></span>
-                    <button onclick="navigator.clipboard.writeText('+9647506045491').then(()=>showAlert('Copied!','success'))"
-                        class="bg-white/10 hover:bg-amber-500 hover:text-black px-3 py-1 rounded-xl text-[10px] font-bold transition-all">Copy</button>
+
+                <!-- FIB Deep Link -->
+                <div class="bg-black/50 p-3 rounded-2xl border border-white/5 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-200">FIB: <strong class="text-white">+964 750 604 5491</strong></span>
+                        <button onclick="navigator.clipboard.writeText('+9647506045491').then(()=>showAlert('Copied!','success'))"
+                            class="bg-white/10 hover:bg-amber-500 hover:text-black px-3 py-1 rounded-xl text-[10px] font-bold transition-all">Copy</button>
+                    </div>
+                    <!-- Deep link: tries fib:// app scheme first, falls back to web -->
+                    <a href="fib://transfer?phone=9647506045491"
+                       onclick="setTimeout(()=>window.open('https://firstiraqibank.com','_blank','noopener,noreferrer'),1200)"
+                       class="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-black font-bold px-4 py-2.5 rounded-xl text-[11px] transition-all shadow-md">
+                        <i class="fa-solid fa-mobile-screen-button"></i> Open FIB App
+                    </a>
                 </div>
+
             </div>
         </div>
 

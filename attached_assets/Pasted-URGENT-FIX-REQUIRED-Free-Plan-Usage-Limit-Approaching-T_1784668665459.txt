@@ -1,0 +1,33 @@
+URGENT FIX REQUIRED (Free Plan Usage Limit Approaching):
+
+The download feature is STILL NOT WORKING for all 5 platforms (TikTok, Instagram, Facebook, YouTube, Snapchat). As shown in the attached UI error, links fail with "Unable to extract media / Could not download. The video may be private or the link invalid" even for valid public links like `vt.tiktok.com`.
+
+Please complete and fix these critical issues immediately before my execution tokens run out:
+
+---
+
+### 1. Fix Media Extractor Backend Logic (CRITICAL)
+- **Problem:** The URL parsing/fetching logic is failing for shortened and modern link formats (e.g., `vt.tiktok.com`, Instagram Reels, YouTube Shorts, Snapchat Spotlights).
+- **Fix Required:**
+  - Update the backend API calls or integration (yt-dlp, RapidAPI, or custom scrapers) to resolve redirected/shortened URLs before extraction.
+  - Implement dynamic multi-provider fallback (e.g., if Provider A fails, immediately fall back to Provider B automatically).
+  - Test and verify extraction logic so valid links for TikTok, Instagram, Facebook, YouTube, and Snapchat work smoothly without throwing extraction errors.
+
+---
+
+### 2. Implement PWA (Progressive Web App) Features
+- Transform ProDown into a fully functional **PWA**:
+  - Create a valid `manifest.json` with app icons, theme colors, background colors, and display settings (`standalone`).
+  - Configure a Service Worker (`sw.js`) for offline caching of static assets and ultra-fast loading times.
+  - Add an "Install App" prompt/button in the UI so users can easily install ProDown directly onto their mobile home screens or desktop like a native app.
+
+---
+
+### 3. Fix "Support Me" Section (Deep Linking for FIB & FastPay)
+- Update the **Support Me** buttons for local payment gateways (**FIB** and **FastPay**).
+- Configure deep-link URLs / custom app schemes (`fib://` or `fastpay://`) or proper payment redirect links so that when a user clicks on "FIB" or "FastPay", it immediately opens the respective wallet/banking app on their phone directly on the transfer/payment screen.
+
+---
+
+### Action Plan:
+Focus strictly on these features now to finalize the app completely. Please fix the download API parser first!

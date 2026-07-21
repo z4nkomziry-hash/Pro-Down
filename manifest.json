@@ -1,0 +1,45 @@
+{
+    "name": "ProDown — Social Video Downloader",
+    "short_name": "ProDown",
+    "description": "Download TikTok, Instagram, Facebook, YouTube & Snapchat videos free — no watermark, HD quality.",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#0b0b0d",
+    "theme_color": "#f97316",
+    "lang": "en-US",
+    "scope": "/",
+    "categories": ["utilities", "productivity"],
+    "icons": [
+        {
+            "src": "assets/images/logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "assets/images/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "assets/images/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "ProDown Home Screen"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Download a Video",
+            "short_name": "Download",
+            "description": "Go directly to the video downloader",
+            "url": "/#downloader",
+            "icons": [{ "src": "assets/images/logo.png", "sizes": "192x192" }]
+        }
+    ]
+}
