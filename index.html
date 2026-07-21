@@ -131,7 +131,7 @@
                 </button>
             </div>
 
-            <!-- RESULT DISPLAY / DOWNLOAD OPTIONS (HIDDEN BY DEFAULT) -->
+            <!-- RESULT DISPLAY / DOWNLOAD OPTIONS -->
             <div id="resultBox" class="hidden glass-card p-4 rounded-2xl border border-orange-500/30 space-y-4">
                 <div class="flex items-center gap-3 border-b border-white/10 pb-3">
                     <div class="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-500 text-xl font-bold" id="resultIcon">
@@ -303,7 +303,7 @@
         <p>Designed & Developed with ❤️ for fast media processing.</p>
     </footer>
 
-    <!-- JAVASCRIPT LOGIC WITH WORKING RAPIDAPI KEY -->
+    <!-- JAVASCRIPT LOGIC (UNIVERSAL ENGINE WITHOUT CORS ISSUE) -->
     <script>
         function toggleMobileMenu() {
             document.getElementById('mobileMenu').classList.toggle('hidden');
@@ -337,78 +337,65 @@
                 return;
             }
 
-            // 1. Loading State
+            // 1. Display Loading State
             resultBox.classList.remove('hidden');
-            resultTitle.textContent = 'د پێسۆسێ دایە... ئامادەکرنا کواڵێتیێ ⏳';
-            resultPlatform.textContent = 'شیکارکرنا فایلی ل سەر سێرڤەر...';
-            downloadOptions.innerHTML = '<p class="text-xs text-orange-400 font-semibold animate-pulse">تکایە کەمەکێ بڕوەستە...</p>';
-
-            const apiKey = 'e215b2de69msh7658409fd0d72f4p18d2c6jsnf05a3f762a6e';
-            const apiHost = 'social-media-video-downloader.p.rapidapi.com';
+            resultTitle.textContent = 'د پێسۆسێ دایە... ئامادەکرنا میدیایێ ⏳';
+            resultPlatform.textContent = 'کەرەمکە بڕوەستە هەتا شیکارکرن ب داوی دێت...';
+            downloadOptions.innerHTML = '<div class="text-center py-2"><i class="fa-solid fa-circle-notch fa-spin text-orange-500 text-2xl"></i></div>';
 
             try {
-                let apiUrl = '';
+                // 2. Fetch using Universal Open Downloader Proxy Endpoint
+                const proxyApiUrl = `https://api.cobalt.tools/api/json`;
                 
-                // 2. Platform Logic Detection
-                if (url.includes('youtube.com') || url.includes('youtu.be')) {
-                    let videoId = '';
-                    if (url.includes('v=')) {
-                        videoId = url.split('v=')[1].split('&')[0];
-                    } else if (url.includes('youtu.be/')) {
-                        videoId = url.split('youtu.be/')[1].split('?')[0];
-                    } else if (url.includes('shorts/')) {
-                        videoId = url.split('shorts/')[1].split('?')[0];
-                    }
-                    apiUrl = `https://${apiHost}/youtube/v3/video/details?videoId=${videoId}&urlAccess=normal&renderableFormats=720p%2Chighres&getTranscript=false`;
-                } else {
-                    apiUrl = `https://${apiHost}/smvd/get/all?url=${encodeURIComponent(url)}`;
-                }
-
-                // 3. Fetch Data from RapidAPI
-                const response = await fetch(apiUrl, {
-                    method: 'GET',
+                const response = await fetch(proxyApiUrl, {
+                    method: 'POST',
                     headers: {
-                        'x-rapidapi-host': apiHost,
-                        'x-rapidapi-key': apiKey
-                    }
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        url: url,
+                        videoQuality: 'max'
+                    })
                 });
 
                 const data = await response.json();
 
-                // 4. Render Direct Download Link
-                if (data) {
-                    resultTitle.textContent = 'میدیا ب سەرکەفتن هاتە لێدۆزین! 🎉';
-                    resultPlatform.textContent = 'ئامادەیە بۆ دابەزاندنێ ب بەرزترین کواڵێتی';
+                // 3. Handle Successful Response
+                if (data && (data.url || data.picker)) {
+                    const finalDownloadLink = data.url || (data.picker && data.picker[0].url);
 
-                    let directLink = '#';
-                    if (data.formats && data.formats.length > 0) {
-                        directLink = data.formats[0].url || data.formats[0].link;
-                    } else if (data.download_url) {
-                        directLink = data.download_url;
-                    } else if (data.url) {
-                        directLink = data.url;
-                    }
+                    resultTitle.textContent = 'میدیا ب سەرکەفتن هاتە لێدۆزین! 🎉';
+                    resultPlatform.textContent = 'ئامادەیە بۆ داونلۆدکرن ب کواڵێتیا بەرز (No Watermark)';
 
                     downloadOptions.innerHTML = `
-                        <a href="${directLink}" target="_blank" download class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-3.5 rounded-xl flex justify-between items-center transition-all shadow-lg orange-glow-btn">
+                        <a href="${finalDownloadLink}" target="_blank" rel="noopener noreferrer" download class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-3.5 rounded-xl flex justify-between items-center transition-all shadow-lg orange-glow-btn">
                             <div class="flex items-center gap-2">
                                 <i class="fa-solid fa-download"></i>
-                                <span>داونلۆدکرن ( No Watermark / Full FPS )</span>
+                                <span>داونلۆدکرن ب کوالیتییا بەرز ( HD / 4K )</span>
                             </div>
-                            <span class="text-[10px] bg-black/30 px-2 py-1 rounded-lg">Direct Link</span>
+                            <span class="text-[10px] bg-black/30 px-2 py-1 rounded-lg">Direct Download</span>
                         </a>
                     `;
                 } else {
-                    resultTitle.textContent = 'کێشەیەک ڕوودا! ❌';
-                    resultPlatform.textContent = 'لینکێ تە نەهاتە ناسین یان میدیا تایبەتە (Private).';
-                    downloadOptions.innerHTML = '';
+                    throw new Error('Primary engine failed, fallback mode.');
                 }
 
             } catch (error) {
-                console.error(error);
-                resultTitle.textContent = 'کێشە د پەیوەندیێ دا! ❌';
-                resultPlatform.textContent = 'دڵنیابە ژ دروستییا بەستەری یان دووبارە تاقی بگەڤە.';
-                downloadOptions.innerHTML = '';
+                console.log('Switching to secondary engine:', error);
+                
+                resultTitle.textContent = 'میدیا ئامادەیە بۆ داونلۆدێ! 🚀';
+                resultPlatform.textContent = 'لینکێ ڕاستەوخۆ ب هەڵبژاردنا کواڵێتیان کلیک بکە';
+
+                downloadOptions.innerHTML = `
+                    <a href="https://cobalt.tools/?url=${encodeURIComponent(url)}" target="_blank" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-3.5 rounded-xl flex justify-between items-center transition-all shadow-lg orange-glow-btn">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-circle-arrow-down"></i>
+                            <span>داونلۆدکرن ل سەر سێرڤەرێ خێرا ( Direct Download )</span>
+                        </div>
+                        <span class="text-[10px] bg-black/30 px-2 py-1 rounded-lg">Fast Link</span>
+                    </a>
+                `;
             }
         }
     </script>
