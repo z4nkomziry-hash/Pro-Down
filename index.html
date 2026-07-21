@@ -1,89 +1,517 @@
 <!DOCTYPE html>
-<html lang="kmr">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProDown - Download Social Media Videos</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
+    <title>Pro-Down | Ultimate Social Media Downloader</title>
+    
+    <!-- Scripts & Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;500;700;900&family=Poppins:wght@300;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #080711;
+            --card-glass: rgba(255, 255, 255, 0.04);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --primary-pink: #ec4899;
+            --primary-purple: #a855f7;
+        }
 
-    <!-- Header -->
-    <header class="top-bar">
-        <div class="logo">
-            <span class="bolt">⚡</span> Pro<span class="pink">Down</span>
-        </div>
-        <div class="lang-selector">
-            🇺🇸 English <span>▼</span>
+        body {
+            font-family: 'Poppins', 'Noto Kufi Arabic', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(236, 72, 153, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .glass-box {
+            background: var(--card-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple));
+            transition: all 0.3s ease;
+        }
+        .btn-gradient:hover {
+            opacity: 0.92;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+        }
+
+        /* User VIP Badges */
+        .badge-free { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+        .badge-plus { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .badge-premium { background: linear-gradient(135deg, #f59e0b, #eab308); color: #000; font-weight: 900; }
+
+        /* Social Platform Button Colors */
+        .net-tiktok { background: #000000; border-color: #fe2c55; }
+        .net-instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+        .net-snapchat { background: #fffc00; color: #000; }
+        .net-facebook { background: #1877f2; }
+        .net-pinterest { background: #e60023; }
+        .net-youtube { background: #ff0000; }
+        .net-telegram { background: #229ed9; }
+
+        .modal-active { display: flex !important; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen justify-between">
+
+    <!-- NAVBAR -->
+    <header class="glass-box sticky top-0 z-50 border-b border-white/10 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.reload()">
+                <div class="w-10 h-10 rounded-2xl btn-gradient flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                </div>
+                <span class="text-2xl font-black tracking-wider text-white">Pro-<span class="text-pink-500">Down</span></span>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center gap-3">
+                <!-- Language Selector -->
+                <select id="langSelect" onchange="switchLanguage(this.value)" class="bg-slate-900 border border-white/20 text-white text-xs rounded-xl px-3 py-2 outline-none cursor-pointer">
+                    <option value="en">🇺🇸 English</option>
+                    <option value="badini">☀️ کوردی (بادینی)</option>
+                    <option value="sorani">☀️ کوردی (سۆرانی)</option>
+                    <option value="ar">🇸🇦 العربية</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                </select>
+
+                <!-- Auth/User Area -->
+                <div id="userProfileArea">
+                    <button onclick="openAuthModal()" class="btn-gradient text-white text-xs font-bold px-4 py-2 rounded-xl">
+                        <i class="fa-solid fa-user-plus mr-1"></i> <span data-i18n="login">Login / Register</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
 
-    <main class="container">
-        <!-- Main Title -->
-        <h1 class="main-title">Download Social Media Videos & Stories Without Watermark</h1>
-        
-        <a href="#" class="how-to-link"><i class="fa-solid fa-play"></i> How to download media?</a>
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-5xl mx-auto px-4 py-6 w-full space-y-8">
 
-        <!-- Main Downloader Card -->
-        <div class="card downloader-card">
-            <div class="tab-buttons">
-                <button class="tab-btn active"><i class="fa-solid fa-link"></i> URL Link</button>
-                <button class="tab-btn"><i class="fa-solid fa-at"></i> Username</button>
+        <!-- 1. ADSENSE TOP BANNER -->
+        <div class="glass-box rounded-2xl p-2 text-center border border-white/5">
+            <div class="h-14 bg-white/5 rounded-xl flex items-center justify-center text-slate-500 text-xs">
+                <i class="fa-solid fa-rectangle-ad text-lg mr-2"></i> AdSense Advertisement Space
+            </div>
+        </div>
+
+        <!-- 2. SOCIAL PLATFORMS SELECTOR (7 Platforms) -->
+        <section>
+            <h3 class="text-xs font-bold text-slate-400 mb-3 text-center uppercase tracking-widest" data-i18n="selectPlatform">Select Platform To Download From</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+                <button onclick="setPlatform('TikTok')" class="net-tiktok border p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-transform hover:scale-105">
+                    <i class="fa-brands fa-tiktok text-xl"></i>
+                    <span class="text-[11px] font-bold">TikTok</span>
+                </button>
+                <button onclick="setPlatform('Instagram')" class="net-instagram p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-transform hover:scale-105">
+                    <i class="fa-brands fa-instagram text-xl"></i>
+                    <span class="text-[11px] font-bold">Instagram</span>
+                </button>
+                <button onclick="setPlatform('Snapchat')" class="net-snapchat p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-transform hover:scale-105">
+                    <i class="fa-brands fa-snapchat text-xl"></i>
+                    <span class="text-[11px] font-bold">Snapchat</span>
+                </button>
+                <button onclick="setPlatform('Facebook')" class="net-facebook p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-transform hover:scale-105">
+                    <i class="fa-brands fa-facebook-f text-xl"></i>
+                    <span class="text-[11px] font-bold">Facebook</span>
+                </button>
+                <button onclick="setPlatform('Pinterest')" class="net-pinterest p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-transform hover:scale-105">
+                    <i class="fa-brands fa-pinterest-p text-xl"></i>
+                    <span class="text-[11px] font-bold">Pinterest</span>
+                </button>
+                <button onclick="setPlatform('YouTube')" class="net-youtube p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-transform hover:scale-105">
+                    <i class="fa-brands fa-youtube text-xl"></i>
+                    <span class="text-[11px] font-bold">YouTube</span>
+                </button>
+                <button onclick="setPlatform('Telegram')" class="net-telegram p-3 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-transform hover:scale-105">
+                    <i class="fa-brands fa-telegram text-xl"></i>
+                    <span class="text-[11px] font-bold">Telegram</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. MAIN INPUT BOX -->
+        <section class="glass-box rounded-3xl p-6 shadow-2xl relative">
+            <div class="flex gap-2 justify-center mb-4">
+                <button onclick="setSearchType('link')" id="btnTypeLink" class="px-4 py-2 rounded-xl text-xs font-bold bg-pink-500 text-white">
+                    <i class="fa-solid fa-link mr-1"></i> Link URL
+                </button>
+                <button onclick="setSearchType('username')" id="btnTypeUser" class="px-4 py-2 rounded-xl text-xs font-bold bg-white/10 text-slate-400">
+                    <i class="fa-solid fa-at mr-1"></i> Username
+                </button>
             </div>
 
-            <div class="input-box">
-                <input type="text" id="url-input" placeholder="لینک لێرە دابنێ...">
-                <button id="paste-btn" class="paste-btn"><i class="fa-solid fa-paste"></i> Paste</button>
-                <button id="clear-btn" class="clear-btn"><i class="fa-solid fa-xmark"></i></button>
+            <div class="relative flex items-center">
+                <input type="text" id="inputUrl" placeholder="Paste link here (Video, Story, Reels, Gif, Highlight...)" 
+                       class="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-pink-500 transition-all">
+                <button onclick="pasteClipboard()" class="absolute right-3 bg-white/10 hover:bg-white/20 text-xs px-3 py-2 rounded-xl font-bold transition-all">
+                    <i class="fa-solid fa-paste"></i>
+                </button>
             </div>
 
-            <button id="download-btn" class="main-dl-btn">
-                Download <i class="fa-solid fa-arrow-down"></i>
+            <button onclick="processDownload()" class="w-full btn-gradient text-white font-bold py-4 rounded-2xl mt-4 text-sm flex items-center justify-center gap-2 shadow-lg">
+                <i class="fa-solid fa-bolt"></i> <span data-i18n="downloadNow">Download Media</span>
             </button>
+        </section>
 
-            <p class="share-text">Share our website link with your friends:</p>
-
-            <div class="share-buttons">
-                <button class="share-btn snap"><i class="fa-brands fa-snapchat"></i> Snapchat Share</button>
-                <button class="share-btn telegram"><i class="fa-paper-plane"></i> Telegram Share</button>
-            </div>
-        </div>
-
-        <!-- Social Platforms Selection Card -->
-        <div class="card platforms-card">
-            <h2>✨ ProDown بەخێرهاتی بۆ</h2>
-            <p class="sub-desc">تکایە ئەو تۆڕە جڤاکیە دیار بکه کو دێ ڤیدیۆیێ ژێ دابەزینی:</p>
-
-            <div class="platform-list">
-                <div class="platform-item"><i class="fa-brands fa-tiktok tiktok-icon"></i> <span>تیک تۆک (TikTok)</span> <i class="fa-solid fa-chevron-right arrow"></i></div>
-                <div class="platform-item"><i class="fa-brands fa-instagram insta-icon"></i> <span>ئینستاگرام (Instagram)</span> <i class="fa-solid fa-chevron-right arrow"></i></div>
-                <div class="platform-item"><i class="fa-brands fa-snapchat snap-icon"></i> <span>سناپ چات (Snapchat)</span> <i class="fa-solid fa-chevron-right arrow"></i></div>
-                <div class="platform-item"><i class="fa-brands fa-facebook fb-icon"></i> <span>فەیسبووک (Facebook)</span> <i class="fa-solid fa-chevron-right arrow"></i></div>
-                <div class="platform-item"><i class="fa-brands fa-pinterest pin-icon"></i> <span>پینتریست (Pinterest)</span> <i class="fa-solid fa-chevron-right arrow"></i></div>
-            </div>
-
-            <div class="info-box">
-                💡 <b>فێرکاری کورت:</b> تەنها لینکێ پۆستێ کۆپیکە ل هەر تۆڕەکێ بگری و ل کادرا ژوورێ دابنێ دا کو پرۆسێسا داونلۆدێ دەست پێ بکەت.
-            </div>
-        </div>
-
-        <!-- Developer Profile Card -->
-        <div class="card dev-card">
-            <h2>🚀 گەشەپێدەری ProDown</h2>
-            <p class="dev-desc">ئەڤ پلاتفۆرمە هاتیا دیزاینکرن بۆ پێشکەشکرنا خزمەتگوزاریەکا خێرا و ئاسان بۆ داگرتنا فایلا.</p>
-            
-            <div class="dev-profile">
-                <div class="profile-avatar">
-                    <i class="fa-solid fa-user"></i>
+        <!-- 4. TELEGRAM BOT PROMOTION BANNER -->
+        <section class="glass-box rounded-3xl p-5 border border-sky-500/30 bg-gradient-to-r from-sky-950/40 to-slate-900/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-sky-500 flex items-center justify-center text-white text-2xl flex-shrink-0">
+                    <i class="fa-brands fa-telegram"></i>
                 </div>
-                <h3>Zaniyar Dildar</h3>
-                <p class="dev-tag">Developer & Founder</p>
-                <a href="https://pro-down.vercel.app" class="dev-link">https://pro-down.vercel.app</a>
+                <div>
+                    <h4 class="font-bold text-sm text-white" data-i18n="tgBotTitle">Pro-Down Telegram Bot</h4>
+                    <p class="text-xs text-slate-400" data-i18n="tgBotDesc">Download videos directly inside Telegram instantly!</p>
+                </div>
+            </div>
+            <a href="https://t.me/z_14x" target="_blank" class="bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs px-5 py-3 rounded-xl transition-all whitespace-nowrap">
+                <i class="fa-solid fa-paper-plane mr-1"></i> <span data-i18n="openBot">Open Telegram Bot</span>
+            </a>
+        </section>
+
+        <!-- 5. SUBSCRIPTION PACKAGES & PAYMENT BOXES -->
+        <section class="space-y-4">
+            <h3 class="text-lg font-black text-center text-white" data-i18n="packagesTitle">Membership Packages</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Free Plan -->
+                <div class="glass-box rounded-3xl p-5 border border-white/10 flex flex-col justify-between">
+                    <div>
+                        <span class="badge-free text-[10px] px-3 py-1 rounded-full uppercase font-bold">Free Plan</span>
+                        <h4 class="text-xl font-bold mt-2">$0 <span class="text-xs text-slate-400">/ forever</span></h4>
+                        <ul class="text-xs text-slate-300 space-y-2 mt-4">
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-1"></i> Quality: 1080p Full HD</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-1"></i> All 7 Social Networks</li>
+                            <li><i class="fa-solid fa-check text-emerald-400 mr-1"></i> Normal Download Speed</li>
+                        </ul>
+                    </div>
+                    <button class="w-full bg-white/10 text-white text-xs font-bold py-3 rounded-xl mt-6">Current Plan</button>
+                </div>
+
+                <!-- Plus Plan -->
+                <div class="glass-box rounded-3xl p-5 border border-blue-500/40 flex flex-col justify-between relative overflow-hidden">
+                    <div>
+                        <span class="badge-plus text-[10px] px-3 py-1 rounded-full uppercase font-bold">Plus Plan</span>
+                        <h4 class="text-xl font-bold mt-2">$4.99 <span class="text-xs text-slate-400">/ Month</span></h4>
+                        <ul class="text-xs text-slate-200 space-y-2 mt-4">
+                            <li><i class="fa-solid fa-check text-blue-400 mr-1"></i> Quality: 2K + 60fps</li>
+                            <li><i class="fa-solid fa-check text-blue-400 mr-1"></i> Bulk & Story Downloads</li>
+                            <li><i class="fa-solid fa-check text-blue-400 mr-1"></i> Ultra Fast Speed</li>
+                        </ul>
+                    </div>
+                    <button onclick="selectPackage('Plus')" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-3 rounded-xl mt-6 transition-all">Choose Plus</button>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="glass-box rounded-3xl p-5 border border-amber-500/60 bg-gradient-to-b from-amber-500/10 to-transparent flex flex-col justify-between">
+                    <div>
+                        <span class="badge-premium text-[10px] px-3 py-1 rounded-full uppercase">VIP Premium</span>
+                        <h4 class="text-xl font-bold mt-2">$9.99 <span class="text-xs text-slate-400">/ Month</span></h4>
+                        <ul class="text-xs text-slate-100 space-y-2 mt-4">
+                            <li><i class="fa-solid fa-crown text-amber-400 mr-1"></i> Quality: 4K/8K + 120fps</li>
+                            <li><i class="fa-solid fa-crown text-amber-400 mr-1"></i> Dolby Vision Audio</li>
+                            <li><i class="fa-solid fa-crown text-amber-400 mr-1"></i> No Advertisements</li>
+                        </ul>
+                    </div>
+                    <button onclick="selectPackage('Premium')" class="w-full btn-gradient text-white text-xs font-bold py-3 rounded-xl mt-6 shadow-lg">Choose Premium</button>
+                </div>
+            </div>
+
+            <!-- PAYMENT & ACTIVATION BOXES (INDEPENDENT) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <!-- Payment Methods Box -->
+                <div class="glass-box rounded-3xl p-5 space-y-3">
+                    <h4 class="text-xs font-bold text-pink-400 uppercase tracking-wider"><i class="fa-solid fa-wallet mr-1"></i> Payment Gateways</h4>
+                    <div class="space-y-2 text-xs">
+                        <div class="bg-black/40 p-2.5 rounded-xl flex justify-between items-center">
+                            <span>FastPay: <b class="text-white">+964 750 604 5491</b></span>
+                            <button onclick="copyText('+9647506045491')" class="text-pink-400"><i class="fa-solid fa-copy"></i></button>
+                        </div>
+                        <div class="bg-black/40 p-2.5 rounded-xl flex justify-between items-center">
+                            <span>FIB: <b class="text-white">+964 750 604 5491</b></span>
+                            <button onclick="copyText('+9647506045491')" class="text-pink-400"><i class="fa-solid fa-copy"></i></button>
+                        </div>
+                        <div class="bg-black/40 p-2.5 rounded-xl flex justify-between items-center">
+                            <span class="truncate">USDT: <b class="text-white text-[10px]">TKUfVwnjyT2KUa9xnBreT32YLLJEwACHpc</b></span>
+                            <button onclick="copyText('TKUfVwnjyT2KUa9xnBreT32YLLJEwACHpc')" class="text-pink-400"><i class="fa-solid fa-copy"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact & Receipt Submission Box -->
+                <div class="glass-box rounded-3xl p-5 space-y-3">
+                    <h4 class="text-xs font-bold text-purple-400 uppercase tracking-wider"><i class="fa-solid fa-receipt mr-1"></i> Submit Payment Receipt</h4>
+                    <p class="text-[11px] text-slate-400">Send your transfer screenshot to activate your package immediately:</p>
+                    <div class="flex flex-col gap-2">
+                        <a href="https://t.me/z_14x" target="_blank" class="bg-sky-500/20 hover:bg-sky-500/30 text-sky-400 border border-sky-500/30 py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-between">
+                            <span><i class="fa-brands fa-telegram mr-1"></i> Telegram Admin</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                        <a href="https://wa.me/9647506045491" target="_blank" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-between">
+                            <span><i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp Support</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- License Key Activation Box -->
+                <div class="glass-box rounded-3xl p-5 space-y-3">
+                    <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-key mr-1"></i> Activate License Key</h4>
+                    <p class="text-[11px] text-slate-400">Enter your VIP key sent by Admin to upgrade:</p>
+                    <input type="text" id="licenseKeyInput" placeholder="PRO-XXXX-XXXX-XXXX" class="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none uppercase">
+                    <button onclick="activateLicenseKey()" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-black py-2 rounded-xl text-xs transition-all">Activate Key</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. DEVELOPER SECTION (ZANIYAR) -->
+        <section class="glass-box rounded-3xl p-6 border border-purple-500/30 bg-slate-950/60 relative overflow-hidden">
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+                <div class="w-24 h-24 rounded-full p-1 btn-gradient flex-shrink-0 shadow-xl">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Developer" class="w-full h-full object-cover rounded-full">
+                </div>
+                <div class="space-y-2 text-center sm:text-left">
+                    <h4 class="text-base font-black text-white flex items-center justify-center sm:justify-start gap-2">
+                        Zaniyar Al-Mzuri <i class="fa-solid fa-circle-check text-blue-500 text-xs"></i>
+                    </h4>
+                    <p class="text-xs text-slate-300 leading-relaxed" data-i18n="devDesc">
+                        Full-stack developer & Creator of Pro-Down. We build custom websites, mobile applications, and automation bots tailored to your specifications at competitive prices. Contact us for any custom project or support.
+                    </p>
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-2">
+                        <a href="https://www.instagram.com/z44nko" target="_blank" class="bg-white/5 hover:bg-pink-600/20 text-xs px-3 py-1.5 rounded-xl border border-white/10 transition-all"><i class="fa-brands fa-instagram text-pink-500"></i> Instagram</a>
+                        <a href="https://www.tiktok.com/@z44nko" target="_blank" class="bg-white/5 hover:bg-white/10 text-xs px-3 py-1.5 rounded-xl border border-white/10 transition-all"><i class="fa-brands fa-tiktok"></i> TikTok</a>
+                        <a href="https://snapchat.com/t/7uaFdl7z" target="_blank" class="bg-white/5 hover:bg-yellow-500/20 text-xs px-3 py-1.5 rounded-xl border border-white/10 transition-all"><i class="fa-brands fa-snapchat text-yellow-400"></i> Snapchat</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. ADSENSE BOTTOM BANNER -->
+        <div class="glass-box rounded-2xl p-2 text-center border border-white/5">
+            <div class="h-14 bg-white/5 rounded-xl flex items-center justify-center text-slate-500 text-xs">
+                <i class="fa-solid fa-rectangle-ad text-lg mr-2"></i> AdSense Advertisement Space
             </div>
         </div>
+
     </main>
 
-    <script src="app.js"></script>
+    <!-- FOOTER -->
+    <footer class="glass-box border-t border-white/10 py-6 text-center text-xs text-slate-500">
+        <p>© 2026 Pro-Down. Developed by Zaniyar Al-Mzuri. All Rights Reserved.</p>
+    </footer>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- PREVIEW MODAL (PLAY/PAUSE/X/SEEK) -->
+    <div id="previewModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-box rounded-3xl max-w-lg w-full p-5 relative border border-white/20">
+            <button onclick="closePreviewModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-pink-500 transition-all">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <h3 class="text-sm font-bold mb-3 text-pink-400" id="previewTitle">Media Preview</h3>
+
+            <div class="relative bg-black rounded-2xl overflow-hidden aspect-video flex items-center justify-center">
+                <video id="previewVideo" class="w-full h-full object-contain" controls></video>
+                <img id="previewImage" class="w-full h-full object-contain hidden" alt="Preview Image">
+            </div>
+
+            <div class="mt-4 flex gap-2">
+                <button onclick="downloadMediaFile('1080p')" class="flex-1 btn-gradient text-white text-xs font-bold py-3 rounded-xl">Download 1080p HD</button>
+                <button onclick="downloadMediaFile('4K')" class="flex-1 bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold py-3 rounded-xl">Download 4K Ultra</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION MODAL (REGISTER / LOGIN) -->
+    <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-box rounded-3xl max-w-md w-full p-6 relative border border-white/20">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-black text-white mb-4 text-center">Login to Pro-Down</h3>
+            
+            <form onsubmit="handleAuthSubmit(event)" class="space-y-3">
+                <input type="text" id="authUsername" placeholder="Username (Unique)" required class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-white outline-none">
+                <input type="text" id="authContact" placeholder="Email or Mobile Phone" required class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-white outline-none">
+                <input type="password" placeholder="Password" required class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-white outline-none">
+                
+                <button type="submit" class="w-full btn-gradient text-white font-bold py-3 rounded-xl text-xs">Create / Login Account</button>
+            </form>
+
+            <div class="relative my-4 text-center text-[10px] text-slate-500 uppercase"><span class="bg-slate-900 px-2">Or Continue With</span></div>
+
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="guestLogin()" class="bg-white/5 hover:bg-white/10 py-2 rounded-xl text-xs font-bold"><i class="fa-solid fa-user-ninja mr-1"></i> Guest</button>
+                <button onclick="mockOAuth('Google')" class="bg-white/5 hover:bg-white/10 py-2 rounded-xl text-xs font-bold text-red-400"><i class="fa-brands fa-google mr-1"></i> Google</button>
+                <button onclick="mockOAuth('Apple')" class="bg-white/5 hover:bg-white/10 py-2 rounded-xl text-xs font-bold"><i class="fa-brands fa-apple mr-1"></i> Apple</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // ================= LANGUAGE TRANSLATIONS =================
+        const translations = {
+            en: {
+                login: "Login / Register", selectPlatform: "Select Platform To Download From",
+                downloadNow: "Download Media", tgBotTitle: "Pro-Down Telegram Bot",
+                tgBotDesc: "Download videos directly inside Telegram instantly!", openBot: "Open Telegram Bot",
+                packagesTitle: "Membership Packages", devDesc: "Full-stack developer & Creator of Pro-Down. We build custom websites, mobile applications, and automation bots tailored to your specifications."
+            },
+            badini: {
+                login: "تومارکرن / چوونە ژوور", selectPlatform: "تۆڕا جڤاکی هەڵبژێرە ژبۆ داونلۆدکرنێ",
+                downloadNow: "داونلۆدکرنا میدیایێ", tgBotTitle: "بۆتێ تێلیگرامێ یێ Pro-Down",
+                tgBotDesc: "دناڤ تێلیگرامێ دا ئێکسەر ڤیدیۆیان داونلۆد بکە!", openBot: "ڤەکرنا بۆتێ تێلیگرامێ",
+                packagesTitle: "پاکێجێن ئابوونەبوونێ", devDesc: "گەشەپێدەرێ وێبسایت و ئەپلیکەیشنان. ئامادەینە ژبو دروستکرنا وێبسایت و ئەپلیکەیشنان ب بهایەکێ گونجایی."
+            },
+            sorani: {
+                login: "تۆماربوون / چوونه‌ژووره‌وه‌", selectPlatform: "تۆڕی کۆمەڵایەتی هەڵبژێرە بۆ داگرتن",
+                downloadNow: "داگرتنی میدیا", tgBotTitle: "بۆتی تێلیگرامی Pro-Down",
+                tgBotDesc: "ڕاستەوخۆ لە ناو تێلیگرام ڤیدیۆکان دابگرە!", openBot: "کردنەوەی بۆتی تێلیگرام",
+                packagesTitle: "پاکێجەکانی ئابوونەبوون", devDesc: "گەشەپێدەری وێبسایت و ئەپڵیکەیشن. ئامادەین بۆ دروستکردنی ماڵپەڕ و ئەپ بە نرخی گونجاو."
+            },
+            ar: {
+                login: "تسجيل الدخول / الاشتراك", selectPlatform: "اختر المنصة للتحميل منها",
+                downloadNow: "تحميل الميديا", tgBotTitle: "بوت تلغرام Pro-Down",
+                tgBotDesc: "قم بتحميل الفيديوهات مباشرة داخل التلغرام!", openBot: "فتح بوت التلغرام",
+                packagesTitle: "باقات الاشتراك", devDesc: "مطور تطبيقات ومواقع. مستعدون لتصميم أحدث المواقع والتطبيقات حسب الطلب وبأسعار مناسبة."
+            },
+            de: {
+                login: "Anmelden / Registrieren", selectPlatform: "Wählen Sie die Plattform zum Herunterladen",
+                downloadNow: "Medien Herunterladen", tgBotTitle: "Pro-Down Telegram Bot",
+                tgBotDesc: "Laden Sie Videos direkt in Telegram herunter!", openBot: "Telegram Bot Öffnen",
+                packagesTitle: "Mitgliedschaftspakete", devDesc: "Full-Stack-Entwickler & Ersteller von Pro-Down. Wir erstellen maßgeschneiderte Websites und Apps."
+            }
+        };
+
+        let currentLang = 'en';
+        let currentUser = JSON.parse(localStorage.getItem('prodown_user')) || null;
+
+        // Switching Languages Completely
+        function switchLanguage(lang) {
+            currentLang = lang;
+            const isRtl = (lang === 'badini' || lang === 'sorani' || lang === 'ar');
+            document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+            document.documentElement.lang = lang;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+        }
+
+        // Initialize LocalStorage & User Interface
+        window.addEventListener('DOMContentLoaded', () => {
+            switchLanguage('en');
+            updateUserUI();
+        });
+
+        // User Auth Functions
+        function openAuthModal() { document.getElementById('authModal').classList.add('modal-active'); }
+        function closeAuthModal() { document.getElementById('authModal').classList.remove('modal-active'); }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('authUsername').value;
+            currentUser = {
+                username: username,
+                id: 'PD-' + Math.floor(100000 + Math.random() * 900000),
+                package: 'Free'
+            };
+            localStorage.setItem('prodown_user', JSON.stringify(currentUser));
+            updateUserUI();
+            closeAuthModal();
+            alert('Welcome, ' + username + '!');
+        }
+
+        function guestLogin() {
+            currentUser = { username: 'Guest_' + Math.floor(1000 + Math.random() * 9000), id: 'PD-GUEST', package: 'Free' };
+            localStorage.setItem('prodown_user', JSON.stringify(currentUser));
+            updateUserUI();
+            closeAuthModal();
+        }
+
+        function mockOAuth(provider) {
+            currentUser = { username: provider + '_User', id: 'PD-' + provider.toUpperCase(), package: 'Free' };
+            localStorage.setItem('prodown_user', JSON.stringify(currentUser));
+            updateUserUI();
+            closeAuthModal();
+        }
+
+        function updateUserUI() {
+            const area = document.getElementById('userProfileArea');
+            if (currentUser) {
+                let badgeClass = 'badge-free';
+                if (currentUser.package === 'Plus') badgeClass = 'badge-plus';
+                if (currentUser.package === 'Premium') badgeClass = 'badge-premium';
+
+                area.innerHTML = `
+                    <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl border border-white/10">
+                        <span class="text-xs font-bold text-white">${currentUser.username}</span>
+                        <span class="text-[9px] px-2 py-0.5 rounded-full ${badgeClass}">${currentUser.package}</span>
+                    </div>
+                `;
+            }
+        }
+
+        // Action Handlers
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert('Copied: ' + text);
+        }
+
+        function activateLicenseKey() {
+            const key = document.getElementById('licenseKeyInput').value.trim();
+            if (!key) return alert('Please enter a key!');
+            if (!currentUser) return openAuthModal();
+
+            currentUser.package = 'Premium';
+            localStorage.setItem('prodown_user', JSON.stringify(currentUser));
+            updateUserUI();
+            alert('VIP License Key Activated Successfully! You are now Premium.');
+        }
+
+        function processDownload() {
+            const val = document.getElementById('inputUrl').value.trim();
+            if (!val) return alert('Please paste a link or username!');
+
+            // Open Preview Modal
+            document.getElementById('previewModal').classList.add('modal-active');
+            const video = document.getElementById('previewVideo');
+            video.src = "https://www.w3schools.com/html/mov_bbb.mp4"; // Sample preview stream
+            video.play();
+        }
+
+        function closePreviewModal() {
+            const video = document.getElementById('previewVideo');
+            video.pause();
+            document.getElementById('previewModal').classList.remove('modal-active');
+        }
+
+        function downloadMediaFile(quality) {
+            alert('Downloading media in ' + quality + ' quality...');
+            closePreviewModal();
+        }
+
+        function pasteClipboard() {
+            navigator.clipboard.readText().then(text => {
+                document.getElementById('inputUrl').value = text;
+            });
+        }
+    </script>
 </body>
 </html>
