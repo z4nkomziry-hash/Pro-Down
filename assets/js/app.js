@@ -1,6 +1,6 @@
 /* ==========================================================================
-   ProDown - Download Engine v2.2
-   Multi-platform | Redirect-aware | XSS-safe DOM construction
+   ProDown - Download Engine v2.3
+   Parallel Racing | Auto-Detect | History | Watermark Toggle | XSS-safe DOM
    ========================================================================== */
 
 /* ── Utility: Toast Alert ─────────────────────────────────────────────────── */
@@ -76,33 +76,55 @@ function selectTab(tab) {
     input.placeholder = placeholders[tab] || placeholders.all;
 }
 
-/* ── Auto-Paste & Keyboard ────────────────────────────────────────────────── */
+/* ── Detect Platform (includes short-link domains) ───────────────────────── */
+function detectPlatform(url) {
+    if (/tiktok\.com|vt\.tiktok\.com/i.test(url))            return { key: 'tt',   label: 'TikTok' };
+    if (/instagram\.com/i.test(url))                          return { key: 'ig',   label: 'Instagram' };
+    if (/(facebook\.com|fb\.watch)/i.test(url))               return { key: 'fb',   label: 'Facebook' };
+    if (/(youtube\.com|youtu\.be)/i.test(url))                return { key: 'yt',   label: 'YouTube' };
+    if (/snapchat\.com/i.test(url))                           return { key: 'snap', label: 'Snapchat' };
+    return null;
+}
+
+/* ── DOMContentLoaded Setup ───────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('inputUrl');
-    if (!input) return;
-    input.addEventListener('focus', async () => {
-        try {
-            const text = await navigator.clipboard.readText();
-            if (text && !input.value && /https?:\/\//i.test(text)) {
-                input.value = text;
-                showAlert('Link pasted from clipboard!', 'info');
-            }
-        } catch (_) {}
-    });
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') processDownload(); });
 
-    // Register Service Worker for PWA
+    // ── Priority 3: Auto Platform Detection on input ─────────────────────
+    if (input) {
+        input.addEventListener('input', () => {
+            const val = input.value.trim();
+            if (!val) return;
+            const p = detectPlatform(val);
+            if (p) selectTab(p.key);
+        });
+
+        // Auto-paste from clipboard on focus
+        input.addEventListener('focus', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text && !input.value && /https?:\/\//i.test(text)) {
+                    input.value = text;
+                    showAlert('Link pasted from clipboard!', 'info');
+                    const p = detectPlatform(text);
+                    if (p) selectTab(p.key);
+                }
+            } catch (_) {}
+        });
+
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') processDownload(); });
+    }
+
+    // ── Service Worker (PWA) ─────────────────────────────────────────────
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
 
-    // PWA Install prompt
+    // ── PWA Install Prompt ───────────────────────────────────────────────
     let deferredInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', e => {
         e.preventDefault();
         deferredInstallPrompt = e;
-        const btn = document.getElementById('installPwaBtn');
-        if (btn) btn.classList.remove('hidden');
     });
     window.addEventListener('appinstalled', () => {
         const btn = document.getElementById('installPwaBtn');
@@ -117,16 +139,46 @@ document.addEventListener('DOMContentLoaded', () => {
         deferredInstallPrompt = null;
         if (outcome === 'accepted') showAlert('Installing ProDown…', 'success');
     });
+
+    // ── Priority 4: Render history on load ───────────────────────────────
+    renderHistory();
 });
 
-/* ── Detect Platform (includes short-link domains) ───────────────────────── */
-function detectPlatform(url) {
-    if (/tiktok\.com/i.test(url))                        return { key: 'tt',   label: 'TikTok' };
-    if (/instagram\.com/i.test(url))                     return { key: 'ig',   label: 'Instagram' };
-    if (/(facebook\.com|fb\.watch)/i.test(url))          return { key: 'fb',   label: 'Facebook' };
-    if (/(youtube\.com|youtu\.be)/i.test(url))           return { key: 'yt',   label: 'YouTube' };
-    if (/snapchat\.com/i.test(url))                      return { key: 'snap', label: 'Snapchat' };
-    return null;
+/* ══════════════════════════════════════════════════════════════════════════
+   PRIORITY 2 — PARALLEL ENGINE RACING
+   raceEngines() fires all engines simultaneously.
+   Each engine has its own timeout wrapper.
+   Returns the first non-null result, or null if all fail / timeout.
+   ══════════════════════════════════════════════════════════════════════════ */
+async function raceEngines(engineFns, timeoutMs = 3000) {
+    return new Promise(resolve => {
+        let settled = false;
+        let remaining = engineFns.length;
+        if (remaining === 0) { resolve(null); return; }
+
+        engineFns.forEach(fn => {
+            // Wrap each engine with a hard timeout
+            const timedFn = Promise.race([
+                fn(),
+                new Promise(r => setTimeout(() => r(null), timeoutMs))
+            ]);
+            timedFn
+                .then(result => {
+                    remaining--;
+                    if (!settled && result && result.length) {
+                        settled = true;
+                        resolve(result);
+                    } else if (remaining === 0 && !settled) {
+                        settled = true;
+                        resolve(null);
+                    }
+                })
+                .catch(() => {
+                    remaining--;
+                    if (remaining === 0 && !settled) { settled = true; resolve(null); }
+                });
+        });
+    });
 }
 
 /* ── Skeleton Loader ──────────────────────────────────────────────────────── */
@@ -141,11 +193,11 @@ function showSkeleton(container) {
 
 /* ══════════════════════════════════════════════════════════════════════════
    DOWNLOAD ENGINES
-   Each engine must return: Array<{ url, label, quality, type }> | null
+   Each engine must return: Array<{ url, label, quality, type, wmUrl?, thumb? }> | null
    All URL values are validated via sanitizeDownloadUrl before returning.
    ══════════════════════════════════════════════════════════════════════════ */
 
-// ── Engine: TikWM (TikTok — handles vt.tiktok.com shortened links) ─────────
+// ── Engine: TikWM (TikTok — returns HD, SD, WM variant, and thumbnail) ─────
 async function fetchTikWM(url) {
     try {
         const body = new URLSearchParams({ url, hd: '1' });
@@ -161,11 +213,21 @@ async function fetchTikWM(url) {
         const results = [];
         const hd   = sanitizeDownloadUrl(d.data.hdplay);
         const sd   = sanitizeDownloadUrl(d.data.play);
-        const wmv  = sanitizeDownloadUrl(d.data.wmplay);
+        const wmv  = sanitizeDownloadUrl(d.data.wmplay);  // watermarked version
         const mp3  = sanitizeDownloadUrl(d.data.music);
-        if (hd)  results.push({ url: hd,  label: 'Download HD (No Watermark)', quality: 'HD',  type: 'video' });
-        else if (sd) results.push({ url: sd, label: 'Download Video (No Watermark)', quality: 'SD', type: 'video' });
-        if (mp3) results.push({ url: mp3, label: 'Download MP3 Audio',          quality: 'MP3', type: 'audio' });
+        const thumb = sanitizeDownloadUrl(d.data.cover || d.data.origin_cover);
+        const videoUrl = hd || sd;
+        if (videoUrl) {
+            results.push({
+                url:   videoUrl,
+                label: 'Download HD (No Watermark)',
+                quality: hd ? 'HD' : 'SD',
+                type:  'video',
+                wmUrl: wmv || null,   // Priority 5: expose watermarked URL
+                thumb: thumb || null
+            });
+        }
+        if (mp3) results.push({ url: mp3, label: 'Download MP3 Audio', quality: 'MP3', type: 'audio', thumb });
         return results.length ? results : null;
     } catch (_) { return null; }
 }
@@ -183,8 +245,8 @@ async function fetchTiklyDown(url) {
             const d = await r.json();
             const noWm = sanitizeDownloadUrl(d?.video?.noWatermark || d?.data?.play);
             const wm   = sanitizeDownloadUrl(d?.video?.watermark);
-            if (noWm) return [{ url: noWm, label: 'Download HD (No Watermark)', quality: 'HD', type: 'video' }];
-            if (wm)   return [{ url: wm,   label: 'Download Video',             quality: 'SD', type: 'video' }];
+            if (noWm) return [{ url: noWm, label: 'Download HD (No Watermark)', quality: 'HD', type: 'video', wmUrl: wm || null }];
+            if (wm)   return [{ url: wm,   label: 'Download Video', quality: 'SD', type: 'video' }];
         } catch (_) {}
     }
     return null;
@@ -244,7 +306,7 @@ async function fetchSaveFrom(url) {
         const d = await r.json();
         const dlUrl = sanitizeDownloadUrl(d?.url?.[0]?.url);
         if (!dlUrl) return null;
-        const ext  = sanitizeText(d.url[0].ext,     8).toUpperCase() || 'Video';
+        const ext  = sanitizeText(d.url[0].ext, 8).toUpperCase() || 'Video';
         const qual = sanitizeText(d.url[0].quality, 8) || 'HD';
         return [{ url: dlUrl, label: `Download ${ext}`, quality: qual, type: 'video' }];
     } catch (_) { return null; }
@@ -264,24 +326,32 @@ async function fetchSnapSave(url) {
 
 /* ── URL Redirect Resolver (handles vt.tiktok.com, youtu.be, fb.watch etc.) */
 async function resolveRedirect(url) {
-    // Use allorigins as a CORS-safe redirect resolver
-    try {
-        const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-        const r = await fetch(proxy, { signal: AbortSignal.timeout(6000) });
-        if (!r.ok) return url;
-        const d = await r.json();
-        // allorigins returns the final URL in the status.url field
-        const finalUrl = d?.status?.url;
-        if (finalUrl && finalUrl !== url) {
-            const safe = sanitizeDownloadUrl(finalUrl);
-            return safe || url;
-        }
-    } catch (_) {}
+    const proxies = [
+        `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+        `https://corsproxy.io/?${encodeURIComponent(url)}`
+    ];
+    for (const proxy of proxies) {
+        try {
+            const r = await fetch(proxy, { signal: AbortSignal.timeout(5000) });
+            if (!r.ok) continue;
+            const d = await r.json();
+            const finalUrl = d?.status?.url || d?.url;
+            if (finalUrl && finalUrl !== url) {
+                const safe = sanitizeDownloadUrl(finalUrl);
+                if (safe) return safe;
+            }
+        } catch (_) {}
+    }
     return url;
 }
 
-/* ── Main Download Orchestrator ───────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════
+   MAIN DOWNLOAD ORCHESTRATOR — uses raceEngines() for parallel execution
+   ══════════════════════════════════════════════════════════════════════════ */
+let _isDownloading = false; // guard against double-clicks
+
 async function processDownload() {
+    if (_isDownloading) return;
     const inputEl        = document.getElementById('inputUrl');
     const resultBox      = document.getElementById('resultBox');
     const resultTitle    = document.getElementById('resultTitle');
@@ -298,7 +368,7 @@ async function processDownload() {
         return;
     }
 
-    // Show loading state
+    _isDownloading = true;
     resultBox.classList.remove('hidden');
     resultTitle.textContent = 'Detecting platform…';
     resultPlatform.textContent = 'ProDown Extraction Engine';
@@ -306,7 +376,7 @@ async function processDownload() {
     setProgress(10);
     showAlert('Processing your link…', 'info');
 
-    // Step 1: Resolve redirects (handles vt.tiktok.com, fb.watch, youtu.be, etc.)
+    // Resolve redirects (handles vt.tiktok.com, fb.watch, youtu.be etc.)
     resultTitle.textContent = 'Resolving link…';
     setProgress(20);
     const resolvedUrl = await resolveRedirect(url);
@@ -320,30 +390,44 @@ async function processDownload() {
         dlOptions.replaceChildren();
         buildErrorState(dlOptions, 'Platform not recognized. Supported: TikTok, Instagram, Facebook, YouTube, Snapchat.');
         showAlert('Platform not supported. Check the link and try again.', 'warn');
+        _isDownloading = false;
         return;
     }
 
     resultTitle.textContent = `Extracting from ${platform.label}…`;
-    resultPlatform.textContent = `Detected: ${platform.label}`;
+    resultPlatform.textContent = `Racing engines for ${platform.label}…`;
     setProgress(40);
 
     let results = null;
     try {
+        // ── Priority 2: Parallel Engine Racing per platform ──────────────
         if (platform.key === 'tt') {
-            // TikTok: TikWM first (best shortened URL support), then TiklyDown, then Cobalt
-            results = await fetchTikWM(workingUrl)
-                   || await fetchTiklyDown(workingUrl)
-                   || await fetchCobalt(workingUrl);
+            results = await raceEngines([
+                () => fetchTikWM(workingUrl),
+                () => fetchTiklyDown(workingUrl),
+                () => fetchCobalt(workingUrl)
+            ], 4000);
         } else if (platform.key === 'snap') {
-            results = await fetchSnapSave(workingUrl) || await fetchCobalt(workingUrl);
+            results = await raceEngines([
+                () => fetchSnapSave(workingUrl),
+                () => fetchCobalt(workingUrl)
+            ], 4000);
         } else if (platform.key === 'yt') {
-            results = await fetchCobalt(workingUrl) || await fetchSaveFrom(workingUrl);
+            results = await raceEngines([
+                () => fetchCobalt(workingUrl),
+                () => fetchSaveFrom(workingUrl)
+            ], 4000);
         } else if (platform.key === 'fb') {
-            results = await fetchCobalt(workingUrl) || await fetchSaveFrom(workingUrl);
+            results = await raceEngines([
+                () => fetchCobalt(workingUrl),
+                () => fetchSaveFrom(workingUrl)
+            ], 4000);
         } else {
             // Instagram
-            results = await fetchCobalt(workingUrl)
-                   || await fetchInstaFinsta(workingUrl);
+            results = await raceEngines([
+                () => fetchCobalt(workingUrl),
+                () => fetchInstaFinsta(workingUrl)
+            ], 4000);
         }
         setProgress(85);
     } catch (err) {
@@ -353,19 +437,92 @@ async function processDownload() {
     setProgress(100);
     setTimeout(() => setProgress(null), 600);
     dlOptions.replaceChildren();
+    _isDownloading = false;
 
     if (results && results.length) {
         resultTitle.textContent = '✅ Media ready to download!';
         resultPlatform.textContent = `${platform.label} · No Watermark · High Quality`;
         showAlert('Success! Your download is ready.', 'success');
+
+        // ── Priority 5: Watermark Toggle — inject above first video result ─
+        const firstVideo = results.find(r => r.type === 'video');
+        if (firstVideo && firstVideo.wmUrl) {
+            const toggleEl = buildWatermarkToggle(firstVideo);
+            dlOptions.appendChild(toggleEl);
+        }
+
         results.forEach((r, i) => dlOptions.appendChild(buildDownloadButton(r, platform, i)));
         dlOptions.appendChild(buildAdSlotCTA());
+
+        // ── Priority 4: Save to history ───────────────────────────────────
+        const thumb = results.find(r => r.thumb)?.thumb || null;
+        saveToHistory({ url: workingUrl, platform: platform.label, platformKey: platform.key, thumb, timestamp: Date.now() });
+        renderHistory();
+
     } else {
         resultTitle.textContent = '⚠️ Unable to extract media';
         resultPlatform.textContent = 'All engines failed';
         showAlert('Could not download. The video may be private or temporarily unavailable.', 'error');
         buildErrorState(dlOptions);
     }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PRIORITY 5 — WATERMARK TOGGLE
+   Builds a pill toggle above the main download button.
+   Switches the button URL between no-watermark (clean) and watermarked.
+   ══════════════════════════════════════════════════════════════════════════ */
+function buildWatermarkToggle(videoResult) {
+    const wrap = document.createElement('div');
+    wrap.className = 'flex items-center gap-3 bg-black/40 border border-white/5 rounded-xl px-3 py-2 text-[10px]';
+
+    const icon = document.createElement('i');
+    icon.className = 'fa-solid fa-droplet text-orange-400 flex-shrink-0';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'text-slate-400 font-semibold flex-1';
+    lbl.textContent = 'TikTok Watermark:';
+
+    const pill = document.createElement('div');
+    pill.className = 'flex items-center bg-white/5 rounded-lg p-0.5 gap-0.5';
+
+    const noWmBtn = document.createElement('button');
+    noWmBtn.type = 'button';
+    noWmBtn.className = 'px-3 py-1 rounded-md text-[10px] font-bold transition-all bg-orange-500 text-white';
+    noWmBtn.textContent = 'Off ✓';
+
+    const wmBtn = document.createElement('button');
+    wmBtn.type = 'button';
+    wmBtn.className = 'px-3 py-1 rounded-md text-[10px] font-bold transition-all text-slate-400 hover:text-white';
+    wmBtn.textContent = 'On';
+
+    let wmMode = false;
+    const update = () => {
+        // Update the download button that follows this toggle
+        const dlBtn = wrap.nextElementSibling;
+        if (dlBtn) {
+            dlBtn.dataset.dlUrl = wmMode ? videoResult.wmUrl : videoResult.url;
+            const sp = dlBtn.querySelector('span');
+            if (sp) sp.textContent = wmMode ? 'Download Video (With Watermark)' : sanitizeText(videoResult.label, 60);
+        }
+        if (wmMode) {
+            wmBtn.className   = 'px-3 py-1 rounded-md text-[10px] font-bold transition-all bg-slate-600 text-white';
+            noWmBtn.className = 'px-3 py-1 rounded-md text-[10px] font-bold transition-all text-slate-400 hover:text-white';
+        } else {
+            noWmBtn.className = 'px-3 py-1 rounded-md text-[10px] font-bold transition-all bg-orange-500 text-white';
+            wmBtn.className   = 'px-3 py-1 rounded-md text-[10px] font-bold transition-all text-slate-400 hover:text-white';
+        }
+    };
+
+    noWmBtn.addEventListener('click', () => { wmMode = false; update(); });
+    wmBtn.addEventListener('click',   () => { wmMode = true;  update(); });
+
+    pill.appendChild(noWmBtn);
+    pill.appendChild(wmBtn);
+    wrap.appendChild(icon);
+    wrap.appendChild(lbl);
+    wrap.appendChild(pill);
+    return wrap;
 }
 
 /* ── Safe DOM: Build a Download Button ───────────────────────────────────── */
@@ -414,7 +571,7 @@ function buildAdSlotCTA() {
 function buildErrorState(container, customMsg) {
     const msg = document.createElement('p');
     msg.className = 'text-slate-400 text-xs text-center py-2 leading-relaxed';
-    msg.textContent = customMsg || 'Make sure the video is public and the link is correct, then try again. Private videos and DRM-protected content cannot be downloaded.';
+    msg.textContent = customMsg || 'Make sure the video is public and the link is correct. Private videos and DRM-protected content cannot be downloaded.';
     container.appendChild(msg);
 
     const retryBtn = document.createElement('button');
@@ -455,6 +612,133 @@ async function triggerDirectDownload(fileUrl, fileName = 'ProDown_video.mp4') {
         window.open(safeUrl, '_blank', 'noopener,noreferrer');
         showAlert('Opened in new tab — use long-press / Save Video to download.', 'info');
     }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PRIORITY 4 — DOWNLOAD HISTORY (localStorage)
+   Stores last 10 downloads: { url, platform, platformKey, thumb, timestamp }
+   ══════════════════════════════════════════════════════════════════════════ */
+const HISTORY_KEY = 'prodown_history';
+const HISTORY_MAX = 10;
+
+function saveToHistory(entry) {
+    let history = loadHistory();
+    // Remove duplicate URLs
+    history = history.filter(h => h.url !== entry.url);
+    history.unshift(entry);
+    history = history.slice(0, HISTORY_MAX);
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch (_) {}
+}
+
+function loadHistory() {
+    try {
+        const raw = localStorage.getItem(HISTORY_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (_) { return []; }
+}
+
+function clearHistory() {
+    try { localStorage.removeItem(HISTORY_KEY); } catch (_) {}
+    renderHistory();
+    showAlert('History cleared.', 'info');
+}
+
+function reDownload(url) {
+    const input = document.getElementById('inputUrl');
+    if (!input) return;
+    input.value = url;
+    const p = detectPlatform(url);
+    if (p) selectTab(p.key);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    processDownload();
+}
+
+function renderHistory() {
+    const section  = document.getElementById('historySection');
+    const list     = document.getElementById('historyList');
+    if (!section || !list) return;
+
+    const history = loadHistory();
+    if (!history.length) { section.classList.add('hidden'); return; }
+    section.classList.remove('hidden');
+    list.replaceChildren();
+
+    const platformIcons = {
+        tt:   { icon: 'fa-brands fa-tiktok',    color: 'text-white' },
+        ig:   { icon: 'fa-brands fa-instagram', color: 'text-pink-500' },
+        fb:   { icon: 'fa-brands fa-facebook',  color: 'text-blue-500' },
+        yt:   { icon: 'fa-brands fa-youtube',   color: 'text-red-500' },
+        snap: { icon: 'fa-brands fa-snapchat',  color: 'text-yellow-400' }
+    };
+
+    history.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'flex items-center gap-3 glass-card p-3 rounded-2xl border border-white/5 hover:border-orange-500/20 transition-all';
+
+        // Thumbnail or platform icon
+        const thumbWrap = document.createElement('div');
+        thumbWrap.className = 'w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0 overflow-hidden';
+        if (item.thumb) {
+            const img = document.createElement('img');
+            img.src = item.thumb;
+            img.alt = item.platform;
+            img.className = 'w-full h-full object-cover';
+            img.onerror = () => { thumbWrap.replaceChildren(buildPlatformIcon(item.platformKey, platformIcons)); };
+            thumbWrap.appendChild(img);
+        } else {
+            thumbWrap.appendChild(buildPlatformIcon(item.platformKey, platformIcons));
+        }
+
+        // Info
+        const info = document.createElement('div');
+        info.className = 'flex-1 min-w-0';
+        const pName = document.createElement('p');
+        pName.className = 'text-[10px] font-black text-orange-400 uppercase tracking-wider';
+        pName.textContent = sanitizeText(item.platform, 20);
+        const urlSpan = document.createElement('p');
+        urlSpan.className = 'text-[10px] text-slate-400 truncate mt-0.5';
+        urlSpan.textContent = sanitizeText(item.url, 50);
+        const timeSpan = document.createElement('p');
+        timeSpan.className = 'text-[9px] text-slate-600 mt-0.5';
+        timeSpan.textContent = formatRelativeTime(item.timestamp);
+        info.appendChild(pName);
+        info.appendChild(urlSpan);
+        info.appendChild(timeSpan);
+
+        // Re-download button
+        const reBtn = document.createElement('button');
+        reBtn.type = 'button';
+        reBtn.className = 'flex-shrink-0 w-9 h-9 rounded-xl bg-orange-500/10 hover:bg-orange-500 text-orange-400 hover:text-white flex items-center justify-center transition-all';
+        reBtn.title = 'Re-download';
+        reBtn.dataset.histUrl = item.url;
+        reBtn.addEventListener('click', () => reDownload(reBtn.dataset.histUrl));
+        const reIcon = document.createElement('i');
+        reIcon.className = 'fa-solid fa-rotate-right text-xs';
+        reBtn.appendChild(reIcon);
+
+        card.appendChild(thumbWrap);
+        card.appendChild(info);
+        card.appendChild(reBtn);
+        list.appendChild(card);
+    });
+}
+
+function buildPlatformIcon(platformKey, platformIcons) {
+    const meta = platformIcons[platformKey] || { icon: 'fa-solid fa-download', color: 'text-orange-400' };
+    const i = document.createElement('i');
+    i.className = `${meta.icon} ${meta.color} text-lg`;
+    return i;
+}
+
+function formatRelativeTime(ts) {
+    const diff = Date.now() - ts;
+    const m = Math.floor(diff / 60000);
+    const h = Math.floor(diff / 3600000);
+    const d = Math.floor(diff / 86400000);
+    if (m < 1)  return 'Just now';
+    if (m < 60) return `${m}m ago`;
+    if (h < 24) return `${h}h ago`;
+    return `${d}d ago`;
 }
 
 /* ── Viral Share Menu ─────────────────────────────────────────────────────── */
