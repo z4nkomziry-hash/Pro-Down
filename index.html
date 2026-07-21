@@ -3,97 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro-Down | Ultra HD 8K Multi-Platform Downloader</title>
-    <meta name="description" content="Download Videos, Reels, Stories & Audio from Instagram, TikTok, YouTube, Snapchat, Facebook, Twitter, and Pinterest in 8K Ultra HD without watermark.">
+    <title>ProDown - Download Social Media Videos</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <canvas id="cyber-canvas"></canvas>
-
-    <!-- TOP MATRIX NAVIGATION -->
-    <header class="navbar">
+    <!-- Header -->
+    <header class="top-bar">
         <div class="logo">
-            <i class="fa-solid fa-bolt-lightning neon-icon"></i>
-            <span>PRO-DOWN <small>v8.0 ENTERPRISE</small></span>
+            <span class="bolt">⚡</span> Pro<span class="pink">Down</span>
         </div>
-        <nav class="nav-links">
-            <a href="#downloader" class="active"><i class="fa-solid fa-download"></i> داگرتن</a>
-            <a href="#features"><i class="fa-solid fa-microchip"></i> تایبەتمەندی</a>
-            <a href="#platforms"><i class="fa-solid fa-share-nodes"></i> تۆڕێن پشتیڤانیکری</a>
-            <a href="#api"><i class="fa-solid fa-code"></i> Developer API</a>
-        </nav>
-        <div class="server-status">
-            <span class="status-dot"></span> 10 Gbps Active
+        <div class="lang-selector">
+            🇺🇸 English <span>▼</span>
         </div>
     </header>
 
-    <!-- HERO SECTION & INPUT MATRIX -->
-    <main class="hero-container" id="downloader">
-        <div class="hero-content">
-            <h1 class="glitch-title" data-text="ULTRA HD 8K MEDIA EXTRACTOR">ULTRA HD 8K MEDIA EXTRACTOR</h1>
-            <p class="hero-subtitle">داگرتنا خێرا ب بێ وۆتەرمارک ژ ٧ تۆڕێن کۆمەڵایەتی ب بەرزترین کوالێتی د جیهانێ دا</p>
-        </div>
+    <main class="container">
+        <!-- Main Title -->
+        <h1 class="main-title">Download Social Media Videos & Stories Without Watermark</h1>
+        
+        <a href="#" class="how-to-link"><i class="fa-solid fa-play"></i> How to download media?</a>
 
-        <div class="download-card">
-            <div class="input-wrapper">
-                <i class="fa-solid fa-link input-icon"></i>
-                <input type="text" id="media-url" placeholder="لینکێ ڤیدیۆیێ ژ (Instagram, TikTok, YouTube, Snapchat...) بپێسس ب کە ل ڤێرێ..." autocomplete="off">
-                <button id="paste-btn" class="btn-secondary"><i class="fa-solid fa-paste"></i> چەسپاندن</button>
+        <!-- Main Downloader Card -->
+        <div class="card downloader-card">
+            <div class="tab-buttons">
+                <button class="tab-btn active"><i class="fa-solid fa-link"></i> URL Link</button>
+                <button class="tab-btn"><i class="fa-solid fa-at"></i> Username</button>
             </div>
 
-            <div class="action-bar">
-                <button id="download-btn" class="btn-primary">
-                    <span class="btn-text"><i class="fa-solid fa-download"></i> پرۆسێسکرنا 8K</span>
-                    <div class="spinner hidden"></div>
-                </button>
+            <div class="input-box">
+                <input type="text" id="url-input" placeholder="لینک لێرە دابنێ...">
+                <button id="paste-btn" class="paste-btn"><i class="fa-solid fa-paste"></i> Paste</button>
+                <button id="clear-btn" class="clear-btn"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <div id="progress-container" class="progress-container hidden">
-                <div class="progress-bar" id="progress-bar"></div>
-                <span id="progress-status">تێپەڕاندنا سیستەمێ ئەمنی... 0%</span>
-            </div>
+            <button id="download-btn" class="main-dl-btn">
+                Download <i class="fa-solid fa-arrow-down"></i>
+            </button>
 
-            <!-- RESULT CARD DISPLAY -->
-            <div id="result-box" class="result-box hidden">
-                <div class="media-preview">
-                    <img id="media-thumb" src="" alt="Thumbnail Preview">
-                </div>
-                <div class="media-details">
-                    <h3 id="media-title">Media Title Extracted</h3>
-                    <div class="tags-container">
-                        <span class="badge" id="badge-platform">Platform</span>
-                        <span class="badge badge-quality">8K Ultra HD</span>
-                        <span class="badge badge-watermark">No Watermark</span>
-                    </div>
-                    <div class="download-links-grid" id="download-options">
-                        <!-- Dynamic Buttons Will Appear Here -->
-                    </div>
-                </div>
+            <p class="share-text">Share our website link with your friends:</p>
+
+            <div class="share-buttons">
+                <button class="share-btn snap"><i class="fa-brands fa-snapchat"></i> Snapchat Share</button>
+                <button class="share-btn telegram"><i class="fa-paper-plane"></i> Telegram Share</button>
             </div>
         </div>
 
-        <!-- PLATFORMS GRID -->
-        <section class="platforms-section" id="platforms">
-            <h2>تۆڕێن نێودەوڵەتی یێن پشتیڤانیکری</h2>
-            <div class="platforms-grid">
-                <div class="platform-card"><i class="fa-brands fa-instagram"></i><span>Instagram</span></div>
-                <div class="platform-card"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></div>
-                <div class="platform-card"><i class="fa-brands fa-youtube"></i><span>YouTube</span></div>
-                <div class="platform-card"><i class="fa-brands fa-snapchat"></i><span>Snapchat</span></div>
-                <div class="platform-card"><i class="fa-brands fa-facebook"></i><span>Facebook</span></div>
-                <div class="platform-card"><i class="fa-brands fa-x-twitter"></i><span>Twitter (X)</span></div>
-                <div class="platform-card"><i class="fa-brands fa-pinterest"></i><span>Pinterest</span></div>
+        <!-- Social Platforms Selection Card -->
+        <div class="card platforms-card">
+            <h2>✨ ProDown بەخێرهاتی بۆ</h2>
+            <p class="sub-desc">تکایە ئەو تۆڕە جڤاکیە دیار بکه کو دێ ڤیدیۆیێ ژێ دابەزینی:</p>
+
+            <div class="platform-list">
+                <div class="platform-item"><i class="fa-brands fa-tiktok tiktok-icon"></i> <span>تیک تۆک (TikTok)</span> <i class="fa-solid fa-chevron-right arrow"></i></div>
+                <div class="platform-item"><i class="fa-brands fa-instagram insta-icon"></i> <span>ئینستاگرام (Instagram)</span> <i class="fa-solid fa-chevron-right arrow"></i></div>
+                <div class="platform-item"><i class="fa-brands fa-snapchat snap-icon"></i> <span>سناپ چات (Snapchat)</span> <i class="fa-solid fa-chevron-right arrow"></i></div>
+                <div class="platform-item"><i class="fa-brands fa-facebook fb-icon"></i> <span>فەیسبووک (Facebook)</span> <i class="fa-solid fa-chevron-right arrow"></i></div>
+                <div class="platform-item"><i class="fa-brands fa-pinterest pin-icon"></i> <span>پینتریست (Pinterest)</span> <i class="fa-solid fa-chevron-right arrow"></i></div>
             </div>
-        </section>
+
+            <div class="info-box">
+                💡 <b>فێرکاری کورت:</b> تەنها لینکێ پۆستێ کۆپیکە ل هەر تۆڕەکێ بگری و ل کادرا ژوورێ دابنێ دا کو پرۆسێسا داونلۆدێ دەست پێ بکەت.
+            </div>
+        </div>
+
+        <!-- Developer Profile Card -->
+        <div class="card dev-card">
+            <h2>🚀 گەشەپێدەری ProDown</h2>
+            <p class="dev-desc">ئەڤ پلاتفۆرمە هاتیا دیزاینکرن بۆ پێشکەشکرنا خزمەتگوزاریەکا خێرا و ئاسان بۆ داگرتنا فایلا.</p>
+            
+            <div class="dev-profile">
+                <div class="profile-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h3>Zaniyar Dildar</h3>
+                <p class="dev-tag">Developer & Founder</p>
+                <a href="https://pro-down.vercel.app" class="dev-link">https://pro-down.vercel.app</a>
+            </div>
+        </div>
     </main>
-
-    <!-- FOOTER MATRIX -->
-    <footer>
-        <p>© 2026 PRO-DOWN OFFICIAL ENTERPRISE. POWERED BY NEXT-GEN HIGH SPEED CLOUD INFRASTRUCTURE.</p>
-    </footer>
 
     <script src="app.js"></script>
 </body>
