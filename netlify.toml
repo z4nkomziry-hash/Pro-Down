@@ -1,0 +1,27 @@
+# ==========================================================================
+# ProDown - Netlify Configuration File
+# Path: ./netlify.toml
+# ==========================================================================
+
+[build]
+  # Directory where the site built output is located
+  publish = "."
+  
+  # Default build command (Not required for pure HTML/JS)
+  command = ""
+
+# --- Security Headers & CORS Configurations ---
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer-when-downgrade"
+    Access-Control-Allow-Origin = "*"
+
+# --- Fallback Redirect Rules for Single Page Application (SPA) ---
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
