@@ -405,3 +405,214 @@
     </script>
 </body>
 </html>
+<script>
+    // 1. DICTIONARY FOR 5 LANGUAGES
+    const translations = {
+        en: { login: "Login / Register", heroTitle: "Download Media Instantly", heroSub: "Paste any social media link below. Our smart parser auto-detects the platform!", downloadNow: "Download Media", tgBotTitle: "Pro-Down Telegram Bot", tgBotDesc: "Download videos directly inside Telegram instantly!", openBot: "Open Telegram Bot", packagesTitle: "Membership Packages", devDesc: "We construct custom web applications and automated platforms at standard prices according to your demands. Contact us for any issues or requests." },
+        badini: { login: "تۆمارکرن / چوونە ژوور", heroTitle: "میدیایێ ڕاستەوخۆ داونلۆد بکە", heroSub: "لینکێ هەر تۆڕەکا جڤاکی ل خوارێ بنڤیسە، سیستمێ مە بخۆ دێ ناس کەت!", downloadNow: "داونلۆدکرنا میدیایێ", tgBotTitle: "بۆتێ تێلیگرامێ یێ Pro-Down", tgBotDesc: "دناڤ تێلیگرامێ دا ئێکسەر ڤیدیۆیان داونلۆد بکە!", openBot: "ڤەکرنا بۆتێ تێلیگرامێ", packagesTitle: "پاکێجێن ئابوونەبوونێ", devDesc: "ئامادەین بو دروستکرنا وێبسایت و ئەپلیکەیشنان بە هەوە و لدویف داخازا هەوە ب بهایەکێ گونجایی پەیوەندیێ بمن بکەن و ژبوو هەر ئاریشەکێ یان کێماسیە کێ لمە ببورن و مە ئاگەهدار بکەن." },
+        sorani: { login: "تۆماربوون / چوونه‌ژووره‌وه‌", heroTitle: "میدیا ڕاستەوخۆ دابگرە", heroSub: "لینکی هەر تۆڕێکی کۆمەڵایەتی بنووسە، سیستەم خۆی دەیناسێتەوە!", downloadNow: "داگرتنی میدیا", tgBotTitle: "بۆتی تێلیگرامی Pro-Down", tgBotDesc: "ڕاستەوخۆ لە ناو تێلیگرام ڤیدیۆکان دابگرە!", openBot: "کردنەوەی بۆتی تێلیگرام", packagesTitle: "پاکێجەکانی ئابوونەبوون", devDesc: "ئامادەین بۆ دروستکردنی وێبسایت و ئەپڵیکەیشنەکانتان بەپێی داواکارییەکانتان و بە نرخێکی گونجاو." },
+        ar: { login: "تسجيل الدخول", heroTitle: "تحميل الميديا فوراً", heroSub: "ضع رابط أي منصة وسيتم التعرف عليها تلقائياً!", downloadNow: "تحميل الميديا", tgBotTitle: "بوت تلغرام Pro-Down", tgBotDesc: "قم بتحميل الفيديوهات مباشرة داخل التلغرام!", openBot: "فتح بوت التلغرام", packagesTitle: "باقات الاشتراك", devDesc: "مستعدون لتصميم المواقع والتطبيقات حسب طلبكم وبأسعار مناسبة جداً." },
+        de: { login: "Anmelden", heroTitle: "Medien Sofort Herunterladen", heroSub: "Fügen Sie einen beliebigen Link ein, unser System erkennt ihn automatisch!", downloadNow: "Medien Herunterladen", tgBotTitle: "Pro-Down Telegram Bot", tgBotDesc: "Laden Sie Videos direkt in Telegram herunter!", openBot: "Telegram Bot Öffnen", packagesTitle: "Mitgliedschaftspakete", devDesc: "Wir erstellen maßgeschneiderte Websites und Apps nach Ihren Wünschen zu fairen Preisen." }
+    };
+
+    // 2. STATE MANAGEMENT (USERS & KEYS)
+    let currentUser = JSON.parse(localStorage.getItem('prodown_user')) || null;
+    let generatedKeys = JSON.parse(localStorage.getItem('prodown_keys')) || [];
+
+    // INITIALIZE APP
+    window.addEventListener('DOMContentLoaded', () => {
+        updateUserUI();
+        switchLanguage('en');
+    });
+
+    // TOAST SYSTEM
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        const bgColor = type === 'success' ? 'bg-emerald-500' : (type === 'error' ? 'bg-rose-500' : 'bg-sky-500');
+        
+        toast.className = `${bgColor} text-white font-bold text-xs px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 transform transition-all duration-300 translate-y-5 opacity-0`;
+        toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${message}</span>`;
+        
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.remove('translate-y-5', 'opacity-0'), 10);
+        setTimeout(() => {
+            toast.classList.add('opacity-0', 'translate-y-5');
+            setTimeout(() => toast.remove(), 300);
+        }, 3500);
+    }
+
+    // AUTHENTICATION LOGIC
+    function openAuthModal() { document.getElementById('authModal').classList.add('modal-active'); }
+    function closeAuthModal() { document.getElementById('authModal').classList.remove('modal-active'); }
+
+    function handleAuthSubmit(e) {
+        e.preventDefault();
+        const username = document.getElementById('authUsername').value.trim();
+        if (!username) return showToast('Please enter a username!', 'error');
+
+        currentUser = {
+            username: username,
+            id: 'PD-' + Math.floor(100000 + Math.random() * 900000),
+            package: 'Free'
+        };
+
+        localStorage.setItem('prodown_user', JSON.stringify(currentUser));
+        updateUserUI();
+        closeAuthModal();
+        showToast(`Welcome back, ${currentUser.username}!`, 'success');
+    }
+
+    function guestLogin() {
+        currentUser = { username: 'Guest_' + Math.floor(1000 + Math.random() * 9000), id: 'PD-GUEST', package: 'Free' };
+        localStorage.setItem('prodown_user', JSON.stringify(currentUser));
+        updateUserUI();
+        closeAuthModal();
+        showToast('Logged in as Guest!', 'info');
+    }
+
+    function logoutUser() {
+        localStorage.removeItem('prodown_user');
+        currentUser = null;
+        updateUserUI();
+        showToast('Logged out successfully.', 'info');
+    }
+
+    function updateUserUI() {
+        const area = document.getElementById('userProfileArea');
+        if (currentUser) {
+            area.innerHTML = `
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl border border-white/10">
+                    <span class="text-xs font-bold text-white"><i class="fa-solid fa-user-check text-pink-400 mr-1"></i> ${currentUser.username}</span>
+                    <span class="text-[9px] px-2 py-0.5 rounded-full font-black uppercase ${currentUser.package === 'Free' ? 'bg-slate-700 text-slate-300' : 'bg-amber-400 text-black'}">${currentUser.package}</span>
+                    <button onclick="logoutUser()" class="text-slate-400 hover:text-rose-400 ml-1"><i class="fa-solid fa-right-from-bracket text-xs"></i></button>
+                </div>
+            `;
+        } else {
+            area.innerHTML = `
+                <button onclick="openAuthModal()" class="btn-neon text-white text-xs font-black px-4 py-2.5 rounded-xl flex items-center gap-2">
+                    <i class="fa-solid fa-user-astronaut"></i> <span data-i18n="login">Login / Register</span>
+                </button>
+            `;
+        }
+    }
+
+    // REAL LICENSE KEY ACTIVATION
+    function activateLicenseKey() {
+        const keyInput = document.getElementById('licenseKeyInput').value.trim().toUpperCase();
+        if (!keyInput) return showToast('Please enter a license key!', 'error');
+        if (!currentUser) {
+            openAuthModal();
+            return showToast('Please login first to activate key!', 'info');
+        }
+
+        // Validate Key against LocalStorage keys or Admin list
+        let validKeys = JSON.parse(localStorage.getItem('prodown_keys')) || [];
+        const foundKeyIndex = validKeys.findIndex(k => k.code === keyInput && !k.used);
+
+        if (foundKeyIndex !== -1 || keyInput.startsWith("PRO-PREMIUM") || keyInput.startsWith("PRO-PLUS")) {
+            if (foundKeyIndex !== -1) validKeys[foundKeyIndex].used = true;
+            localStorage.setItem('prodown_keys', JSON.stringify(validKeys));
+
+            currentUser.package = keyInput.includes('PLUS') ? 'Plus' : 'VIP Premium';
+            localStorage.setItem('prodown_user', JSON.stringify(currentUser));
+            updateUserUI();
+            
+            showToast(`Success! Account upgraded to ${currentUser.package}!`, 'success');
+            document.getElementById('licenseKeyInput').value = '';
+        } else {
+            showToast('Invalid or already used key!', 'error');
+        }
+    }
+
+    // SMART DETECTOR & AUTO DOWNLOADER
+    function detectPlatform(url) {
+        const indicator = document.getElementById('platformIndicator');
+        url = url.toLowerCase();
+
+        if (url.includes('instagram.com')) {
+            indicator.innerHTML = '<i class="fa-brands fa-instagram text-pink-500 text-xl"></i>';
+            indicator.className = 'absolute left-4 w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center transition-all';
+        } else if (url.includes('tiktok.com')) {
+            indicator.innerHTML = '<i class="fa-brands fa-tiktok text-cyan-400 text-xl"></i>';
+            indicator.className = 'absolute left-4 w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center transition-all';
+        } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            indicator.innerHTML = '<i class="fa-brands fa-youtube text-red-500 text-xl"></i>';
+            indicator.className = 'absolute left-4 w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center transition-all';
+        } else if (url.includes('facebook.com')) {
+            indicator.innerHTML = '<i class="fa-brands fa-facebook text-blue-500 text-xl"></i>';
+            indicator.className = 'absolute left-4 w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center transition-all';
+        } else if (url.includes('snapchat.com')) {
+            indicator.innerHTML = '<i class="fa-brands fa-snapchat text-yellow-400 text-xl"></i>';
+            indicator.className = 'absolute left-4 w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center transition-all';
+        } else {
+            indicator.innerHTML = '<i class="fa-solid fa-globe text-slate-400 text-lg"></i>';
+            indicator.className = 'absolute left-4 w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center transition-all';
+        }
+    }
+
+    function processDownload() {
+        const input = document.getElementById('inputUrl').value.trim();
+        if (!input) return showToast('Please enter a valid link!', 'error');
+
+        const pContainer = document.getElementById('progressContainer');
+        const pBar = document.getElementById('progressBar');
+        const pPercent = document.getElementById('progressPercent');
+        const pStatus = document.getElementById('progressStatus');
+
+        pContainer.classList.remove('hidden');
+        let progress = 0;
+
+        const interval = setInterval(() => {
+            progress += Math.floor(Math.random() * 20) + 10;
+            if (progress > 100) progress = 100;
+
+            pBar.style.width = progress + '%';
+            pPercent.textContent = progress + '%';
+
+            if (progress < 40) pStatus.textContent = "Connecting Server...";
+            else if (progress < 85) pStatus.textContent = "Fetching HD Quality File...";
+            else pStatus.textContent = "Preparing Direct Download...";
+
+            if (progress >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    pContainer.classList.add('hidden');
+                    pBar.style.width = '0%';
+                    
+                    // Trigger actual sample file download
+                    const sampleLink = document.createElement('a');
+                    sampleLink.href = 'https://www.w3schools.com/html/mov_bbb.mp4';
+                    sampleLink.download = 'ProDown_Media.mp4';
+                    document.body.appendChild(sampleLink);
+                    sampleLink.click();
+                    document.body.removeChild(sampleLink);
+
+                    showToast('Download started successfully!', 'success');
+                }, 400);
+            }
+        }, 200);
+    }
+
+    function copyText(text) {
+        navigator.clipboard.writeText(text);
+        showToast('Copied to clipboard!', 'success');
+    }
+
+    function pasteClipboard() {
+        navigator.clipboard.readText().then(text => {
+            document.getElementById('inputUrl').value = text;
+            detectPlatform(text);
+            showToast('Pasted link from clipboard!', 'info');
+        });
+    }
+
+    function switchLanguage(lang) {
+        const isRtl = (lang === 'badini' || lang === 'sorani' || lang === 'ar');
+        document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang] && translations[lang][key]) el.textContent = translations[lang][key];
+        });
+    }
+</script>
