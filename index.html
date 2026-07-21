@@ -1,297 +1,100 @@
 <!DOCTYPE html>
-<html lang="kmr" dir="rtl" class="dark">
+<html lang="kmr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro-Down Studio 3.0 | Ultimate AI Media Ecosystem</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;700;900&display=swap');
-        * { font-family: 'Noto Kufi Arabic', sans-serif; }
-        
-        .neon-border {
-            box-shadow: 0 0 25px rgba(236, 72, 153, 0.35), inset 0 0 15px rgba(236, 72, 153, 0.15);
-        }
-        .neon-glow:hover {
-            box-shadow: 0 0 40px rgba(168, 85, 247, 0.7);
-        }
-        .cyber-glass {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .pulse-text {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .4; }
-        }
-    </style>
+    <title>Pro-Down | Ultra HD 8K Multi-Platform Downloader</title>
+    <meta name="description" content="Download Videos, Reels, Stories & Audio from Instagram, TikTok, YouTube, Snapchat, Facebook, Twitter, and Pinterest in 8K Ultra HD without watermark.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-pink-500 selection:text-white pb-24">
+<body>
 
-    <!-- BACKGROUND NEON GLOWS -->
-    <div class="fixed top-0 right-1/4 w-[500px] h-[500px] bg-pink-600/15 rounded-full blur-[140px] pointer-events-none"></div>
-    <div class="fixed bottom-0 left-1/4 w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[140px] pointer-events-none"></div>
-    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[160px] pointer-events-none"></div>
+    <canvas id="cyber-canvas"></canvas>
 
-    <!-- NAVBAR -->
-    <nav class="sticky top-0 z-50 cyber-glass border-b border-white/10 px-4 py-3">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-purple-600 to-cyan-400 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-pink-500/30">
-                    P
-                </div>
-                <div>
-                    <span class="font-black text-xl tracking-wider text-white">PRO-<span class="text-pink-500">DOWN</span></span>
-                    <span class="text-[9px] bg-gradient-to-r from-pink-500 to-purple-600 text-white border border-pink-500/30 px-2 py-0.5 rounded-full mr-2 font-black">ECOSYSTEM 3.0</span>
-                </div>
-            </div>
-
-            <!-- LIVE STATS & EXTENSION LINK -->
-            <div class="hidden md:flex items-center gap-6 text-xs border border-white/10 px-4 py-2 rounded-2xl bg-slate-900/60">
-                <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 pulse-text"></span>
-                    <span class="text-slate-400">داگرتنێن زندی:</span>
-                    <span id="liveCounter" class="font-mono font-bold text-pink-400">5,102,940</span>
-                </div>
-                <div class="text-slate-700">|</div>
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-gauge-high text-cyan-400"></i>
-                    <span class="text-slate-400">خێرایی سێرڤەری:</span>
-                    <span class="font-mono font-bold text-cyan-400">10 Gbps</span>
-                </div>
-            </div>
-
-            <!-- TELEGRAM & EXTENSION -->
-            <div class="flex items-center gap-2">
-                <button onclick="installExtension()" class="hidden sm:flex bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500 text-amber-400 hover:text-slate-950 px-3 py-2 rounded-xl text-xs font-bold transition items-center gap-1.5">
-                    <i class="fa-brands fa-chrome"></i> <span>Chrome Extension</span>
-                </button>
-                <a href="https://t.me/ProDownOfficial_Bot" target="_blank" class="bg-blue-600/20 border border-blue-500/30 hover:bg-blue-600 text-blue-400 hover:text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2">
-                    <i class="fa-brands fa-telegram"></i> <span class="hidden sm:inline">Bot 24/7</span>
-                </a>
-            </div>
+    <!-- TOP MATRIX NAVIGATION -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-bolt-lightning neon-icon"></i>
+            <span>PRO-DOWN <small>v8.0 ENTERPRISE</small></span>
         </div>
-    </nav>
+        <nav class="nav-links">
+            <a href="#downloader" class="active"><i class="fa-solid fa-download"></i> داگرتن</a>
+            <a href="#features"><i class="fa-solid fa-microchip"></i> تایبەتمەندی</a>
+            <a href="#platforms"><i class="fa-solid fa-share-nodes"></i> تۆڕێن پشتیڤانیکری</a>
+            <a href="#api"><i class="fa-solid fa-code"></i> Developer API</a>
+        </nav>
+        <div class="server-status">
+            <span class="status-dot"></span> 10 Gbps Active
+        </div>
+    </header>
 
-    <!-- HERO SECTION -->
-    <main class="max-w-6xl mx-auto mt-8 px-4 space-y-10">
-
-        <div class="text-center space-y-4">
-            <h1 class="text-3xl sm:text-6xl font-black leading-tight tracking-tight">
-                ناڤەندا جیهانی یا داگرتن و گوڕینا میدیایان ب <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-400 to-cyan-400">AI Ultra 8K & Dolby Vision</span>
-            </h1>
-            <p class="text-slate-400 text-xs sm:text-sm max-w-2xl mx-auto">
-                بێ وۆتەرمارک ژ TikTok, Reels, YouTube, Snapchat, Torrent, Spotify ب ئێک کلیک دگەل ئامرازێن زیرەکێن AI.
-            </p>
+    <!-- HERO SECTION & INPUT MATRIX -->
+    <main class="hero-container" id="downloader">
+        <div class="hero-content">
+            <h1 class="glitch-title" data-text="ULTRA HD 8K MEDIA EXTRACTOR">ULTRA HD 8K MEDIA EXTRACTOR</h1>
+            <p class="hero-subtitle">داگرتنا خێرا ب بێ وۆتەرمارک ژ ٧ تۆڕێن کۆمەڵایەتی ب بەرزترین کوالێتی د جیهانێ دا</p>
         </div>
 
-        <!-- MAIN PASTE INPUT BOX -->
-        <div class="cyber-glass p-4 sm:p-6 rounded-3xl neon-border space-y-5">
-            
-            <!-- INPUT & PASTE -->
-            <div class="flex flex-col sm:flex-row gap-3">
-                <div class="relative flex-1">
-                    <input type="text" id="videoUrl" placeholder="لینکێ ڤیدیۆ، ئۆدیۆ، پلی لیست یان تورێنت ل ڤێرێ پەپەست بکە..." 
-                           class="w-full bg-slate-900/90 border border-white/10 rounded-2xl px-5 py-4 text-xs sm:text-sm font-sans focus:outline-none focus:border-pink-500 transition text-white placeholder:text-slate-500">
-                    <button onclick="pasteFromClipboard()" class="absolute left-3 top-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] px-3 py-1.5 rounded-lg border border-white/10 font-bold transition">
-                        <i class="fa-solid fa-paste ml-1"></i> Paste
-                    </button>
-                </div>
-                <button onclick="processDownload()" class="bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-500 hover:opacity-90 text-white font-black px-8 py-4 rounded-2xl text-xs sm:text-sm transition neon-glow flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-bolt text-yellow-300"></i> پرۆسێسکرنا خێرا
+        <div class="download-card">
+            <div class="input-wrapper">
+                <i class="fa-solid fa-link input-icon"></i>
+                <input type="text" id="media-url" placeholder="لینکێ ڤیدیۆیێ ژ (Instagram, TikTok, YouTube, Snapchat...) بپێسس ب کە ل ڤێرێ..." autocomplete="off">
+                <button id="paste-btn" class="btn-secondary"><i class="fa-solid fa-paste"></i> چەسپاندن</button>
+            </div>
+
+            <div class="action-bar">
+                <button id="download-btn" class="btn-primary">
+                    <span class="btn-text"><i class="fa-solid fa-download"></i> پرۆسێسکرنا 8K</span>
+                    <div class="spinner hidden"></div>
                 </button>
             </div>
 
-            <!-- QUALITY MATRIX & FORMAT SELECTOR (Matrix Concept) -->
-            <div class="space-y-3 pt-3 border-t border-white/5">
-                <span class="text-[10px] font-bold text-slate-400 block"><i class="fa-solid fa-sliders text-pink-500 ml-1"></i> هەڵبژارتنا کوالێتی و جۆرێ فایلی:</span>
-                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 text-[11px]">
-                    <label class="flex items-center gap-2 bg-slate-900/60 border border-white/5 p-2.5 rounded-xl cursor-pointer hover:border-pink-500/50 transition">
-                        <input type="radio" name="format" checked class="accent-pink-500">
-                        <span class="text-slate-300 font-bold"><i class="fa-solid fa-film text-pink-400 ml-1"></i> 8K 120fps HDR</span>
-                    </label>
-                    <label class="flex items-center gap-2 bg-slate-900/60 border border-white/5 p-2.5 rounded-xl cursor-pointer hover:border-pink-500/50 transition">
-                        <input type="radio" name="format" class="accent-pink-500">
-                        <span class="text-slate-300 font-bold"><i class="fa-solid fa-tv text-purple-400 ml-1"></i> 1080p Fast</span>
-                    </label>
-                    <label class="flex items-center gap-2 bg-slate-900/60 border border-white/5 p-2.5 rounded-xl cursor-pointer hover:border-pink-500/50 transition">
-                        <input type="radio" name="format" class="accent-pink-500">
-                        <span class="text-slate-300 font-bold"><i class="fa-solid fa-music text-cyan-400 ml-1"></i> MP3 Audio 320k</span>
-                    </label>
-                    <label class="flex items-center gap-2 bg-slate-900/60 border border-white/5 p-2.5 rounded-xl cursor-pointer hover:border-pink-500/50 transition">
-                        <input type="radio" name="format" class="accent-pink-500">
-                        <span class="text-slate-300 font-bold"><i class="fa-solid fa-list-check text-emerald-400 ml-1"></i> Playlist ZIP</span>
-                    </label>
-                    <label class="flex items-center gap-2 bg-slate-900/60 border border-white/5 p-2.5 rounded-xl cursor-pointer hover:border-pink-500/50 transition">
-                        <input type="radio" name="format" class="accent-pink-500">
-                        <span class="text-slate-300 font-bold"><i class="fa-solid fa-magnet text-rose-400 ml-1"></i> Torrent Magnet</span>
-                    </label>
-                    <label class="flex items-center gap-2 bg-slate-900/60 border border-white/5 p-2.5 rounded-xl cursor-pointer hover:border-pink-500/50 transition">
-                        <input type="radio" name="format" class="accent-pink-500">
-                        <span class="text-slate-300 font-bold"><i class="fa-solid fa-face-grin-squint text-yellow-400 ml-1"></i> GIF Meme</span>
-                    </label>
+            <div id="progress-container" class="progress-container hidden">
+                <div class="progress-bar" id="progress-bar"></div>
+                <span id="progress-status">تێپەڕاندنا سیستەمێ ئەمنی... 0%</span>
+            </div>
+
+            <!-- RESULT CARD DISPLAY -->
+            <div id="result-box" class="result-box hidden">
+                <div class="media-preview">
+                    <img id="media-thumb" src="" alt="Thumbnail Preview">
+                </div>
+                <div class="media-details">
+                    <h3 id="media-title">Media Title Extracted</h3>
+                    <div class="tags-container">
+                        <span class="badge" id="badge-platform">Platform</span>
+                        <span class="badge badge-quality">8K Ultra HD</span>
+                        <span class="badge badge-watermark">No Watermark</span>
+                    </div>
+                    <div class="download-links-grid" id="download-options">
+                        <!-- Dynamic Buttons Will Appear Here -->
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 10 NEXT-LEVEL AI TOOLS MATRIX GRID -->
-        <div class="space-y-4">
-            <div class="flex items-center justify-between">
-                <h2 class="text-lg font-black text-white flex items-center gap-2">
-                    <i class="fa-solid fa-wand-magic-sparkles text-pink-500"></i> ئامرازێن پێشکەفتیێن Pro-Down Studio
-                </h2>
-                <span class="text-xs text-slate-500">10 AI Powered Engines</span>
+        <!-- PLATFORMS GRID -->
+        <section class="platforms-section" id="platforms">
+            <h2>تۆڕێن نێودەوڵەتی یێن پشتیڤانیکری</h2>
+            <div class="platforms-grid">
+                <div class="platform-card"><i class="fa-brands fa-instagram"></i><span>Instagram</span></div>
+                <div class="platform-card"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></div>
+                <div class="platform-card"><i class="fa-brands fa-youtube"></i><span>YouTube</span></div>
+                <div class="platform-card"><i class="fa-brands fa-snapchat"></i><span>Snapchat</span></div>
+                <div class="platform-card"><i class="fa-brands fa-facebook"></i><span>Facebook</span></div>
+                <div class="platform-card"><i class="fa-brands fa-x-twitter"></i><span>Twitter (X)</span></div>
+                <div class="platform-card"><i class="fa-brands fa-pinterest"></i><span>Pinterest</span></div>
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                
-                <!-- TOOL 1: CLOUD DIRECT STREAM -->
-                <div class="cyber-glass p-5 rounded-2xl border-t-2 border-pink-500 space-y-2 hover:border-pink-400 transition">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-xs text-white"><i class="fa-solid fa-play text-pink-500 ml-1"></i> Cloud Direct Stream</h3>
-                        <span class="text-[9px] bg-pink-500/20 text-pink-400 px-2 py-0.5 rounded-full font-bold">No-Data Usage</span>
-                    </div>
-                    <p class="text-[11px] text-slate-400">تەشیرکرنا ئۆنلاین یا ڤیدیۆیێ بەریا داگرتنێ ب بێ خەرجکرنا ئینتەرنێتێ.</p>
-                </div>
-
-                <!-- TOOL 2: GHOST STORY SAVER -->
-                <div class="cyber-glass p-5 rounded-2xl border-t-2 border-purple-500 space-y-2 hover:border-purple-400 transition">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-xs text-white"><i class="fa-solid fa-user-ninja text-purple-500 ml-1"></i> Ghost Story Saver</h3>
-                        <span class="text-[9px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full font-bold">100% Anonymous</span>
-                    </div>
-                    <p class="text-[11px] text-slate-400">داگرتنا ستۆری و هایلایتا ب شێوازی نەپەنی ب بێ ئەوەی ناڤێ تە (Seen) ببت.</p>
-                </div>
-
-                <!-- TOOL 3: SHAZAM MUSIC DETECTOR -->
-                <div class="cyber-glass p-5 rounded-2xl border-t-2 border-cyan-500 space-y-2 hover:border-cyan-400 transition">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-xs text-white"><i class="fa-solid fa-wave-square text-cyan-500 ml-1"></i> Shazam AI Music Finder</h3>
-                        <span class="text-[9px] bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded-full font-bold">Auto Detect</span>
-                    </div>
-                    <p class="text-[11px] text-slate-400">جوداکرن و دیتنا ناڤێ گۆرانییا پشت زەمینێ و داگرتنا فایلی وێ ب MP3.</p>
-                </div>
-
-                <!-- TOOL 4: AI VOICE DUBBING & SUBTITLE -->
-                <div class="cyber-glass p-5 rounded-2xl border-t-2 border-amber-500 space-y-2 hover:border-amber-400 transition">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-xs text-white"><i class="fa-solid fa-language text-amber-500 ml-1"></i> AI Translator & Dubbing</h3>
-                        <span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-bold">Kurdish / Arabic / EN</span>
-                    </div>
-                    <p class="text-[11px] text-slate-400">وەرگێڕانا دەنگی و ژێرنووسکرنا ئۆتۆماتیکی یا ڤیدیۆیان ب زیرەکیا دەستکرد.</p>
-                </div>
-
-                <!-- TOOL 5: CUSTOM BRANDING WATERMARK -->
-                <div class="cyber-glass p-5 rounded-2xl border-t-2 border-emerald-500 space-y-2 hover:border-emerald-400 transition">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-xs text-white"><i class="fa-solid fa-copyright text-emerald-500 ml-1"></i> Custom Branding Watermark</h3>
-                        <span class="text-[9px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-bold">For Creators</span>
-                    </div>
-                    <p class="text-[11px] text-slate-400">زێدەکرنا لۆگۆ یان ناڤێ پەیجێ تە ل سەر ڤیدیۆیێ بەریا داگرتنێ.</p>
-                </div>
-
-                <!-- TOOL 6: VIDEO COMPRESSOR PRO -->
-                <div class="cyber-glass p-5 rounded-2xl border-t-2 border-rose-500 space-y-2 hover:border-rose-400 transition">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-xs text-white"><i class="fa-solid fa-compress text-rose-500 ml-1"></i> Smart Video Compressor</h3>
-                        <span class="text-[9px] bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded-full font-bold">-60% Size</span>
-                    </div>
-                    <p class="text-[11px] text-slate-400">کەمکرنا قەبارەیێ ڤیدیۆیێ بۆ شێرکرنێ د واتساپێ دا ب بێ دۆڕاندنا کوالێتیێ.</p>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- VIP KEY ACTIVATION & REFERRAL SYSTEM -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            <!-- REFERRAL PROGRAM -->
-            <div class="cyber-glass p-6 rounded-3xl space-y-3 border-l-4 border-pink-500">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-bold text-sm text-white"><i class="fa-solid fa-gift text-pink-500 ml-2"></i> سیستمێ بانیژەکرنێ (Referral VIP)</h3>
-                    <span class="text-xs font-bold text-pink-400 bg-pink-500/10 border border-pink-500/30 px-3 py-1 rounded-xl">4 / 5 هەڤاڵ</span>
-                </div>
-                <p class="text-xs text-slate-400">5 هەڤاڵان ب ڕێکا لینکێ خۆ بانگهێشت بکه دا 1 هەفتیا VIP ب بێ پارە وەربگری!</p>
-                <button onclick="copyReferralLink()" class="w-full bg-slate-900 hover:bg-slate-800 text-pink-400 border border-pink-500/30 text-xs font-bold py-3 rounded-2xl transition">
-                    <i class="fa-solid fa-link ml-1"></i> کۆپیکردنا لینکێ بانیژەکرنێ
-                </button>
-            </div>
-
-            <!-- VIP KEY ACTIVATION -->
-            <div class="cyber-glass p-6 rounded-3xl space-y-3 border-l-4 border-cyan-500">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-bold text-sm text-white"><i class="fa-solid fa-key text-cyan-500 ml-2"></i> ئەکتیڤکرنا کلیلا VIP</h3>
-                    <span class="text-xs font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1 rounded-xl">Pro Access</span>
-                </div>
-                <div class="flex gap-2">
-                    <input type="text" id="userKeyInput" placeholder="PRO-PREMIUM-XXXX" class="flex-1 bg-slate-900 border border-white/10 rounded-2xl px-4 text-center text-xs font-mono text-cyan-400 outline-none focus:border-cyan-500">
-                    <button onclick="activateKey()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs px-6 py-3 rounded-2xl transition">
-                        ئەکتیڤکرن
-                    </button>
-                </div>
-            </div>
-
-        </div>
-
+        </section>
     </main>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // Live Counter Engine
-        let baseDownloads = 5102940;
-        setInterval(() => {
-            baseDownloads += Math.floor(Math.random() * 4) + 1;
-            document.getElementById('liveCounter').innerText = baseDownloads.toLocaleString();
-        }, 2500);
+    <!-- FOOTER MATRIX -->
+    <footer>
+        <p>© 2026 PRO-DOWN OFFICIAL ENTERPRISE. POWERED BY NEXT-GEN HIGH SPEED CLOUD INFRASTRUCTURE.</p>
+    </footer>
 
-        // Clipboard Action
-        async function pasteFromClipboard() {
-            try {
-                const text = await navigator.clipboard.readText();
-                document.getElementById('videoUrl').value = text;
-            } catch (err) {
-                alert('تکایە ب دەست لینکەکە دابنێ');
-            }
-        }
-
-        // Process Download Engine
-        function processDownload() {
-            const url = document.getElementById('videoUrl').value;
-            if(!url) {
-                alert('تکایە سەرەتا لینکەک دابنێ!');
-                return;
-            }
-            alert('🚀 پرۆسێسکرنا ئاستبەرزی AI دەستپێکر! فایلا تە بەرهەڤ دبیت...');
-        }
-
-        // Referral Copy
-        function copyReferralLink() {
-            const refLink = "https://pro-down.vercel.app?ref=" + Math.floor(1000 + Math.random() * 9000);
-            navigator.clipboard.writeText(refLink);
-            alert("🎉 لینکێ بانیژەکرنێ کۆپی بوو!\n" + refLink);
-        }
-
-        // Key Activation
-        function activateKey() {
-            const key = document.getElementById('userKeyInput').value.trim();
-            if(key.startsWith('PRO-')) {
-                alert('🎉 ئەپپگرەید بوو ب سەرکەفتن! کوالێتیا 8K + Dolby Vision و هەمی ئامرازێن AI بۆ تە ئەکتیڤ بوون.');
-            } else {
-                alert('❌ کلیلا نەیا دروستە! تکایە کلیلەکا ڕاست بنڤێسە.');
-            }
-        }
-
-        // Extension Install Simulator
-        function installExtension() {
-            alert("🧩 Chrome Extension یا Pro-Down ئامادەیە بۆ دامەزراندنێ د بڕاوسەری دا!");
-        }
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
