@@ -145,32 +145,7 @@
 
                 <!-- DOWNLOAD BUTTONS BY QUALITY -->
                 <div class="space-y-2 text-xs" id="downloadOptions">
-                    <!-- Option 1: Full HD / 60 FPS Video No Watermark -->
-                    <a href="#" target="_blank" class="w-full bg-white/5 hover:bg-orange-500/20 border border-white/10 hover:border-orange-500/50 p-3 rounded-xl flex justify-between items-center transition-all">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                            <span class="font-bold text-white">Video (No Watermark - Original FPS)</span>
-                        </div>
-                        <span class="text-[10px] bg-orange-500 text-white font-black px-2 py-1 rounded-lg">1080p / 4K</span>
-                    </a>
-
-                    <!-- Option 2: High Res Photo / GIF -->
-                    <a href="#" target="_blank" class="w-full bg-white/5 hover:bg-orange-500/20 border border-white/10 hover:border-orange-500/50 p-3 rounded-xl flex justify-between items-center transition-all">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                            <span class="font-bold text-white">Image / GIF (Highest Resolution)</span>
-                        </div>
-                        <span class="text-[10px] bg-blue-500/20 text-blue-400 font-bold px-2 py-1 rounded-lg">Original</span>
-                    </a>
-
-                    <!-- Option 3: MP3 Audio Only -->
-                    <a href="#" target="_blank" class="w-full bg-white/5 hover:bg-orange-500/20 border border-white/10 hover:border-orange-500/50 p-3 rounded-xl flex justify-between items-center transition-all">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-purple-500"></span>
-                            <span class="font-bold text-white">Audio Only (HQ Track)</span>
-                        </div>
-                        <span class="text-[10px] bg-purple-500/20 text-purple-400 font-bold px-2 py-1 rounded-lg">MP3 320kbps</span>
-                    </a>
+                    <!-- Dynamic Buttons Inject Here -->
                 </div>
             </div>
 
@@ -328,7 +303,7 @@
         <p>Designed & Developed with ❤️ for fast media processing.</p>
     </footer>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC WITH WORKING RAPIDAPI KEY -->
     <script>
         function toggleMobileMenu() {
             document.getElementById('mobileMenu').classList.toggle('hidden');
@@ -350,31 +325,90 @@
             }
         }
 
-        function processDownload() {
+        async function processDownload() {
             const url = document.getElementById('inputUrl').value.trim();
             const resultBox = document.getElementById('resultBox');
             const resultTitle = document.getElementById('resultTitle');
             const resultPlatform = document.getElementById('resultPlatform');
+            const downloadOptions = document.getElementById('downloadOptions');
 
             if (!url) {
-                alert('Please paste a media URL from Pinterest, YouTube, Snapchat, or Telegram!');
+                alert('تکایە بەستەرێ (Link) وێنە یان ڤیدیۆیێ پێست بکە!');
                 return;
             }
 
-            // Simple platform detector UI demo
+            // 1. Loading State
             resultBox.classList.remove('hidden');
-            resultTitle.textContent = 'Media Link Successfully Detected!';
-            
-            if (url.includes('youtube.com') || url.includes('youtu.be')) {
-                resultPlatform.textContent = 'Platform: YouTube (Shorts / Video / Live Stream)';
-            } else if (url.includes('snapchat.com')) {
-                resultPlatform.textContent = 'Platform: Snapchat (Spotlight / Public Story)';
-            } else if (url.includes('pinterest.com') || url.includes('pin.it')) {
-                resultPlatform.textContent = 'Platform: Pinterest (Video / GIF / Board Image)';
-            } else if (url.includes('t.me')) {
-                resultPlatform.textContent = 'Platform: Telegram Public Media';
-            } else {
-                resultPlatform.textContent = 'Platform: Universal Social Media Extractor';
+            resultTitle.textContent = 'د پێسۆسێ دایە... ئامادەکرنا کواڵێتیێ ⏳';
+            resultPlatform.textContent = 'شیکارکرنا فایلی ل سەر سێرڤەر...';
+            downloadOptions.innerHTML = '<p class="text-xs text-orange-400 font-semibold animate-pulse">تکایە کەمەکێ بڕوەستە...</p>';
+
+            const apiKey = 'e215b2de69msh7658409fd0d72f4p18d2c6jsnf05a3f762a6e';
+            const apiHost = 'social-media-video-downloader.p.rapidapi.com';
+
+            try {
+                let apiUrl = '';
+                
+                // 2. Platform Logic Detection
+                if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                    let videoId = '';
+                    if (url.includes('v=')) {
+                        videoId = url.split('v=')[1].split('&')[0];
+                    } else if (url.includes('youtu.be/')) {
+                        videoId = url.split('youtu.be/')[1].split('?')[0];
+                    } else if (url.includes('shorts/')) {
+                        videoId = url.split('shorts/')[1].split('?')[0];
+                    }
+                    apiUrl = `https://${apiHost}/youtube/v3/video/details?videoId=${videoId}&urlAccess=normal&renderableFormats=720p%2Chighres&getTranscript=false`;
+                } else {
+                    apiUrl = `https://${apiHost}/smvd/get/all?url=${encodeURIComponent(url)}`;
+                }
+
+                // 3. Fetch Data from RapidAPI
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'x-rapidapi-host': apiHost,
+                        'x-rapidapi-key': apiKey
+                    }
+                });
+
+                const data = await response.json();
+
+                // 4. Render Direct Download Link
+                if (data) {
+                    resultTitle.textContent = 'میدیا ب سەرکەفتن هاتە لێدۆزین! 🎉';
+                    resultPlatform.textContent = 'ئامادەیە بۆ دابەزاندنێ ب بەرزترین کواڵێتی';
+
+                    let directLink = '#';
+                    if (data.formats && data.formats.length > 0) {
+                        directLink = data.formats[0].url || data.formats[0].link;
+                    } else if (data.download_url) {
+                        directLink = data.download_url;
+                    } else if (data.url) {
+                        directLink = data.url;
+                    }
+
+                    downloadOptions.innerHTML = `
+                        <a href="${directLink}" target="_blank" download class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-3.5 rounded-xl flex justify-between items-center transition-all shadow-lg orange-glow-btn">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-download"></i>
+                                <span>داونلۆدکرن ( No Watermark / Full FPS )</span>
+                            </div>
+                            <span class="text-[10px] bg-black/30 px-2 py-1 rounded-lg">Direct Link</span>
+                        </a>
+                    `;
+                } else {
+                    resultTitle.textContent = 'کێشەیەک ڕوودا! ❌';
+                    resultPlatform.textContent = 'لینکێ تە نەهاتە ناسین یان میدیا تایبەتە (Private).';
+                    downloadOptions.innerHTML = '';
+                }
+
+            } catch (error) {
+                console.error(error);
+                resultTitle.textContent = 'کێشە د پەیوەندیێ دا! ❌';
+                resultPlatform.textContent = 'دڵنیابە ژ دروستییا بەستەری یان دووبارە تاقی بگەڤە.';
+                downloadOptions.innerHTML = '';
             }
         }
     </script>
