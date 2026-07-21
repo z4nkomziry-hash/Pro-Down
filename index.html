@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KrdDown - Fast Social Media Video Downloader</title>
+    <title>ProDown - Fast Social Media Video Downloader</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -44,8 +44,8 @@
     <!-- NAVIGATION HEADER -->
     <header class="w-full max-w-2xl px-5 py-4 flex justify-between items-center border-b border-white/5 sticky top-0 bg-[#0b0b0d]/90 backdrop-blur-md z-40">
         <div class="flex items-center gap-3">
-            <img src="assets/images/logo.png" alt="KrdDown Logo" class="w-10 h-10 object-contain" onerror="this.src='https://ui-avatars.com/api/?name=KD&background=f97316&color=fff'">
-            <span class="text-xl font-black tracking-tight text-white">Krd<span class="text-orange-500">Down</span></span>
+            <img src="assets/images/logo.png" alt="ProDown Logo" class="w-10 h-10 object-contain" onerror="this.src='https://ui-avatars.com/api/?name=PD&background=f97316&color=fff'">
+            <span class="text-xl font-black tracking-tight text-white">Pro<span class="text-orange-500">Down</span></span>
         </div>
         
         <button onclick="toggleMobileMenu()" class="w-10 h-10 rounded-xl glass-card flex items-center justify-center text-slate-300 hover:text-white transition-all">
@@ -132,7 +132,7 @@
                     </div>
                     <div class="flex-1 truncate">
                         <h4 class="text-xs font-bold text-white truncate" id="resultTitle">Processing Media</h4>
-                        <p class="text-[10px] text-slate-400" id="resultPlatform">KrdDown Native Extractor</p>
+                        <p class="text-[10px] text-slate-400" id="resultPlatform">ProDown Extraction Engine</p>
                     </div>
                 </div>
 
@@ -217,7 +217,7 @@
                     </div>
                     <div>
                         <h4 class="text-xs font-bold text-white">Support Me</h4>
-                        <p class="text-[10px] text-slate-400">Keep KrdDown free forever</p>
+                        <p class="text-[10px] text-slate-400">Keep ProDown free forever</p>
                     </div>
                 </div>
                 <i class="fa-solid fa-chevron-down text-xs text-slate-500 group-hover:text-pink-400 transition-all"></i>
@@ -245,10 +245,10 @@
 
     <!-- FOOTER -->
     <footer class="w-full max-w-2xl text-center py-6 border-t border-white/5 text-[11px] text-slate-500 space-y-1">
-        <p>&copy; 2026 KrdDown. All rights reserved.</p>
+        <p>&copy; 2026 ProDown. All rights reserved.</p>
     </footer>
 
-    <!-- ROBUST MULTI-API EXTRACTION ENGINE -->
+    <!-- ROBUST MULTI-API EXTRACTION & DIRECT BLOB DOWNLOAD ENGINE -->
     <script>
         function toggleMobileMenu() {
             document.getElementById('mobileMenu').classList.toggle('hidden');
@@ -270,6 +270,32 @@
             }
         }
 
+        // --- iOS / Safari Direct Download Trigger Function ---
+        async function triggerDirectDownload(fileUrl, fileName = "video.mp4") {
+            const btn = document.getElementById('downloadTriggerBtn');
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Preparing Download...';
+            
+            try {
+                const response = await fetch(fileUrl);
+                const blob = await response.blob();
+                
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = fileName;
+                document.body.appendChild(link);
+                
+                link.click();
+                
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+            } catch (err) {
+                // Fallback direct navigation if blob fails
+                window.location.href = fileUrl;
+            } finally {
+                if (btn) btn.innerHTML = '<i class="fa-solid fa-file-arrow-down mr-2"></i> Download Video';
+            }
+        }
+
         async function processDownload() {
             const urlInput = document.getElementById('inputUrl').value.trim();
             const resultBox = document.getElementById('resultBox');
@@ -284,12 +310,12 @@
 
             resultBox.classList.remove('hidden');
             resultTitle.textContent = 'Extracting Media... Please Wait ⏳';
-            resultPlatform.textContent = 'KrdDown Extraction Engine';
+            resultPlatform.textContent = 'ProDown Extraction Engine';
             downloadOptions.innerHTML = '<div class="text-center py-3"><i class="fa-solid fa-circle-notch fa-spin text-orange-500 text-2xl"></i></div>';
 
             let downloadUrl = null;
 
-            // --- Attempt 1: TiklyDown / Public TikTok Extractor for TikTok Links ---
+            // Attempt 1: TiklyDown
             if (urlInput.includes('tiktok.com')) {
                 try {
                     const res = await fetch(`https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(urlInput)}`);
@@ -302,15 +328,12 @@
                 }
             }
 
-            // --- Attempt 2: Universal Engine (Cobalt Proxy / Multi Instance) ---
+            // Attempt 2: Cobalt Proxy
             if (!downloadUrl) {
                 try {
                     const res = await fetch('https://co.wuk.sh/api/json', {
                         method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
                         body: JSON.stringify({ url: urlInput, videoQuality: 'max' })
                     });
                     const data = await res.json();
@@ -322,7 +345,7 @@
                 }
             }
 
-            // --- Attempt 3: Direct CORS Proxy Bridge ---
+            // Attempt 3: Universal CORS Bridge
             if (!downloadUrl) {
                 try {
                     const proxyRes = await fetch(`https://api.cobalt.tools/api/json`, {
@@ -339,18 +362,18 @@
                 }
             }
 
-            // --- Render Results ---
+            // Render Result
             if (downloadUrl) {
                 resultTitle.textContent = 'Media Extraction Successful! 🎉';
-                resultPlatform.textContent = 'Ready for High-Speed Download';
+                resultPlatform.textContent = 'Ready for Direct Download';
                 downloadOptions.innerHTML = `
-                    <a href="${downloadUrl}" target="_blank" download rel="noopener" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-3.5 rounded-xl flex justify-between items-center transition-all shadow-lg orange-glow-btn">
+                    <button id="downloadTriggerBtn" onclick="triggerDirectDownload('${downloadUrl}', 'video.mp4')" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-3.5 rounded-xl flex justify-between items-center transition-all shadow-lg orange-glow-btn">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-file-arrow-down text-base"></i>
-                            <span>Download Media ( Direct MP4 )</span>
+                            <span>Download Video</span>
                         </div>
-                        <span class="text-[10px] bg-black/30 px-2.5 py-1 rounded-lg">HD Quality</span>
-                    </a>
+                        <span class="text-[10px] bg-black/30 px-2.5 py-1 rounded-lg">Direct MP4</span>
+                    </button>
                 `;
             } else {
                 resultTitle.textContent = 'Unable to Extract Link ⚠️';
