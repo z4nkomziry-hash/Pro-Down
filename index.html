@@ -1,527 +1,350 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" class="dark">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro-Down | Next-Gen Ultra Media Downloader</title>
-
-    <!-- Tailwind CSS & FontAwesome Icons -->
+    <title>ProDown - Fast, Easy & Secure Video Downloader</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;500;700;900&family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            pink: '#ec4899',
-                            purple: '#a855f7',
-                            cyan: '#06b6d4',
-                            dark: '#030014'
-                        }
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'glow': 'glow 2s ease-in-out infinite alternate',
-                    },
-                    keyframes: {
-                        glow: {
-                            '0%': { boxShadow: '0 0 15px rgba(236, 72, 153, 0.3)' },
-                            '100%': { boxShadow: '0 0 30px rgba(168, 85, 247, 0.6)' }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Google AdSense Script Placeholder -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_ID" crossorigin="anonymous"></script> -->
 
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', 'Noto Kufi Arabic', sans-serif;
-            background-color: #030014;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(236, 72, 153, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
-                radial-gradient(at 50% 50%, rgba(6, 182, 212, 0.08) 0px, transparent 50%);
-            background-attachment: fixed;
-            color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0b0d;
+            color: #ffffff;
         }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        .orange-glow-box {
+            box-shadow: 0 0 35px rgba(249, 115, 22, 0.15);
+        }
+
+        .orange-glow-btn {
+            box-shadow: 0 4px 20px rgba(249, 115, 22, 0.4);
+        }
+
+        .glass-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
         }
 
-        .btn-neon {
-            background: linear-gradient(135deg, #ec4899, #a855f7);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .ad-banner-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
         }
-        .btn-neon:hover {
-            transform: translateY(-3px) scale(1.01);
-            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.5);
-        }
-
-        #toastContainer {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-        }
-
-        .modal-active { display: flex !important; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between overflow-x-hidden">
+<body class="min-h-screen flex flex-col justify-between items-center antialiased">
 
-    <!-- TOAST NOTIFICATION CONTAINER -->
-    <div id="toastContainer" class="flex flex-col gap-2"></div>
+    <!-- NAVIGATION HEADER -->
+    <header class="w-full max-w-2xl px-5 py-4 flex justify-between items-center border-b border-white/5 sticky top-0 bg-[#0b0b0d]/90 backdrop-blur-md z-40">
+        <div class="flex items-center gap-3">
+            <img src="assets/images/logo.png" alt="ProDown Logo" class="w-10 h-10 object-contain">
+            <span class="text-xl font-black tracking-tight text-white">Pro<span class="text-orange-500">Down</span></span>
+        </div>
+        
+        <button onclick="toggleMobileMenu()" class="w-10 h-10 rounded-xl glass-card flex items-center justify-center text-slate-300 hover:text-white transition-all">
+            <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+    </header>
 
-    <!-- HEADER / NAVBAR -->
-    <header class="glass-panel sticky top-0 z-40 border-b border-white/10 px-4 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.reload()">
-                <div class="w-11 h-11 rounded-2xl btn-neon flex items-center justify-center text-white text-2xl shadow-lg animate-glow">
-                    <i class="fa-solid fa-bolt"></i>
-                </div>
-                <div>
-                    <span class="text-2xl font-black tracking-tight text-white">Pro-<span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">Down</span></span>
-                    <span class="block text-[9px] text-slate-400 font-bold uppercase tracking-widest">Ultra Downloader Engine</span>
-                </div>
+    <!-- MOBILE NAVIGATION MENU DROPDOWN -->
+    <div id="mobileMenu" class="hidden fixed inset-x-0 top-[65px] bg-[#0b0b0d]/95 backdrop-blur-xl border-b border-white/10 p-5 z-30 space-y-3 max-w-2xl mx-auto">
+        <a href="#downloader" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm"><i class="fa-solid fa-download mr-2 text-orange-500"></i> Downloader</a>
+        <a href="#developer" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm"><i class="fa-solid fa-code mr-2 text-orange-500"></i> Developer</a>
+        <a href="#contact" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm"><i class="fa-solid fa-headset mr-2 text-orange-500"></i> Contact Support</a>
+        <a href="#support" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm"><i class="fa-solid fa-heart mr-2 text-pink-500"></i> Support Me</a>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="w-full max-w-2xl px-4 py-6 space-y-8" id="downloader">
+
+        <!-- ADSENSE SLOT 1: TOP BANNER -->
+        <div class="w-full ad-banner-box rounded-2xl p-2 text-center text-slate-500 text-[10px] tracking-widest uppercase">
+            <span>Advertisement</span>
+            <div class="my-1 min-h-[60px] flex items-center justify-center">
+                <!-- Replace with Google AdSense Ad Unit Tag -->
+                <p class="text-slate-600 text-xs">Google AdSense Top Banner Placement</p>
+            </div>
+        </div>
+
+        <!-- HERO SECTION -->
+        <div class="relative overflow-hidden glass-card rounded-3xl p-6 md:p-8 orange-glow-box">
+            
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 px-3.5 py-1.5 rounded-full mb-4">
+                <i class="fa-solid fa-bolt text-orange-500 text-xs"></i>
+                <span class="text-xs font-bold text-orange-400 tracking-wide">Fast. Easy. Secure.</span>
             </div>
 
-            <div class="flex items-center gap-3">
-                <select id="langSelect" onchange="switchLanguage(this.value)" class="bg-slate-900/80 border border-white/15 text-white text-xs rounded-xl px-3 py-2 outline-none cursor-pointer hover:border-pink-500 transition-all">
-                    <option value="en">🇺🇸 English</option>
-                    <option value="badini">☀️ کوردی (بادینی)</option>
-                    <option value="sorani">☀️ کوردی (سۆرانی)</option>
-                    <option value="ar">🇸🇦 العربية</option>
-                    <option value="de">🇩🇪 Deutsch</option>
-                </select>
+            <!-- Title & Description -->
+            <h1 class="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight mb-3">
+                Download videos <br>
+                from any <span class="text-orange-500">social media.</span>
+            </h1>
+            <p class="text-slate-400 text-xs md:text-sm font-normal leading-relaxed mb-6">
+                Paste the link and download videos from TikTok, Instagram, Facebook, Twitter, YouTube and more in full HD/4K quality.
+            </p>
 
-                <div id="userProfileArea">
-                    <button onclick="openAuthModal()" class="btn-neon text-white text-xs font-black px-4 py-2.5 rounded-xl flex items-center gap-2">
-                        <i class="fa-solid fa-user-astronaut"></i> <span data-i18n="login">Login / Register</span>
-                    </button>
+            <!-- INPUT DOWNLOAD BOX -->
+            <div class="relative flex flex-col sm:flex-row gap-2 bg-[#141418] border border-white/10 rounded-2xl p-2 transition-all focus-within:border-orange-500/60">
+                <div class="flex items-center pl-3 py-2 sm:py-0 flex-1">
+                    <i class="fa-solid fa-link text-slate-500 mr-3 text-sm"></i>
+                    <input 
+                        type="url" 
+                        id="inputUrl"
+                        placeholder="Paste video link here..." 
+                        class="w-full bg-transparent text-sm text-white placeholder-slate-500 focus:outline-none"
+                    >
+                </div>
+                <button 
+                    onclick="processDownload()" 
+                    class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black px-6 py-3.5 rounded-xl text-sm transition-all orange-glow-btn flex items-center justify-center gap-2"
+                >
+                    <span>Download</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- SUPPORTED PLATFORMS SECTION -->
+        <div class="space-y-3 text-center">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Supported Platforms</h3>
+            <div class="grid grid-cols-6 gap-2">
+                <div class="glass-card p-3 rounded-2xl flex flex-col items-center gap-2 hover:border-white/20 transition-all cursor-pointer">
+                    <i class="fa-brands fa-tiktok text-xl text-white"></i>
+                    <span class="text-[10px] font-medium text-slate-400">TikTok</span>
+                </div>
+                <div class="glass-card p-3 rounded-2xl flex flex-col items-center gap-2 hover:border-white/20 transition-all cursor-pointer">
+                    <i class="fa-brands fa-instagram text-xl text-pink-500"></i>
+                    <span class="text-[10px] font-medium text-slate-400">Instagram</span>
+                </div>
+                <div class="glass-card p-3 rounded-2xl flex flex-col items-center gap-2 hover:border-white/20 transition-all cursor-pointer">
+                    <i class="fa-brands fa-facebook-f text-xl text-blue-500"></i>
+                    <span class="text-[10px] font-medium text-slate-400">Facebook</span>
+                </div>
+                <div class="glass-card p-3 rounded-2xl flex flex-col items-center gap-2 hover:border-white/20 transition-all cursor-pointer">
+                    <i class="fa-brands fa-x-twitter text-xl text-white"></i>
+                    <span class="text-[10px] font-medium text-slate-400">Twitter</span>
+                </div>
+                <div class="glass-card p-3 rounded-2xl flex flex-col items-center gap-2 hover:border-white/20 transition-all cursor-pointer">
+                    <i class="fa-brands fa-youtube text-xl text-red-500"></i>
+                    <span class="text-[10px] font-medium text-slate-400">YouTube</span>
+                </div>
+                <div class="glass-card p-3 rounded-2xl flex flex-col items-center gap-2 hover:border-white/20 transition-all cursor-pointer">
+                    <i class="fa-solid fa-ellipsis text-xl text-slate-400"></i>
+                    <span class="text-[10px] font-medium text-slate-400">More</span>
                 </div>
             </div>
         </div>
-    </header>
 
-    <!-- MAIN CONTENT -->
-    <main class="max-w-5xl mx-auto px-4 py-8 w-full space-y-8">
-
-        <!-- SMART AUTO-DETECT INPUT CARD -->
-        <section class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-pink-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-            <div class="text-center max-w-xl mx-auto mb-6 space-y-2">
-                <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight" data-i18n="heroTitle">Download Media Instantly</h2>
-                <p class="text-xs text-slate-400" data-i18n="heroSub">Paste any social media link below. Our smart parser auto-detects the platform!</p>
+        <!-- ADSENSE SLOT 2: MID PAGE BANNER -->
+        <div class="w-full ad-banner-box rounded-2xl p-2 text-center text-slate-500 text-[10px] tracking-widest uppercase my-4">
+            <span>Advertisement</span>
+            <div class="my-1 min-h-[90px] flex items-center justify-center">
+                <!-- Replace with Google AdSense In-Article or Display Ad Unit -->
+                <p class="text-slate-600 text-xs">Google AdSense Mid-Page Banner</p>
             </div>
+        </div>
 
-            <div class="space-y-4 max-w-3xl mx-auto">
-                <div class="relative flex items-center">
-                    <div id="platformIndicator" class="absolute left-4 w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 transition-all">
-                        <i class="fa-solid fa-globe text-lg"></i>
+        <!-- WHY CHOOSE PRODOWN SECTION -->
+        <div class="space-y-4">
+            <h2 class="text-center text-lg font-extrabold">Why Choose Pro<span class="text-orange-500">Down?</span></h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="glass-card p-4 rounded-2xl flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 flex-shrink-0">
+                        <i class="fa-solid fa-bolt text-lg"></i>
                     </div>
-
-                    <input type="text" id="inputUrl" oninput="detectPlatform(this.value)" placeholder="Paste video/photo link here (Instagram, TikTok, YouTube, etc...)" 
-                           class="w-full bg-slate-950/60 border border-white/10 rounded-2xl pl-16 pr-28 py-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-pink-500/80 focus:ring-2 focus:ring-pink-500/20 transition-all shadow-inner">
-
-                    <button onclick="pasteClipboard()" class="absolute right-3 bg-white/10 hover:bg-white/20 text-xs px-3.5 py-2.5 rounded-xl font-bold transition-all flex items-center gap-1.5 text-slate-300">
-                        <i class="fa-solid fa-paste"></i> <span>Paste</span>
-                    </button>
-                </div>
-
-                <!-- PROGRESS BAR CONTAINER -->
-                <div id="progressContainer" class="hidden space-y-2">
-                    <div class="flex justify-between text-xs font-bold text-slate-300">
-                        <span id="progressStatus">Parsing Media Link...</span>
-                        <span id="progressPercent">0%</span>
-                    </div>
-                    <div class="w-full h-3 bg-slate-900 rounded-full overflow-hidden border border-white/10">
-                        <div id="progressBar" class="h-full btn-neon w-0 transition-all duration-300"></div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white mb-1">Lightning Fast</h4>
+                        <p class="text-[11px] text-slate-400 leading-normal">Download videos in seconds with our ultra-fast servers.</p>
                     </div>
                 </div>
 
-                <button onclick="processDownload()" class="w-full btn-neon text-white font-black py-4 rounded-2xl text-sm flex items-center justify-center gap-2 shadow-2xl tracking-wide">
-                    <i class="fa-solid fa-cloud-arrow-down text-lg"></i> <span data-i18n="downloadNow">Download Media</span>
-                </button>
-            </div>
-        </section>
+                <div class="glass-card p-4 rounded-2xl flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 flex-shrink-0">
+                        <i class="fa-solid fa-shield-halved text-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white mb-1">100% Secure</h4>
+                        <p class="text-[11px] text-slate-400 leading-normal">We don't store your data. Your downloads are private.</p>
+                    </div>
+                </div>
 
-        <!-- TELEGRAM BOT PROMO -->
-        <section class="glass-panel rounded-3xl p-5 border border-sky-500/30 bg-gradient-to-r from-sky-950/30 via-slate-900/40 to-slate-950/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="glass-card p-4 rounded-2xl flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 flex-shrink-0">
+                        <i class="fa-solid fa-mobile-screen-button text-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white mb-1">Works Everywhere</h4>
+                        <p class="text-[11px] text-slate-400 leading-normal">Works perfectly on all browsers and mobile devices.</p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 rounded-2xl flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 flex-shrink-0">
+                        <i class="fa-regular fa-circle-check text-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white mb-1">Easy to Use</h4>
+                        <p class="text-[11px] text-slate-400 leading-normal">Simple interface makes video downloading effortless.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS BAR -->
+        <div class="glass-card p-4 rounded-2xl grid grid-cols-4 gap-2 text-center">
+            <div>
+                <span class="block text-sm font-black text-orange-500">10M+</span>
+                <span class="text-[10px] text-slate-400">Downloads</span>
+            </div>
+            <div>
+                <span class="block text-sm font-black text-orange-500">2M+</span>
+                <span class="text-[10px] text-slate-400">Happy Users</span>
+            </div>
+            <div>
+                <span class="block text-sm font-black text-orange-500">100+</span>
+                <span class="text-[10px] text-slate-400">Supported Sites</span>
+            </div>
+            <div>
+                <span class="block text-sm font-black text-orange-500">4.9/5</span>
+                <span class="text-[10px] text-slate-400">User Rating</span>
+            </div>
+        </div>
+
+        <!-- DEVELOPER PROFILE CARD -->
+        <div class="glass-card rounded-3xl p-6 relative border border-orange-500/20 space-y-4" id="developer">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 text-2xl flex-shrink-0">
-                    <i class="fa-brands fa-telegram"></i>
+                <div class="relative">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-orange-500 p-0.5 bg-black">
+                        <!-- Path linked directly to image.jpeg -->
+                        <img src="assets/images/image.jpeg" alt="Developer Avatar" class="w-full h-full object-cover rounded-xl">
+                    </div>
+                    <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-black" title="Active Developer"></span>
                 </div>
                 <div>
-                    <h4 class="font-bold text-sm text-white" data-i18n="tgBotTitle">Pro-Down Telegram Bot</h4>
-                    <p class="text-xs text-slate-400" data-i18n="tgBotDesc">Download videos directly inside Telegram instantly!</p>
+                    <span class="text-[10px] font-black uppercase text-orange-400 tracking-wider">Lead Developer</span>
+                    <h3 class="text-base font-extrabold text-white">Zaniyar Dildar</h3>
+                    <p class="text-[11px] text-slate-400">Software Engineer & Platform Architect</p>
                 </div>
             </div>
-            <a href="https://t.me/z_14x" target="_blank" class="bg-sky-500 hover:bg-sky-600 text-white font-black text-xs px-5 py-3 rounded-xl transition-all shadow-lg whitespace-nowrap">
-                <i class="fa-solid fa-paper-plane mr-1.5"></i> <span data-i18n="openBot">Open Telegram Bot</span>
+            <p class="text-xs text-slate-300 leading-relaxed bg-black/40 p-3 rounded-2xl border border-white/5">
+                Passionate web developer specializing in high-performance web applications, media downloader systems, and SaaS platforms. Built ProDown for fast and seamless user experiences.
+            </p>
+            <div class="flex items-center gap-3 pt-1">
+                <a href="https://github.com" target="_blank" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 hover:text-white transition-all"><i class="fa-brands fa-github text-sm"></i></a>
+                <a href="https://t.me/z_14x" target="_blank" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 hover:text-white transition-all"><i class="fa-brands fa-telegram text-sm"></i></a>
+                <a href="https://instagram.com" target="_blank" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 hover:text-white transition-all"><i class="fa-brands fa-instagram text-sm"></i></a>
+            </div>
+        </div>
+
+        <!-- CONTACT US & SUPPORT BUTTONS SECTION -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="contact">
+            <!-- Contact Us Button -->
+            <a href="https://t.me/z_14x" target="_blank" class="glass-card p-4 rounded-2xl flex items-center justify-between hover:border-orange-500/50 transition-all group">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                        <i class="fa-solid fa-headset text-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white">Contact Us</h4>
+                        <p class="text-[10px] text-slate-400">Get 24/7 technical help</p>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-xs text-slate-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all"></i>
             </a>
-        </section>
 
-        <!-- PACKAGES & PRICING -->
-        <section class="space-y-4">
-            <h3 class="text-lg font-black text-center text-white uppercase tracking-wider" data-i18n="packagesTitle">Membership Packages</h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Free -->
-                <div class="glass-panel rounded-3xl p-6 border border-white/10 flex flex-col justify-between hover:border-white/20 transition-all">
-                    <div>
-                        <span class="bg-slate-800 text-slate-300 text-[10px] px-3 py-1 rounded-full uppercase font-black">Free Plan</span>
-                        <h4 class="text-2xl font-black mt-3">$0 <span class="text-xs text-slate-400 font-normal">/ forever</span></h4>
-                        <ul class="text-xs text-slate-300 space-y-2.5 mt-4">
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-1.5"></i> Quality: 1080p Full HD</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-1.5"></i> All 7 Social Networks</li>
-                            <li><i class="fa-solid fa-check text-emerald-400 mr-1.5"></i> Standard Download Speed</li>
-                        </ul>
+            <!-- Support Me Button -->
+            <a href="#support" onclick="toggleSupportBox()" class="glass-card p-4 rounded-2xl flex items-center justify-between hover:border-pink-500/50 transition-all group" id="support">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-pink-500/10 text-pink-400 flex items-center justify-center">
+                        <i class="fa-solid fa-heart text-lg"></i>
                     </div>
-                    <button class="w-full bg-white/5 text-slate-400 text-xs font-bold py-3 rounded-xl mt-6 cursor-not-allowed">Current Plan</button>
+                    <div>
+                        <h4 class="text-xs font-bold text-white">Support Me</h4>
+                        <p class="text-[10px] text-slate-400">Keep ProDown free forever</p>
+                    </div>
                 </div>
+                <i class="fa-solid fa-chevron-down text-xs text-slate-500 group-hover:text-pink-400 transition-all"></i>
+            </a>
+        </div>
 
-                <!-- Plus -->
-                <div class="glass-panel rounded-3xl p-6 border border-blue-500/40 flex flex-col justify-between hover:border-blue-500/80 transition-all">
-                    <div>
-                        <span class="bg-blue-500/20 text-blue-400 border border-blue-500/40 text-[10px] px-3 py-1 rounded-full uppercase font-black">Plus Plan</span>
-                        <h4 class="text-2xl font-black mt-3">$4.99 <span class="text-xs text-slate-400 font-normal">/ Month</span></h4>
-                        <ul class="text-xs text-slate-200 space-y-2.5 mt-4">
-                            <li><i class="fa-solid fa-check text-blue-400 mr-1.5"></i> Quality: 2K + 60fps</li>
-                            <li><i class="fa-solid fa-check text-blue-400 mr-1.5"></i> Bulk & Story Downloads</li>
-                            <li><i class="fa-solid fa-check text-blue-400 mr-1.5"></i> Fast Turbo Speed</li>
-                        </ul>
-                    </div>
-                    <button onclick="showToast('Send payment receipt to Admin to activate Plus!', 'info')" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-black py-3 rounded-xl mt-6 transition-all shadow-lg">Get Plus</button>
+        <!-- SUPPORT PAYMENT METHODS EXPANDABLE BOX -->
+        <div id="supportBox" class="hidden glass-card rounded-3xl p-5 space-y-3 border border-pink-500/30">
+            <h4 class="text-xs font-black text-pink-400 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-gem"></i> Donation Gateways
+            </h4>
+            <div class="space-y-2 text-xs">
+                <!-- FastPay -->
+                <div class="bg-black/50 p-3 rounded-2xl flex justify-between items-center border border-white/5">
+                    <span class="font-bold text-slate-200">FastPay: <b class="text-white">+964 750 604 5491</b></span>
+                    <button onclick="navigator.clipboard.writeText('+9647506045491')" class="bg-white/10 hover:bg-pink-500 hover:text-white px-3 py-1 rounded-xl text-[10px] font-bold">Copy</button>
                 </div>
-
-                <!-- Premium -->
-                <div class="glass-panel rounded-3xl p-6 border border-amber-500/60 bg-gradient-to-b from-amber-500/10 to-transparent flex flex-col justify-between hover:border-amber-500 transition-all">
-                    <div>
-                        <span class="bg-gradient-to-r from-amber-500 to-yellow-400 text-black text-[10px] px-3 py-1 rounded-full uppercase font-black">VIP Premium</span>
-                        <h4 class="text-2xl font-black mt-3">$9.99 <span class="text-xs text-slate-400 font-normal">/ Month</span></h4>
-                        <ul class="text-xs text-slate-100 space-y-2.5 mt-4">
-                            <li><i class="fa-solid fa-crown text-amber-400 mr-1.5"></i> Quality: 4K / 8K + 120fps</li>
-                            <li><i class="fa-solid fa-crown text-amber-400 mr-1.5"></i> Dolby Atmos & Vision</li>
-                            <li><i class="fa-solid fa-crown text-amber-400 mr-1.5"></i> Completely Ad-Free</li>
-                        </ul>
-                    </div>
-                    <button onclick="showToast('Send payment receipt to Admin to activate VIP!', 'info')" class="w-full btn-neon text-white text-xs font-black py-3 rounded-xl mt-6 shadow-xl">Get VIP Premium</button>
+                <!-- FIB -->
+                <div class="bg-black/50 p-3 rounded-2xl flex justify-between items-center border border-white/5">
+                    <span class="font-bold text-slate-200">FIB: <b class="text-white">+964 750 604 5491</b></span>
+                    <button onclick="navigator.clipboard.writeText('+9647506045491')" class="bg-white/10 hover:bg-amber-500 hover:text-black px-3 py-1 rounded-xl text-[10px] font-bold">Copy</button>
+                </div>
+                <!-- USDT -->
+                <div class="bg-black/50 p-3 rounded-2xl flex justify-between items-center border border-white/5">
+                    <span class="font-bold text-slate-200 truncate">USDT (TRC20): <b class="text-white text-[10px]">TKUfVwnjyT2...</b></span>
+                    <button onclick="navigator.clipboard.writeText('TKUfVwnjyT2KUa9xnBreT32YLLJEwACHpc')" class="bg-white/10 hover:bg-emerald-500 hover:text-white px-3 py-1 rounded-xl text-[10px] font-bold ml-2">Copy</button>
                 </div>
             </div>
+        </div>
 
-            <!-- GATEWAYS & CONTACT BOXES -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                <div class="glass-panel rounded-3xl p-5 space-y-3">
-                    <h4 class="text-xs font-black text-pink-400 uppercase tracking-wider"><i class="fa-solid fa-wallet mr-1"></i> Payment Gateways</h4>
-                    <div class="space-y-2 text-xs">
-                        <div class="bg-black/40 p-2.5 rounded-xl flex justify-between items-center border border-white/5">
-                            <span>FastPay: <b class="text-white">+964 750 604 5491</b></span>
-                            <button onclick="copyText('+9647506045491')" class="text-pink-400 hover:text-white"><i class="fa-solid fa-copy"></i></button>
-                        </div>
-                        <div class="bg-black/40 p-2.5 rounded-xl flex justify-between items-center border border-white/5">
-                            <span>FIB: <b class="text-white">+964 750 604 5491</b></span>
-                            <button onclick="copyText('+9647506045491')" class="text-pink-400 hover:text-white"><i class="fa-solid fa-copy"></i></button>
-                        </div>
-                        <div class="bg-black/40 p-2.5 rounded-xl flex justify-between items-center border border-white/5">
-                            <span class="truncate">USDT: <b class="text-white text-[10px]">TKUfVwnjyT2KUa9xnBreT32YLLJEwACHpc</b></span>
-                            <button onclick="copyText('TKUfVwnjyT2KUa9xnBreT32YLLJEwACHpc')" class="text-pink-400 hover:text-white"><i class="fa-solid fa-copy"></i></button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-panel rounded-3xl p-5 space-y-3">
-                    <h4 class="text-xs font-black text-purple-400 uppercase tracking-wider"><i class="fa-solid fa-receipt mr-1"></i> Submit Receipt</h4>
-                    <p class="text-[11px] text-slate-400">Send receipt to activate your VIP package:</p>
-                    <div class="flex flex-col gap-2">
-                        <a href="https://t.me/z_14x" target="_blank" class="bg-sky-500/20 hover:bg-sky-500/30 text-sky-400 border border-sky-500/30 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
-                            <span><i class="fa-brands fa-telegram mr-1.5"></i> Telegram Admin</span>
-                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                        </a>
-                        <a href="https://wa.me/9647506045491" target="_blank" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-between transition-all">
-                            <span><i class="fa-brands fa-whatsapp mr-1.5"></i> WhatsApp Support</span>
-                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="glass-panel rounded-3xl p-5 space-y-3">
-                    <h4 class="text-xs font-black text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-key mr-1"></i> Key Activation</h4>
-                    <p class="text-[11px] text-slate-400">Enter license key received from admin:</p>
-                    <input type="text" id="licenseKeyInput" placeholder="PRO-XXXX-XXXX-XXXX" class="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none uppercase focus:border-amber-400">
-                    <button onclick="activateLicenseKey()" class="w-full bg-amber-500 hover:bg-amber-600 text-black font-black py-2.5 rounded-xl text-xs transition-all shadow-md">Activate Key</button>
-                </div>
+        <!-- ADSENSE SLOT 3: FOOTER BANNER -->
+        <div class="w-full ad-banner-box rounded-2xl p-2 text-center text-slate-500 text-[10px] tracking-widest uppercase">
+            <span>Advertisement</span>
+            <div class="my-1 min-h-[60px] flex items-center justify-center">
+                <!-- Replace with Google AdSense Footer Ad Unit -->
+                <p class="text-slate-600 text-xs">Google AdSense Bottom Banner</p>
             </div>
-        </section>
+        </div>
 
-        <!-- DEVELOPER SECTION -->
-        <section class="glass-panel rounded-3xl p-6 border border-purple-500/30 bg-slate-950/60">
-            <div class="flex flex-col sm:flex-row items-center gap-6">
-                <div class="w-20 h-20 rounded-2xl p-1 btn-neon flex-shrink-0 shadow-xl">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Developer" class="w-full h-full object-cover rounded-xl">
-                </div>
-                <div class="space-y-2 text-center sm:text-left">
-                    <h4 class="text-base font-black text-white">Zaniyar Dildar Elmzoory (Al-Mzuri) <i class="fa-solid fa-circle-check text-blue-500 text-xs"></i></h4>
-                    <p class="text-xs text-slate-300 leading-relaxed" data-i18n="devDesc">
-                        ئەم ئامادەین بۆ دروستکردنی وێبسایت و ئەپڵیکەیشن بە هەموو جۆرەکانییەوە بە بەرزترین کوالێتی و گونجاوترین بەها. ژبوو هەر ئاریشەکێ یان کێماسیەکێ لمە ببورن و مە ئاگەهدار بکەن.
-                    </p>
-                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-2">
-                        <a href="https://www.instagram.com/z44nko" target="_blank" class="bg-white/5 hover:bg-white/10 text-xs px-3 py-1.5 rounded-xl border border-white/10 transition-all"><i class="fa-brands fa-instagram text-pink-500"></i> Instagram</a>
-                        <a href="https://www.tiktok.com/@z44nko" target="_blank" class="bg-white/5 hover:bg-white/10 text-xs px-3 py-1.5 rounded-xl border border-white/10 transition-all"><i class="fa-brands fa-tiktok"></i> TikTok</a>
-                        <a href="https://snapchat.com/t/qi9Js8Ln" target="_blank" class="bg-white/5 hover:bg-white/10 text-xs px-3 py-1.5 rounded-xl border border-white/10 transition-all"><i class="fa-brands fa-snapchat text-yellow-400"></i> Snapchat</a>
-                        <a href="mailto:z.14x@outlook.com" class="bg-white/5 hover:bg-white/10 text-xs px-3 py-1.5 rounded-xl border border-white/10 transition-all"><i class="fa-solid fa-envelope text-sky-400"></i> Email</a>
-                    </div>
-                </div>
+        <!-- INSTALL APP CTA BUTTON -->
+        <a href="#" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold py-4 px-6 rounded-2xl text-sm flex items-center justify-between orange-glow-btn transition-all">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-download text-lg"></i>
+                <span>Download Our Mobile App</span>
             </div>
-        </section>
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+        </a>
 
     </main>
 
-    <!-- AUTHENTICATION MODAL -->
-    <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="glass-panel rounded-3xl max-w-md w-full p-6 relative border border-white/20">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-lg font-black text-white mb-4 text-center">Login / Register to Pro-Down</h3>
-            
-            <form onsubmit="handleAuthSubmit(event)" class="space-y-3">
-                <input type="text" id="authUsername" placeholder="Unique Username" required class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-pink-500">
-                <input type="text" placeholder="Email or Mobile Phone Number" required class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-pink-500">
-                <input type="password" placeholder="Password" required class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-pink-500">
-                <button type="submit" class="w-full btn-neon text-white font-bold py-3 rounded-xl text-xs shadow-lg">Login Account</button>
-            </form>
-
-            <div class="my-3 text-center text-[10px] text-slate-500 uppercase font-bold">Or Continue With</div>
-
-            <div class="grid grid-cols-3 gap-2">
-                <button onclick="guestLogin()" class="bg-white/5 hover:bg-white/10 py-2 rounded-xl text-xs font-bold transition-all"><i class="fa-solid fa-user-ninja mr-1"></i> Guest</button>
-                <button onclick="guestLogin()" class="bg-white/5 hover:bg-white/10 py-2 rounded-xl text-xs font-bold text-red-400 transition-all"><i class="fa-brands fa-google mr-1"></i> Google</button>
-                <button onclick="guestLogin()" class="bg-white/5 hover:bg-white/10 py-2 rounded-xl text-xs font-bold transition-all"><i class="fa-brands fa-apple mr-1"></i> Apple</button>
-            </div>
-        </div>
-    </div>
-
     <!-- FOOTER -->
-    <footer class="glass-panel border-t border-white/10 py-6 text-center text-xs text-slate-500">
-        <p>© 2026 Pro-Down Ultra Engine. Designed & Developed by Zaniyar Al-Mzuri.</p>
+    <footer class="w-full max-w-2xl text-center py-6 border-t border-white/5 text-[11px] text-slate-500 space-y-1">
+        <p>&copy; 2026 ProDown Downloader. All rights reserved.</p>
+        <p>Designed & Developed with ❤️ for fast media processing.</p>
     </footer>
 
-    <!-- COMPLETE JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT ACTIONS -->
     <script>
-        // 1. TRANSLATIONS DATA
-        const translations = {
-            en: { login: "Login / Register", heroTitle: "Download Media Instantly", heroSub: "Paste any social media link below. Our smart parser auto-detects the platform!", downloadNow: "Download Media", tgBotTitle: "Pro-Down Telegram Bot", tgBotDesc: "Download videos directly inside Telegram instantly!", openBot: "Open Telegram Bot", packagesTitle: "Membership Packages", devDesc: "We construct custom web applications and automated platforms at standard prices according to your demands. Contact us for any issues or requests." },
-            badini: { login: "تۆمارکرن / چوونە ژوور", heroTitle: "میدیایێ ڕاستەوخۆ داونلۆد بکە", heroSub: "لینکێ هەر تۆڕەکا جڤاکی ل خوارێ بنڤیسە، سیستمێ مە بخۆ دێ ناس کەت!", downloadNow: "داونلۆدکرنا میدیایێ", tgBotTitle: "بۆتێ تێلیگرامێ یێ Pro-Down", tgBotDesc: "دناڤ تێلیگرامێ دا ئێکسەر ڤیدیۆیان داونلۆد بکە!", openBot: "ڤەکرنا بۆتێ تێلیگرامێ", packagesTitle: "پاکێجێن ئابوونەبوونێ", devDesc: "ئامادەین بو دروستکرنا وێبسایت و ئەپلیکەیشنان بە هەوە و لدویف داخازا هەوە ب بهایەکێ گونجایی پەیوەندیێ بمن بکەن و ژبوو هەر ئاریشەکێ یان کێماسیە کێ لمە ببورن و مە ئاگەهدار بکەن." },
-            sorani: { login: "تۆماربوون / چوونه‌ژووره‌وه‌", heroTitle: "میدیا ڕاستەوخۆ دابگرە", heroSub: "لینکی هەر تۆڕێکی کۆمەڵایەتی بنووسە، سیستەم خۆی دەیناسێتەوە!", downloadNow: "داگرتنی میدیا", tgBotTitle: "بۆتی تێلیگرامی Pro-Down", tgBotDesc: "ڕاستەوخۆ لە ناو تێلیگرام ڤیدیۆکان دابگرە!", openBot: "کردنەوەی بۆتی تێلیگرام", packagesTitle: "پاکێجەکانی ئابوونەبوون", devDesc: "ئامادەین بۆ دروستکردنی وێبسایت و ئەپڵیکەیشنەکانتان بەپێی داواکارییەکانتان و بە نرخێکی گونجاو." },
-            ar: { login: "تسجيل الدخول", heroTitle: "تحميل الميديا فوراً", heroSub: "ضع رابط أي منصة وسيتم التعرف عليها تلقائياً!", downloadNow: "تحميل الميديا", tgBotTitle: "بوت تلغرام Pro-Down", tgBotDesc: "قم بتحميل الفيديوهات مباشرة داخل التلغرام!", openBot: "فتح بوت التلغرام", packagesTitle: "باقات الاشتراك", devDesc: "مستعدون لتصميم المواقع والتطبيقات حسب طلبكم وبأسعار مناسبة جداً." },
-            de: { login: "Anmelden", heroTitle: "Medien Sofort Herunterladen", heroSub: "Fügen Sie einen beliebigen Link ein, unser System erkennt ihn automatisch!", downloadNow: "Medien Herunterladen", tgBotTitle: "Pro-Down Telegram Bot", tgBotDesc: "Laden Sie Videos direkt in Telegram herunter!", openBot: "Telegram Bot Öffnen", packagesTitle: "Mitgliedschaftspakete", devDesc: "Wir erstellen maßgeschneiderte Websites und Apps nach Ihren Wünschen zu fairen Preisen." }
-        };
-
-        // 2. STATE MANAGEMENT
-        let currentUser = JSON.parse(localStorage.getItem('prodown_user')) || null;
-
-        window.addEventListener('DOMContentLoaded', () => {
-            updateUserUI();
-            switchLanguage('en');
-        });
-
-        // 3. TOAST SYSTEM
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            const bgColor = type === 'success' ? 'bg-emerald-500' : (type === 'error' ? 'bg-rose-500' : 'bg-sky-500');
-            
-            toast.className = `${bgColor} text-white font-bold text-xs px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 transform transition-all duration-300 translate-y-5 opacity-0`;
-            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${message}</span>`;
-            
-            container.appendChild(toast);
-            setTimeout(() => toast.classList.remove('translate-y-5', 'opacity-0'), 10);
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-5');
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
         }
 
-        // 4. AUTHENTICATION LOGIC
-        function openAuthModal() { document.getElementById('authModal').classList.add('modal-active'); }
-        function closeAuthModal() { document.getElementById('authModal').classList.remove('modal-active'); }
-
-        function handleAuthSubmit(e) {
-            e.preventDefault();
-            const username = document.getElementById('authUsername').value.trim();
-            if (!username) return showToast('Please enter a username!', 'error');
-
-            currentUser = {
-                username: username,
-                id: 'PD-' + Math.floor(100000 + Math.random() * 900000),
-                package: 'Free'
-            };
-
-            localStorage.setItem('prodown_user', JSON.stringify(currentUser));
-            updateUserUI();
-            closeAuthModal();
-            showToast(`Welcome back, ${currentUser.username}!`, 'success');
-        }
-
-        function guestLogin() {
-            currentUser = { username: 'Guest_' + Math.floor(1000 + Math.random() * 9000), id: 'PD-GUEST', package: 'Free' };
-            localStorage.setItem('prodown_user', JSON.stringify(currentUser));
-            updateUserUI();
-            closeAuthModal();
-            showToast('Logged in as Guest!', 'info');
-        }
-
-        function logoutUser() {
-            localStorage.removeItem('prodown_user');
-            currentUser = null;
-            updateUserUI();
-            showToast('Logged out successfully.', 'info');
-        }
-
-        function updateUserUI() {
-            const area = document.getElementById('userProfileArea');
-            if (currentUser) {
-                area.innerHTML = `
-                    <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl border border-white/10">
-                        <span class="text-xs font-bold text-white"><i class="fa-solid fa-user-check text-pink-400 mr-1"></i> ${currentUser.username}</span>
-                        <span class="text-[9px] px-2 py-0.5 rounded-full font-black uppercase ${currentUser.package === 'Free' ? 'bg-slate-700 text-slate-300' : 'bg-amber-400 text-black'}">${currentUser.package}</span>
-                        <button onclick="logoutUser()" class="text-slate-400 hover:text-rose-400 ml-1"><i class="fa-solid fa-right-from-bracket text-xs"></i></button>
-                    </div>
-                `;
-            } else {
-                area.innerHTML = `
-                    <button onclick="openAuthModal()" class="btn-neon text-white text-xs font-black px-4 py-2.5 rounded-xl flex items-center gap-2">
-                        <i class="fa-solid fa-user-astronaut"></i> <span data-i18n="login">Login / Register</span>
-                    </button>
-                `;
-            }
-        }
-
-        // 5. LICENSE KEY ACTIVATION
-        function activateLicenseKey() {
-            const keyInput = document.getElementById('licenseKeyInput').value.trim().toUpperCase();
-            if (!keyInput) return showToast('Please enter a license key!', 'error');
-            if (!currentUser) {
-                openAuthModal();
-                return showToast('Please login first to activate key!', 'info');
-            }
-
-            let validKeys = JSON.parse(localStorage.getItem('prodown_keys')) || [];
-            const foundKeyIndex = validKeys.findIndex(k => k.code === keyInput && !k.used);
-
-            if (foundKeyIndex !== -1 || keyInput.startsWith("PRO-PREMIUM") || keyInput.startsWith("PRO-PLUS")) {
-                if (foundKeyIndex !== -1) validKeys[foundKeyIndex].used = true;
-                localStorage.setItem('prodown_keys', JSON.stringify(validKeys));
-
-                currentUser.package = keyInput.includes('PLUS') ? 'Plus' : 'VIP Premium';
-                localStorage.setItem('prodown_user', JSON.stringify(currentUser));
-                updateUserUI();
-                
-                showToast(`Success! Account upgraded to ${currentUser.package}!`, 'success');
-                document.getElementById('licenseKeyInput').value = '';
-            } else {
-                showToast('Invalid or already used key!', 'error');
-            }
-        }
-
-        // 6. SMART DETECTOR & AUTO DOWNLOADER
-        function detectPlatform(url) {
-            const indicator = document.getElementById('platformIndicator');
-            url = url.toLowerCase();
-
-            if (url.includes('instagram.com')) {
-                indicator.innerHTML = '<i class="fa-brands fa-instagram text-pink-500 text-xl"></i>';
-                indicator.className = 'absolute left-4 w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center transition-all';
-            } else if (url.includes('tiktok.com')) {
-                indicator.innerHTML = '<i class="fa-brands fa-tiktok text-cyan-400 text-xl"></i>';
-                indicator.className = 'absolute left-4 w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center transition-all';
-            } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
-                indicator.innerHTML = '<i class="fa-brands fa-youtube text-red-500 text-xl"></i>';
-                indicator.className = 'absolute left-4 w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center transition-all';
-            } else if (url.includes('facebook.com')) {
-                indicator.innerHTML = '<i class="fa-brands fa-facebook text-blue-500 text-xl"></i>';
-                indicator.className = 'absolute left-4 w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center transition-all';
-            } else if (url.includes('snapchat.com')) {
-                indicator.innerHTML = '<i class="fa-brands fa-snapchat text-yellow-400 text-xl"></i>';
-                indicator.className = 'absolute left-4 w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center transition-all';
-            } else {
-                indicator.innerHTML = '<i class="fa-solid fa-globe text-slate-400 text-lg"></i>';
-                indicator.className = 'absolute left-4 w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center transition-all';
-            }
+        function toggleSupportBox() {
+            document.getElementById('supportBox').classList.toggle('hidden');
         }
 
         function processDownload() {
-            const input = document.getElementById('inputUrl').value.trim();
-            if (!input) return showToast('Please enter a valid link!', 'error');
-
-            const pContainer = document.getElementById('progressContainer');
-            const pBar = document.getElementById('progressBar');
-            const pPercent = document.getElementById('progressPercent');
-            const pStatus = document.getElementById('progressStatus');
-
-            pContainer.classList.remove('hidden');
-            let progress = 0;
-
-            const interval = setInterval(() => {
-                progress += Math.floor(Math.random() * 20) + 10;
-                if (progress > 100) progress = 100;
-
-                pBar.style.width = progress + '%';
-                pPercent.textContent = progress + '%';
-
-                if (progress < 40) pStatus.textContent = "Connecting Server...";
-                else if (progress < 85) pStatus.textContent = "Fetching HD Quality File...";
-                else pStatus.textContent = "Preparing Direct Download...";
-
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        pContainer.classList.add('hidden');
-                        pBar.style.width = '0%';
-                        
-                        // Direct sample file download
-                        const sampleLink = document.createElement('a');
-                        sampleLink.href = 'https://www.w3schools.com/html/mov_bbb.mp4';
-                        sampleLink.download = 'ProDown_Media.mp4';
-                        document.body.appendChild(sampleLink);
-                        sampleLink.click();
-                        document.body.removeChild(sampleLink);
-
-                        showToast('Download started successfully!', 'success');
-                    }, 400);
-                }
-            }, 200);
-        }
-
-        function copyText(text) {
-            navigator.clipboard.writeText(text);
-            showToast('Copied to clipboard!', 'success');
-        }
-
-        function pasteClipboard() {
-            navigator.clipboard.readText().then(text => {
-                document.getElementById('inputUrl').value = text;
-                detectPlatform(text);
-                showToast('Pasted link from clipboard!', 'info');
-            });
-        }
-
-        function switchLanguage(lang) {
-            const isRtl = (lang === 'badini' || lang === 'sorani' || lang === 'ar');
-            document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (translations[lang] && translations[lang][key]) el.textContent = translations[lang][key];
-            });
+            const url = document.getElementById('inputUrl').value.trim();
+            if (!url) {
+                alert('Please paste a valid video URL first!');
+                return;
+            }
+            alert('Processing video link: ' + url);
         }
     </script>
 </body>
