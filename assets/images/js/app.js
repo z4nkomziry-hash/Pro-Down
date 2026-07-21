@@ -1,9 +1,8 @@
 /* ==========================================================================
-   ProDown - Main JavaScript Engine
+   ProDown - Main JavaScript Engine (Updated)
    Path: assets/js/app.js
    ========================================================================== */
 
-// --- Toggle Mobile Menu Dropdown ---
 function toggleMobileMenu() {
     const mobileMenu = document.getElementById('mobileMenu');
     if (mobileMenu) {
@@ -11,7 +10,6 @@ function toggleMobileMenu() {
     }
 }
 
-// --- Toggle Support Payment Gateways Box ---
 function toggleSupportBox() {
     const supportBox = document.getElementById('supportBox');
     if (supportBox) {
@@ -19,59 +17,51 @@ function toggleSupportBox() {
     }
 }
 
-// --- Platform Tabs Switcher Logic ---
 function selectTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
-        btn.classList.add('bg-white/5');
+        btn.classList.add('bg-slate-100', 'dark:bg-white/5');
     });
     const activeBtn = document.getElementById('tab-' + tab);
     if (activeBtn) {
         activeBtn.classList.add('active');
-        activeBtn.classList.remove('bg-white/5');
+        activeBtn.classList.remove('bg-slate-100', 'dark:bg-white/5');
     }
 }
 
-// --- iOS / Safari Native Direct Download Trigger ---
-async function triggerDirectDownload(fileUrl, fileName = "video.mp4") {
+// Fixed iOS Safari Direct Blob Downloader
+async function triggerDirectDownload(fileUrl, fileName = "ProDown_video.mp4") {
     const btn = document.getElementById('downloadTriggerBtn');
     if (btn) {
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Preparing Download...';
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Starting Download...';
     }
     
     try {
-        const response = await fetch(fileUrl);
+        const response = await fetch(fileUrl, { mode: 'cors' });
         const blob = await response.blob();
-        
-        // Create anchor element to simulate direct file transfer
         const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
+        link.href = window.URL.createObjectURL(blob);
         link.download = fileName;
         document.body.appendChild(link);
-        
-        // Trigger browser native download pop-up
         link.click();
-        
-        // Clean up object memory
         document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
+        window.URL.revokeObjectURL(link.href);
     } catch (err) {
-        // Fallback: direct window redirect if CORS blocks fetch
-        window.location.href = fileUrl;
+        // Fallback popup if fetch blocked by CORS
+        window.open(fileUrl, '_blank');
     } finally {
         if (btn) {
             btn.innerHTML = `
                 <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-file-arrow-down text-base"></i>
+                    <i class="fa-solid fa-cloud-arrow-down text-base"></i>
                     <span>Download Video</span>
                 </div>
-                <span class="text-[10px] bg-black/30 px-2.5 py-1 rounded-lg">Direct MP4</span>
+                <span class="text-[10px] bg-black/30 px-2.5 py-1 rounded-xl">Direct MP4</span>
             `;
         }
     }
 }
 
-// --- Core Media Extraction Process Engine ---
 async function processDownload() {
     const inputUrlObj = document.getElementById('inputUrl');
     const resultBox = document.getElementById('resultBox');
@@ -87,7 +77,6 @@ async function processDownload() {
         return;
     }
 
-    // UI Loading State
     resultBox.classList.remove('hidden');
     resultTitle.textContent = 'Extracting Media... Please Wait ⏳';
     resultPlatform.textContent = 'ProDown Extraction Engine';
@@ -99,7 +88,7 @@ async function processDownload() {
 
     let downloadUrl = null;
 
-    // Attempt 1: TiklyDown (TikTok Specialized API)
+    // TikTok Direct API
     if (urlInput.includes('tiktok.com')) {
         try {
             const res = await fetch(`https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(urlInput)}`);
@@ -108,11 +97,11 @@ async function processDownload() {
                 downloadUrl = data.video.noWatermark || data.video.watermark;
             }
         } catch (e) {
-            console.log('TiklyDown failed, switching to Cobalt engine...');
+            console.log('TiklyDown fallback...');
         }
     }
 
-    // Attempt 2: Cobalt Engine Primary Proxy
+    // Cobalt Engine Primary Proxy
     if (!downloadUrl) {
         try {
             const res = await fetch('https://co.wuk.sh/api/json', {
@@ -125,45 +114,27 @@ async function processDownload() {
                 downloadUrl = data.url || data.picker[0].url;
             }
         } catch (e) {
-            console.log('Cobalt primary failed, switching to universal fallback...');
+            console.log('Cobalt fallback...');
         }
     }
 
-    // Attempt 3: Universal CORS Fallback Engine
-    if (!downloadUrl) {
-        try {
-            const proxyRes = await fetch(`https://api.cobalt.tools/api/json`, {
-                method: 'POST',
-                headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: urlInput, videoQuality: 'max' })
-            });
-            const data = await proxyRes.json();
-            if (data && (data.url || (data.picker && data.picker[0].url))) {
-                downloadUrl = data.url || data.picker[0].url;
-            }
-        } catch (e) {
-            console.error('All extraction endpoints failed.', e);
-        }
-    }
-
-    // Render Download Options Result
     if (downloadUrl) {
-        resultTitle.textContent = 'Media Extraction Successful! 🎉';
-        resultPlatform.textContent = 'Ready for Direct Download';
+        resultTitle.textContent = 'Media Ready for Download! 🎉';
+        resultPlatform.textContent = 'High Quality No Watermark';
         downloadOptions.innerHTML = `
-            <button id="downloadTriggerBtn" onclick="triggerDirectDownload('${downloadUrl}', 'ProDown_video.mp4')" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-3.5 rounded-xl flex justify-between items-center transition-all shadow-lg orange-glow-btn">
+            <button id="downloadTriggerBtn" onclick="triggerDirectDownload('${downloadUrl}', 'ProDown_${Date.now()}.mp4')" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-3.5 rounded-xl flex justify-between items-center transition-all shadow-lg orange-glow-btn">
                 <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-file-arrow-down text-base"></i>
+                    <i class="fa-solid fa-cloud-arrow-down text-base"></i>
                     <span>Download Video</span>
                 </div>
-                <span class="text-[10px] bg-black/30 px-2.5 py-1 rounded-lg">Direct MP4</span>
+                <span class="text-[10px] bg-black/30 px-2.5 py-1 rounded-xl text-white">Direct MP4</span>
             </button>
         `;
     } else {
         resultTitle.textContent = 'Unable to Extract Link ⚠️';
         resultPlatform.textContent = 'Verification Failed';
         downloadOptions.innerHTML = `
-            <p class="text-slate-400 text-xs text-center py-2">
+            <p class="text-slate-500 dark:text-slate-400 text-xs text-center py-2">
                 Please verify the URL is public and valid, then try again.
             </p>
         `;
