@@ -1,123 +1,66 @@
 import os
-import time
 import telebot
-from telebot.types import CallbackQuery
-from config import Config
-from ui_templates import UITemplates
-from media_engine import MediaEngine
-from analytics import analytics_system
+import yt_dlp
 
-# Initialize Telegram Bot with High-Performance Settings
-bot = telebot.TeleBot(Config.BOT_TOKEN, parse_mode='Markdown', threaded=True, num_threads=Config.MAX_THREADS)
-
-print("=" * 60)
-print("🚀 PRO-DOWN ENTERPRISE ENGINE v3.0 IS STARTING...")
-print(f"🔑 BOT TOKEN: {Config.BOT_TOKEN[:10]}...[PROTECTED]")
-print("🌐 TARGET ENDPOINT: https://pro-down.vercel.app")
-print("=" * 60)
-
-# ---------------------------------------------------------
-# COMMAND HANDLERS
-# ---------------------------------------------------------
+TOKEN = '8918824536:AAHqEEL34NC-hQ-fNOwN84mvuz3uDy0E_VA'
+bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start', 'help'])
-def handle_start(message):
-    first_name = message.from_user.first_name or "بەکارهێنەر"
-    text = UITemplates.welcome_message(first_name)
-    markup = UITemplates.main_keyboard()
-    bot.reply_to(message, text, reply_markup=markup, disable_web_page_preview=True)
-
-@bot.message_handler(commands=['stats'])
-def handle_stats(message):
-    stats = analytics_system.get_stats()
-    text = (
-        "📊 **ئامارێن زندی یێن سێرڤەرێ Pro-Down Enterprise:**\n\n"
-        f"⚡ **حاڵەتێ سێرڤەری:** `{stats['status']}`\n"
-        f"📥 **تۆتالی داگرتنان:** `{stats['total_downloads']:,}`\n"
-        f"👥 **بەکارهێنەرێن چالاک:** `{stats['active_users_count']}`\n"
-        f"🌐 **خێرایی سێرڤەری:** `10 Gbps Direct Fiber`"
+def send_welcome(message):
+    welcome_text = (
+        "🌟 **بەخێربهێی بۆ Pro-Down Downloader Bot!**\n\n"
+        "لینکێ هەرمیدیا و ڤیدیۆیەکێ ژ (Instagram, TikTok, YouTube, Facebook...) فرێبکە "
+        "دا ڕاستەوخۆ فایلا ڤیدیۆیێ بۆ تە بنێرم! 🚀"
     )
-    bot.reply_to(message, text)
-
-# ---------------------------------------------------------
-# CALLBACK QUERY HANDLERS (Inline Buttons)
-# ---------------------------------------------------------
-
-@bot.callback_query_handler(func=lambda call: True)
-def handle_callback(call: CallbackQuery):
-    if call.data == "refresh_status":
-        bot.answer_callback_query(call.id, "✅ سیستم نوو بووەوە!", show_alert=False)
-    elif call.data == "server_stats":
-        stats = analytics_system.get_stats()
-        alert_text = f"📊 داگرتنێن گشتی: {stats['total_downloads']:,}\n⚡ سێرڤەر: 100% Active"
-        bot.answer_callback_query(call.id, alert_text, show_alert=True)
-    elif call.data == "activate_vip":
-        vip_text = "🔑 برایێ هێژا! بۆ وەرگرتنا کلیلا VIP سەردانا مالپەڕێ مە ب کە:\n🌐 https://pro-down.vercel.app"
-        bot.send_message(call.message.chat.id, vip_text)
-
-# ---------------------------------------------------------
-# MEDIA PROCESSOR (Core Engine Logic)
-# ---------------------------------------------------------
+    bot.reply_to(message, welcome_text, parse_mode='Markdown')
 
 @bot.message_handler(func=lambda message: True)
-def handle_media_requests(message):
-    user_id = message.from_user.id
-    user_text = message.text.strip()
+def download_and_send_video(message):
+    url = message.text.strip()
     
-    # 1. Rate Limiting Control
-    if not analytics_system.check_rate_limit(user_id):
-        bot.reply_to(message, "⚠️ **ئاگاداری:** سپام مەکە! تکایە چەند چڕۆکەکا بپێشە بەری فرێکرنا لینکێ دی.")
+    # Validating simple link format
+    if not (url.startswith("http://") or url.startswith("https://")):
+        bot.reply_to(message, "⚠️ تکایە لینکەکێ دروست بنێرە!")
         return
 
-    # 2. Extract Platform Metadata
-    platform = MediaEngine.detect_platform(user_text)
+    status_msg = bot.reply_to(message, "⏳ **فایلا تە د ئامادەکرنێ دایە... تکایە بپێشە...**")
     
-    if platform != "unknown":
-        # Send Initial Processing Message
-        proc_msg = bot.reply_to(
-            message, 
-            UITemplates.processing_message(platform), 
-            disable_web_page_preview=True
-        )
-        
-        # Simulate Processing Delay for High Quality Render
-        time.sleep(1.5)
-        
-        # Final Success Direct Response
-        success_text = (
-            f"🎉 **فایلا تە ژ {platform.upper()} ب سەرکەفتنی هاتە ئامادەکرن!**\n\n"
-            "🎥 **کوالێتی:** Ultra HD 8K (No Watermark)\n"
-            "🔊 **دەنگ:** Dolby Atmos 320kbps\n\n"
-            "📥 **بۆ داگرتنا خێرا و ئۆتۆماتیکی کلیک ل سەر لینکێ خوارێ بکە:**\n"
-            f"🌐 {Config.WEBSITE_URL}\n\n"
-            "✨ *دەلینکا ل سەرێ داگرتن د خولەکەکێ دا ئەنجام دبیت!*"
-        )
-        
-        bot.edit_message_text(
-            chat_id=message.chat.id, 
-            message_id=proc_msg.message_id, 
-            text=success_text,
-            reply_markup=UITemplates.main_keyboard(),
-            disable_web_page_preview=True
-        )
-    else:
-        # Invalid Input Handling
-        error_text = (
-            "❌ **لینکێ نەناسیار یان نەیا دروستە!**\n\n"
-            "تکایە لینکەکێ ڕاست ژ ڤان تۆڕان بنێرە:\n"
-            "📸 Instagram | 🎵 TikTok | 🔴 YouTube | 👻 Snapchat | 📘 Facebook | 🐦 Twitter | 📌 Pinterest\n\n"
-            "🌐 یان ڕاستەوخۆ سەرەدانا وێبسایتی ب کە:\n"
-            "🔗 https://pro-down.vercel.app"
-        )
-        bot.reply_to(message, error_text, disable_web_page_preview=True)
+    file_path = f"video_{message.chat.id}.mp4"
 
-# ---------------------------------------------------------
-# BOT ENGINE LAUNCHER
-# ---------------------------------------------------------
+    # Options for yt-dlp direct video download
+    ydl_opts = {
+        'format': 'best',
+        'outtmpl': file_path,
+        'quiet': True,
+        'no_warnings': True,
+    }
 
-if __name__ == '__main__':
     try:
-        print("✅ PRO-DOWN BOT IS NOW ONLINE AND POLLING 24/7...")
-        bot.infinity_polling(timeout=20, long_polling_timeout=10)
+        # Download the media using yt-dlp
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+
+        # Send the downloaded video file to Telegram Chat
+        with open(file_path, 'rb') as video:
+            bot.send_video(
+                message.chat.id, 
+                video, 
+                caption="🎉 **فایلا تە ب سەرکەفتنی هاتە داگرتن!**\n🌐 https://pro-down.vercel.app"
+            )
+
+        # Delete processing message & delete file from server
+        bot.delete_message(message.chat.id, status_msg.message_id)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
     except Exception as e:
-        print(f"❌ CRITICAL ENGINE ERROR: {e}")
+        bot.edit_message_text(
+            f"❌ **ئاریشەیەک د داگرتنێ دا چێبوو!**\n\nدکرێت لینک تایبەت (Private) بێت یان مافێ پاراستنێ هەبێت.\nئاریشە: `{str(e)[:100]}`", 
+            chat_id=message.chat.id, 
+            message_id=status_msg.message_id
+        )
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+print("🚀 Direct Video Downloader Engine Active...")
+bot.infinity_polling()
