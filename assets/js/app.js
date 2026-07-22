@@ -252,32 +252,79 @@ async function fetchTiklyDown(url) {
     return null;
 }
 
-// ── Engine: Cobalt (all platforms — tries multiple public instances) ────────
+/* ── CORS Proxy helper — wraps a URL through available proxies ──────────── */
+async function fetchViaProxy(targetUrl, timeoutMs = 10000) {
+    const proxies = [
+        `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`,
+        `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
+    ];
+    for (const p of proxies) {
+        try {
+            const r = await fetch(p, { signal: AbortSignal.timeout(timeoutMs) });
+            if (!r.ok) continue;
+            const ct = r.headers.get('content-type') || '';
+            if (ct.includes('application/json')) {
+                const d = await r.json();
+                // allorigins wraps in { contents, status }; corsproxy returns raw
+                return d?.contents !== undefined ? d.contents : JSON.stringify(d);
+            }
+            return await r.text();
+        } catch (_) {}
+    }
+    return null;
+}
+
+/* ── Parse raw content — tries JSON then returns string ─────────────────── */
+function tryParseJson(raw) {
+    if (typeof raw !== 'string') return raw;
+    try { return JSON.parse(raw); } catch (_) { return null; }
+}
+
+// ── Engine: Cobalt v7+ (all platforms — fixed API format) ─────────────────
 async function fetchCobalt(url) {
     const instances = [
         'https://api.cobalt.tools/',
         'https://cobalt.api.timelessnesses.me/',
-        'https://co.wuk.sh/api/json'
+        'https://cobalt-api.kkili.com/',
+        'https://cobalt.api.lostdomain.org/',
     ];
+    const body = JSON.stringify({
+        url,
+        videoQuality:  '1080',   // v7+ requires numeric string, not 'max'
+        downloadMode:  'auto',   // required in v7+
+        filenameStyle: 'pretty',
+        audioFormat:   'best',
+        tiktokH265:    false,
+        twitterGif:    false,
+    });
     for (const ep of instances) {
         try {
             const r = await fetch(ep, {
-                method: 'POST',
+                method:  'POST',
                 headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url, videoQuality: 'max', filenameStyle: 'pretty' }),
-                signal: AbortSignal.timeout(10000)
+                body,
+                signal:  AbortSignal.timeout(12000)
             });
             if (!r.ok) continue;
             const d = await r.json();
+            // v7+ always has d.status; skip errors
+            if (!d || d.status === 'error' || d.error) continue;
             const results = [];
-            const videoUrl = sanitizeDownloadUrl(d?.url);
-            const audioUrl = sanitizeDownloadUrl(d?.audio);
-            if (videoUrl) results.push({ url: videoUrl, label: 'Download HD Video',  quality: 'HD',  type: 'video' });
+            // status: redirect | tunnel | stream → d.url is the media URL
+            const videoUrl = sanitizeDownloadUrl(d.url);
+            if (videoUrl) results.push({ url: videoUrl, label: 'Download HD Video', quality: '1080p', type: 'video' });
+            const audioUrl = sanitizeDownloadUrl(d.audio);
             if (audioUrl) results.push({ url: audioUrl, label: 'Download MP3 Audio', quality: 'MP3', type: 'audio' });
-            if (Array.isArray(d?.picker)) {
-                d.picker.slice(0, 3).forEach((p, i) => {
+            // status: picker → d.picker[] (carousel / multi-image posts)
+            if (Array.isArray(d.picker)) {
+                d.picker.slice(0, 6).forEach((p, i) => {
                     const pUrl = sanitizeDownloadUrl(p?.url);
-                    if (pUrl) results.push({ url: pUrl, label: `Download Option ${i + 1}`, quality: 'HD', type: p.type === 'audio' ? 'audio' : 'video' });
+                    if (pUrl) results.push({
+                        url: pUrl,
+                        label: `Download ${p.type === 'photo' ? 'Photo' : 'Video'} ${i + 1}`,
+                        quality: 'HD',
+                        type: 'video'
+                    });
                 });
             }
             if (results.length) return results;
@@ -286,41 +333,189 @@ async function fetchCobalt(url) {
     return null;
 }
 
-// ── Engine: InstaFinsta (Instagram fallback) ───────────────────────────────
-async function fetchInstaFinsta(url) {
+// ── Engine: SnapInst (Instagram — dedicated API, via proxy) ───────────────
+async function fetchSnapInst(url) {
     try {
-        const api = `https://instafinsta.com/api/download?url=${encodeURIComponent(url)}`;
-        const r = await fetch(api, { signal: AbortSignal.timeout(8000) });
-        if (!r.ok) return null;
-        const d = await r.json();
-        const dlUrl = sanitizeDownloadUrl(d?.data?.url || d?.url);
-        return dlUrl ? [{ url: dlUrl, label: 'Download Reel', quality: 'HD', type: 'video' }] : null;
+        const raw = await fetchViaProxy(
+            `https://snapinst.app/api/?url=${encodeURIComponent(url)}&lang=en`, 11000
+        );
+        if (!raw) return null;
+        const d = tryParseJson(raw);
+        if (!d) return null;
+        const results = [];
+        const items = Array.isArray(d) ? d
+            : Array.isArray(d?.data) ? d.data
+            : d?.url ? [d] : [];
+        items.slice(0, 6).forEach((item, i) => {
+            const dlUrl = sanitizeDownloadUrl(item?.url || item?.download_url || item?.link);
+            if (dlUrl) results.push({
+                url: dlUrl, label: i === 0 ? 'Download Reel HD' : `Download Item ${i + 1}`,
+                quality: 'HD', type: item?.type === 'image' ? 'video' : 'video'
+            });
+        });
+        if (!results.length) {
+            const single = sanitizeDownloadUrl(d?.url || d?.link);
+            if (single) results.push({ url: single, label: 'Download Reel', quality: 'HD', type: 'video' });
+        }
+        return results.length ? results : null;
     } catch (_) { return null; }
 }
 
-// ── Engine: SaveFrom (YouTube / Facebook fallback) ─────────────────────────
-async function fetchSaveFrom(url) {
+// ── Engine: IgramWorld (Instagram fallback) ────────────────────────────────
+async function fetchIgram(url) {
     try {
-        const r = await fetch(`https://worker.saveform.net/api/info?url=${encodeURIComponent(url)}`, { signal: AbortSignal.timeout(8000) });
-        if (!r.ok) return null;
-        const d = await r.json();
-        const dlUrl = sanitizeDownloadUrl(d?.url?.[0]?.url);
-        if (!dlUrl) return null;
-        const ext  = sanitizeText(d.url[0].ext, 8).toUpperCase() || 'Video';
-        const qual = sanitizeText(d.url[0].quality, 8) || 'HD';
-        return [{ url: dlUrl, label: `Download ${ext}`, quality: qual, type: 'video' }];
+        const raw = await fetchViaProxy(
+            `https://igram.world/api/convert?url=${encodeURIComponent(url)}`, 11000
+        );
+        if (!raw) return null;
+        const d = tryParseJson(raw);
+        if (!d) return null;
+        const results = [];
+        const items = Array.isArray(d) ? d : (d?.media ? d.media : []);
+        items.slice(0, 4).forEach((item, i) => {
+            const dlUrl = sanitizeDownloadUrl(item?.url || item?.src);
+            if (dlUrl) results.push({ url: dlUrl, label: `Download ${i === 0 ? 'Reel' : 'Item ' + (i + 1)}`, quality: item?.quality || 'HD', type: 'video' });
+        });
+        if (!results.length) {
+            const solo = sanitizeDownloadUrl(d?.url || d?.download_url);
+            if (solo) results.push({ url: solo, label: 'Download Reel', quality: 'HD', type: 'video' });
+        }
+        return results.length ? results : null;
     } catch (_) { return null; }
 }
 
-// ── Engine: SnapSave (Snapchat) ────────────────────────────────────────────
+// ── Engine: FbSave (Facebook — dedicated fallback) ─────────────────────────
+async function fetchFbSave(url) {
+    // fdown.net accepts a POST with the Facebook URL and returns JSON with hd/sd links
+    try {
+        const formData = `URLz=${encodeURIComponent(url)}`;
+        const raw = await fetchViaProxy(
+            `https://fdown.net/download.php?${formData}`, 11000
+        );
+        if (!raw) return null;
+        const d = tryParseJson(raw);
+        if (!d) {
+            // Might return HTML — look for MP4 hrefs
+            const m = String(raw).match(/href="(https:\/\/[^"]+\.mp4[^"]*?)"/i);
+            if (m) {
+                const u = sanitizeDownloadUrl(m[1]);
+                if (u) return [{ url: u, label: 'Download Facebook Video', quality: 'HD', type: 'video' }];
+            }
+            return null;
+        }
+        const results = [];
+        const hd = sanitizeDownloadUrl(d?.hd || d?.hd_url || d?.hd_link);
+        const sd = sanitizeDownloadUrl(d?.sd || d?.sd_url || d?.sd_link || d?.url);
+        if (hd) results.push({ url: hd, label: 'Download HD Video', quality: 'HD', type: 'video' });
+        if (sd) results.push({ url: sd, label: 'Download SD Video', quality: 'SD', type: 'video' });
+        return results.length ? results : null;
+    } catch (_) { return null; }
+}
+
+// ── Engine: GetFVid (Facebook fallback #2) ─────────────────────────────────
+async function fetchGetFVid(url) {
+    try {
+        const raw = await fetchViaProxy(
+            `https://getfvid.com/downloader?url=${encodeURIComponent(url)}`, 11000
+        );
+        if (!raw) return null;
+        // HTML response — scan for mp4 hrefs
+        const text = String(raw);
+        const hdMatch = text.match(/href="(https:\/\/[^"]+)"[^>]*>.*?HD/i);
+        const sdMatch = text.match(/href="(https:\/\/[^"]+)"[^>]*>.*?SD/i);
+        const anyMatch = text.match(/href="(https:\/\/[^"]+\.mp4[^"]*?)"/i);
+        const results = [];
+        const hd = hdMatch ? sanitizeDownloadUrl(hdMatch[1]) : null;
+        const sd = sdMatch ? sanitizeDownloadUrl(sdMatch[1]) : null;
+        const any = anyMatch ? sanitizeDownloadUrl(anyMatch[1]) : null;
+        if (hd) results.push({ url: hd, label: 'Download HD Video', quality: 'HD', type: 'video' });
+        if (sd && sd !== hd) results.push({ url: sd, label: 'Download SD Video', quality: 'SD', type: 'video' });
+        if (!results.length && any) results.push({ url: any, label: 'Download Video', quality: 'HD', type: 'video' });
+        return results.length ? results : null;
+    } catch (_) { return null; }
+}
+
+// ── Engine: YtLoader (YouTube fallback — loader.to API) ───────────────────
+async function fetchYtLoader(url) {
+    try {
+        const raw = await fetchViaProxy(
+            `https://loader.to/api/button/?url=${encodeURIComponent(url)}&f=mp4`, 11000
+        );
+        if (!raw) return null;
+        const d = tryParseJson(raw);
+        if (!d) return null;
+        const dlUrl = sanitizeDownloadUrl(d?.url || d?.download_url || d?.link);
+        return dlUrl ? [{ url: dlUrl, label: 'Download YouTube Video MP4', quality: '720p', type: 'video' }] : null;
+    } catch (_) { return null; }
+}
+
+// ── Engine: YtMate (YouTube fallback — y2mate API) ─────────────────────────
+async function fetchYtMate(url) {
+    // y2mate uses a 2-step flow: analyse → download link
+    try {
+        const step1Raw = await fetchViaProxy(
+            `https://www.y2mate.guru/api/ajaxSearch?url=${encodeURIComponent(url)}&q_auto=0&ajax=1`, 11000
+        );
+        if (!step1Raw) return null;
+        const step1 = tryParseJson(step1Raw);
+        if (!step1 || !step1.vid) return null;
+        const vid = sanitizeText(step1.vid, 20);
+        const step2Raw = await fetchViaProxy(
+            `https://www.y2mate.guru/api/ajaxConvert?vid=${vid}&type=mp4&quality=720`, 11000
+        );
+        if (!step2Raw) return null;
+        const step2 = tryParseJson(step2Raw);
+        const dlUrl = sanitizeDownloadUrl(step2?.dlink || step2?.url);
+        return dlUrl ? [{ url: dlUrl, label: 'Download YouTube Video 720p', quality: '720p', type: 'video' }] : null;
+    } catch (_) { return null; }
+}
+
+// ── Engine: SnapSave (Snapchat — direct + proxy + multi-pattern parser) ────
 async function fetchSnapSave(url) {
+    const apiUrl = `https://snapsave.app/action.php?lang=en&url=${encodeURIComponent(url)}`;
+    let text = null;
+
+    // Try direct first (sometimes CORS works for this endpoint)
     try {
-        const r = await fetch(`https://snapsave.app/action.php?lang=en&url=${encodeURIComponent(url)}`, { signal: AbortSignal.timeout(8000) });
-        if (!r.ok) return null;
-        const text = await r.text();
-        const match = text.match(/href="(https:\/\/[^"]+\.mp4[^"]*?)"/i);
-        const dlUrl = match ? sanitizeDownloadUrl(match[1]) : null;
-        return dlUrl ? [{ url: dlUrl, label: 'Download Spotlight', quality: 'HD', type: 'video' }] : null;
+        const r = await fetch(apiUrl, { signal: AbortSignal.timeout(8000) });
+        if (r.ok) text = await r.text();
+    } catch (_) {}
+
+    // Fallback: route through CORS proxy
+    if (!text) {
+        text = await fetchViaProxy(apiUrl, 11000);
+    }
+
+    if (!text || typeof text !== 'string') return null;
+
+    // Multiple regex patterns covering different response shapes
+    const patterns = [
+        /href=["'](https:\/\/[^"']+\.mp4[^"']*?)["']/gi,
+        /src=["'](https:\/\/[^"']+\.mp4[^"']*?)["']/gi,
+        /"url"\s*:\s*["'](https:\/\/[^"']+)["']/gi,
+        /"download"\s*:\s*["'](https:\/\/[^"']+)["']/gi,
+    ];
+    for (const pat of patterns) {
+        const matches = [...text.matchAll(pat)];
+        if (matches.length) {
+            const dlUrl = sanitizeDownloadUrl(matches[0][1]);
+            if (dlUrl) return [{ url: dlUrl, label: 'Download Spotlight', quality: 'HD', type: 'video' }];
+        }
+    }
+    return null;
+}
+
+// ── Engine: SnapDownloader (Snapchat fallback) ─────────────────────────────
+async function fetchSnapDownloader(url) {
+    try {
+        const raw = await fetchViaProxy(
+            `https://snapdownloader.app/api/download?url=${encodeURIComponent(url)}`, 11000
+        );
+        if (!raw) return null;
+        const d = tryParseJson(raw);
+        if (!d) return null;
+        const dlUrl = sanitizeDownloadUrl(d?.url || d?.download || d?.link);
+        return dlUrl ? [{ url: dlUrl, label: 'Download Snap Video', quality: 'HD', type: 'video' }] : null;
     } catch (_) { return null; }
 }
 
@@ -400,34 +595,42 @@ async function processDownload() {
 
     let results = null;
     try {
-        // ── Priority 2: Parallel Engine Racing per platform ──────────────
+        // ── Parallel Engine Racing — all engines fire simultaneously ─────
+        // Timeout raised to 8 s so proxy-wrapped engines have time to respond.
         if (platform.key === 'tt') {
             results = await raceEngines([
                 () => fetchTikWM(workingUrl),
                 () => fetchTiklyDown(workingUrl),
-                () => fetchCobalt(workingUrl)
-            ], 4000);
+                () => fetchCobalt(workingUrl),
+            ], 8000);
+        } else if (platform.key === 'ig') {
+            // Instagram: Cobalt (carousel-aware) + SnapInst + IgramWorld
+            results = await raceEngines([
+                () => fetchCobalt(workingUrl),
+                () => fetchSnapInst(workingUrl),
+                () => fetchIgram(workingUrl),
+            ], 8000);
+        } else if (platform.key === 'fb') {
+            // Facebook: Cobalt + fdown.net + getfvid.com
+            results = await raceEngines([
+                () => fetchCobalt(workingUrl),
+                () => fetchFbSave(workingUrl),
+                () => fetchGetFVid(workingUrl),
+            ], 8000);
+        } else if (platform.key === 'yt') {
+            // YouTube: Cobalt + loader.to + y2mate
+            results = await raceEngines([
+                () => fetchCobalt(workingUrl),
+                () => fetchYtLoader(workingUrl),
+                () => fetchYtMate(workingUrl),
+            ], 8000);
         } else if (platform.key === 'snap') {
+            // Snapchat: SnapSave (direct+proxy) + snapdownloader + Cobalt
             results = await raceEngines([
                 () => fetchSnapSave(workingUrl),
-                () => fetchCobalt(workingUrl)
-            ], 4000);
-        } else if (platform.key === 'yt') {
-            results = await raceEngines([
+                () => fetchSnapDownloader(workingUrl),
                 () => fetchCobalt(workingUrl),
-                () => fetchSaveFrom(workingUrl)
-            ], 4000);
-        } else if (platform.key === 'fb') {
-            results = await raceEngines([
-                () => fetchCobalt(workingUrl),
-                () => fetchSaveFrom(workingUrl)
-            ], 4000);
-        } else {
-            // Instagram
-            results = await raceEngines([
-                () => fetchCobalt(workingUrl),
-                () => fetchInstaFinsta(workingUrl)
-            ], 4000);
+            ], 8000);
         }
         setProgress(85);
     } catch (err) {
