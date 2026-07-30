@@ -74,6 +74,12 @@ app.get('/', (req, res) => {
     res.send('ProDown Backend API Server is running smoothly! 🚀');
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Export app for Vercel Serverless Environments
+module.exports = app;
+
+// Run stand-alone server locally (Only if not running on Vercel)
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server running locally on port ${PORT}`);
+    });
+}
