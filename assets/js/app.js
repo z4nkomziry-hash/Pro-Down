@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ProDown - Engine v3.0 (i18n + LocalStorage + Expanded Platforms)
+   ProDown - Engine v3.1 (Real API Integration & Direct Video Download)
    ========================================================================== */
 
 // ── Translation Dictionaries ──────────────────────────────────────────────
@@ -113,11 +113,9 @@ function initAppLanguage() {
     const modal = document.getElementById('onboardingModal');
 
     if (!savedLang) {
-        // First time visit -> Show onboarding modal
         if (modal) modal.classList.remove('hidden');
-        applyLanguage('en'); // Default initial view is English
+        applyLanguage('en');
     } else {
-        // Returning user -> Hide modal and load saved language
         if (modal) modal.classList.add('hidden');
         applyLanguage(savedLang);
     }
@@ -131,7 +129,6 @@ function goToLangStep() {
 function setAppLanguage(langKey) {
     localStorage.setItem(LANG_STORAGE_KEY, langKey);
     applyLanguage(langKey);
-    
     const modal = document.getElementById('onboardingModal');
     if (modal) modal.classList.add('hidden');
 }
@@ -141,22 +138,19 @@ function applyLanguage(lang) {
     document.documentElement.lang = lang === 'ku_bad' || lang === 'ku_sor' ? 'ku' : 'en';
     document.documentElement.dir = dict.dir;
 
-    // Sync header dropdown
     const select = document.getElementById('langSelectHeader');
     if (select) select.value = lang;
 
-    // Update text elements with data-i18n
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (dict[key]) el.textContent = dict[key];
     });
 
-    // Update placeholder
     const input = document.getElementById('inputUrl');
     if (input) input.placeholder = dict.placeholderAll;
 }
 
-// ── Alert Toast ─────────────────────────────────────────────────────────
+// ── Alert Toast & Progress ───────────────────────────────────────────────
 function showAlert(msg, type = 'info') {
     const toast = document.getElementById('alertToast');
     if (!toast) return;
@@ -180,17 +174,9 @@ function setProgress(pct) {
     fill.style.width = pct + '%';
 }
 
-function toggleMobileMenu() {
-    document.getElementById('mobileMenu')?.classList.toggle('hidden');
-}
-
-function toggleSupportBox() {
-    document.getElementById('supportBox')?.classList.toggle('hidden');
-}
-
-function toggleShareMenu() {
-    document.getElementById('shareMenu')?.classList.toggle('hidden');
-}
+function toggleMobileMenu() { document.getElementById('mobileMenu')?.classList.toggle('hidden'); }
+function toggleSupportBox() { document.getElementById('supportBox')?.classList.toggle('hidden'); }
+function toggleShareMenu() { document.getElementById('shareMenu')?.classList.toggle('hidden'); }
 
 function selectTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -210,38 +196,7 @@ function detectPlatform(url) {
     return null;
 }
 
-// ── DOM Setup ───────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-    initAppLanguage();
-
-    const input = document.getElementById('inputUrl');
-    if (input) {
-        input.addEventListener('input', () => {
-            const val = input.value.trim();
-            if (!val) return;
-            const p = detectPlatform(val);
-            if (p) selectTab(p.key);
-        });
-
-        input.addEventListener('focus', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                if (text && !input.value && /https?:\/\//i.test(text)) {
-                    input.value = text;
-                    showAlert('Link pasted!', 'info');
-                    const p = detectPlatform(text);
-                    if (p) selectTab(p.key);
-                }
-            } catch (_) {}
-        });
-
-        input.addEventListener('keydown', e => { if (e.key === 'Enter') processDownload(); });
-    }
-
-    renderHistory();
-});
-
-// ── Download Logic ──────────────────────────────────────────────────────
+// ── REAL DOWNLOAD PROCESSING (API CALL) ──────────────────────────────────
 async function processDownload() {
     const inputEl = document.getElementById('inputUrl');
     const resultBox = document.getElementById('resultBox');
@@ -250,40 +205,69 @@ async function processDownload() {
     const dlOptions = document.getElementById('downloadOptions');
 
     if (!inputEl || !inputEl.value.trim()) {
-        showAlert('Please paste a link or username first.', 'warn');
+        showAlert('تکایە سەرەتا لینک یان ناوی بەکارهێنەر پەیست بکە.', 'warn');
         return;
     }
 
-    const val = inputEl.value.trim();
+    const targetUrl = inputEl.value.trim();
     resultBox.classList.remove('hidden');
-    resultTitle.textContent = 'Extracting media...';
-    resultPlatform.textContent = 'ProDown Multi-Engine';
-    dlOptions.innerHTML = '<div class="skeleton h-10 rounded-xl w-full"></div>';
-    setProgress(30);
+    resultTitle.textContent = 'چاوەڕێ بە، دەرهێنانی لینکەکە بەردەوامە...';
+    resultPlatform.textContent = 'ProDown Extraction Engine';
+    dlOptions.innerHTML = '<div class="skeleton h-12 rounded-xl w-full"></div>';
+    setProgress(40);
 
-    // Simulated Extraction Engine Response
-    setTimeout(() => {
+    try {
+        // بەکارهێنانی API سەربەخۆ بۆ دەرهێنانی لینکی ڕاستەوخۆ
+        const apiUrl = `https://api.cobalt.tools/api/json`;
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                url: targetUrl,
+                vCodec: 'h264',
+                downloadMode: 'auto'
+            })
+        });
+
+        const data = await response.json();
         setProgress(100);
-        setTimeout(() => setProgress(null), 500);
+        setTimeout(() => setProgress(null), 400);
 
-        const platform = detectPlatform(val) || { label: 'Social Media' };
-        resultTitle.textContent = '✅ Media Ready!';
-        resultPlatform.textContent = `${platform.label} • High Quality • No Watermark`;
+        if (data && data.url) {
+            const platform = detectPlatform(targetUrl) || { label: 'Social Media' };
+            resultTitle.textContent = '✅ فایلەکە ئامادەیە برای بەڕێز!';
+            resultPlatform.textContent = `${platform.label} • کوالێتی بەرزی HD • بە بێ واتەرمارک`;
 
+            // دروستکردنی دوگمەی داونلۆدکردنی ڕاستەقینە
+            dlOptions.innerHTML = `
+                <a href="${data.url}" download target="_blank" rel="noopener" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold p-3.5 rounded-xl flex justify-between items-center orange-glow-btn shadow-lg">
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-download"></i> داونلۆدکردنی ڤیدیۆ HD (داگرتن)</span>
+                    <span class="text-[10px] bg-black/40 px-2 py-1 rounded-lg">MP4</span>
+                </a>
+            `;
+
+            saveToHistory({ url: targetUrl, platform: platform.label, timestamp: Date.now() });
+            renderHistory();
+        } else {
+            throw new Error("Unable to fetch video source");
+        }
+
+    } catch (err) {
+        setProgress(null);
+        resultTitle.textContent = '❌ کێشەیەک ڕوویدا!';
+        resultPlatform.textContent = 'تکایە دڵنیابەوە لەوەی ئەکاونتەکە گشتییە (Public) یان لینکەکە دروستە.';
+        
+        // لە حاڵەتی هەڵەدا، لینکی یارمەتیدەر پیشان دەدات
         dlOptions.innerHTML = `
-            <a href="${val}" target="_blank" rel="noopener" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold p-3.5 rounded-xl flex justify-between items-center orange-glow-btn shadow-lg">
-                <span class="flex items-center gap-2"><i class="fa-solid fa-cloud-arrow-down"></i> Download Video / Story HD</span>
-                <span class="text-[10px] bg-black/30 px-2 py-1 rounded-lg">HD MP4</span>
-            </a>
-            <a href="${val}" target="_blank" rel="noopener" class="w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold p-3.5 rounded-xl flex justify-between items-center orange-glow-btn shadow-lg">
-                <span class="flex items-center gap-2"><i class="fa-solid fa-music"></i> Download Audio MP3</span>
-                <span class="text-[10px] bg-black/30 px-2 py-1 rounded-lg">MP3</span>
+            <a href="https://savefrom.net/${targetUrl}" target="_blank" rel="noopener" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold p-3.5 rounded-xl flex justify-between items-center shadow-lg transition-all">
+                <span class="flex items-center gap-2"><i class="fa-solid fa-arrow-up-right-from-square"></i> تاقیکردنەوە لە ڕێگەی دەرهێنەری ئەڵتەرنەتیڤ</span>
+                <span class="text-[10px] bg-orange-500 px-2 py-1 rounded-lg">Alternative</span>
             </a>
         `;
-
-        saveToHistory({ url: val, platform: platform.label, timestamp: Date.now() });
-        renderHistory();
-    }, 1200);
+    }
 }
 
 // ── History Management ──────────────────────────────────────────────────
@@ -303,7 +287,7 @@ function loadHistory() {
 function clearHistory() {
     localStorage.removeItem(HISTORY_KEY);
     renderHistory();
-    showAlert('History cleared!', 'info');
+    showAlert('مێژووی داونلۆدەکان سڕایەوە!', 'info');
 }
 
 function renderHistory() {
@@ -332,3 +316,34 @@ function renderHistory() {
         list.appendChild(div);
     });
 }
+
+// ── DOM Setup ───────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    initAppLanguage();
+
+    const input = document.getElementById('inputUrl');
+    if (input) {
+        input.addEventListener('input', () => {
+            const val = input.value.trim();
+            if (!val) return;
+            const p = detectPlatform(val);
+            if (p) selectTab(p.key);
+        });
+
+        input.addEventListener('focus', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text && !input.value && /https?:\/\//i.test(text)) {
+                    input.value = text;
+                    showAlert('لینکەکە کۆپی کرا!', 'info');
+                    const p = detectPlatform(text);
+                    if (p) selectTab(p.key);
+                }
+            } catch (_) {}
+        });
+
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') processDownload(); });
+    }
+
+    renderHistory();
+});
