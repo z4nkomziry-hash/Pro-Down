@@ -2,6 +2,10 @@
    ProDown - Multi-API & Native System Downloader v6.0 (Fixed & Updated)
    ========================================================================== */
 
+// ── Backend Config ────────────────────────────────────────────────────────
+// ⚠️ ل شوێنا ئەڤی لینکی، لینکی سێرڤەرێ خۆ یێ Render یان Local (http://localhost:5000/api/download) دابنێ
+const BACKEND_API_URL = 'http://localhost:5000/api/download';
+
 // ── Translation Dictionaries ──────────────────────────────────────────────
 const i18nData = {
     en: {
@@ -227,9 +231,27 @@ async function triggerNativeDownload(mediaUrl, filename) {
     }
 }
 
-// ── MULTI-SERVER API FETCH ENGINE (Cobalt v10 + Fallbacks) ────────────────
+// ── MULTI-SERVER API FETCH ENGINE (Node.js Backend + Fallbacks) ───────────
 async function fetchDirectStreamUrl(targetUrl) {
-    // 1st Engine: Cobalt v10 Modern Public API Instance
+    // 01. Node.js Backend API Call (Handles CORS & Pro Engine)
+    try {
+        const res = await fetch(BACKEND_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: targetUrl })
+        });
+        
+        if (res.ok) {
+            const data = await res.json();
+            if (data && data.success && data.downloadUrl) {
+                return data.downloadUrl;
+            }
+        }
+    } catch (err) {
+        console.warn('Backend server unreachable, trying public fallback engines...', err);
+    }
+
+    // 02. Fallback Engine 1: Cobalt Public Instance
     try {
         const res = await fetch('https://co.wuk.sh/api/json', {
             method: 'POST',
@@ -241,7 +263,7 @@ async function fetchDirectStreamUrl(targetUrl) {
         if (data && data.picker && data.picker[0]?.url) return data.picker[0].url;
     } catch (_) {}
 
-    // 2nd Engine: Alternative Cobalt v10 Endpoint
+    // 03. Fallback Engine 2: Alternative Cobalt Endpoint
     try {
         const res = await fetch('https://api.cobalt.tools/', {
             method: 'POST',
@@ -253,7 +275,7 @@ async function fetchDirectStreamUrl(targetUrl) {
         if (data && data.picker && data.picker[0]?.url) return data.picker[0].url;
     } catch (_) {}
 
-    // 3rd Engine: Direct Social Media Extractor Engine
+    // 04. Fallback Engine 3: VKRDown Extractor
     try {
         const res = await fetch(`https://api.vkrdown.com/v1/main?url=${encodeURIComponent(targetUrl)}`);
         const data = await res.json();
