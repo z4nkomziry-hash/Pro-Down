@@ -1,14 +1,18 @@
 {
   "name": "prodown-backend",
-  "version": "1.0.0",
-  "description": "Backend API Server for ProDown Media Downloader",
+  "version": "6.0.0",
+  "description": "ProDown Social Media Extractor API Server",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "axios": "^1.6.8",
     "cors": "^2.8.5",
     "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18.x"
   }
 }
