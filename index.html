@@ -9,20 +9,20 @@
     <meta name="description" content="Download TikTok, Instagram Reels, Facebook Videos, YouTube Shorts, and Snapchat Spotlights for free. No watermark, HD/4K quality, zero signup required.">
     <meta name="keywords" content="TikTok downloader, Instagram Reels downloader, Facebook video downloader, YouTube Shorts downloader, Snapchat video downloader, no watermark, free, HD, ProDown">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://pro-down.netlify.app/">
+    <link rel="canonical" href="https://prodown.vercel.app/">
 
     <!-- Open Graph -->
     <meta property="og:type"        content="website">
-    <meta property="og:url"         content="https://pro-down.netlify.app/">
+    <meta property="og:url"         content="https://prodown.vercel.app/">
     <meta property="og:title"       content="ProDown — Free Social Media Video Downloader">
     <meta property="og:description" content="Download TikTok, Instagram, Facebook, YouTube & Snapchat videos instantly. No watermark, HD quality, completely free.">
-    <meta property="og:image"       content="https://pro-down.netlify.app/assets/images/logo.png">
+    <meta property="og:image"       content="https://prodown.vercel.app/assets/images/logo.png">
 
     <!-- Twitter Card -->
     <meta name="twitter:card"        content="summary_large_image">
     <meta name="twitter:title"       content="ProDown — Free Social Media Video Downloader">
     <meta name="twitter:description" content="Download TikTok, Instagram, Facebook, YouTube & Snapchat videos instantly. No watermark, HD quality, completely free.">
-    <meta name="twitter:image"       content="https://pro-down.netlify.app/assets/images/logo.png">
+    <meta name="twitter:image"       content="https://prodown.vercel.app/assets/images/logo.png">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -39,7 +39,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
 
-    <!-- Google AdSense -->
+    <!-- Google AdSense Code -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7926552217625654" crossorigin="anonymous"></script>
 
     <!-- PWA Manifest & Theme -->
@@ -57,7 +57,7 @@
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "ProDown",
-        "url": "https://pro-down.netlify.app/",
+        "url": "https://prodown.vercel.app/",
         "description": "Free social media video downloader supporting TikTok, Instagram, Facebook, YouTube, and Snapchat with no watermark and HD quality.",
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Any",
@@ -94,7 +94,7 @@
         </a>
 
         <div class="flex items-center gap-2">
-            <!-- PWA Install Button (hidden until browser fires beforeinstallprompt) -->
+            <!-- PWA Install Button -->
             <button id="installPwaBtn" class="hidden w-9 h-9 rounded-xl glass-card flex items-center justify-center text-slate-300 hover:text-orange-400 transition-all" title="Install ProDown App">
                 <i class="fa-solid fa-mobile-screen-button text-sm"></i>
             </button>
@@ -216,7 +216,7 @@
                 <div id="progressFill" class="progress-bar-fill" style="width:0%"></div>
             </div>
 
-            <!-- ── IN-CONTENT AD SLOT (between input and results) ── -->
+            <!-- ── IN-CONTENT AD SLOT ── -->
             <div class="ad-slot ad-slot-inline" id="adSlotInline">
                 <!-- ProDown AdSense: In-Content Slot -->
                 <ins class="adsbygoogle"
@@ -247,7 +247,7 @@
 
         </div>
 
-        <!-- ── PRIORITY 4: DOWNLOAD HISTORY ─────────────────────────── -->
+        <!-- DOWNLOAD HISTORY -->
         <div id="historySection" class="hidden space-y-3">
             <div class="flex items-center justify-between">
                 <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
@@ -405,7 +405,6 @@
                         <button onclick="navigator.clipboard.writeText('+9647506045491').then(()=>showAlert('Copied!','success'))"
                             class="bg-white/10 hover:bg-pink-500 hover:text-white px-3 py-1 rounded-xl text-[10px] font-bold transition-all">Copy</button>
                     </div>
-                    <!-- Deep link: tries fastpay:// app scheme first, falls back to web -->
                     <a href="fastpay://send?phone=9647506045491"
                        onclick="setTimeout(()=>window.open('https://fastpay.iq','_blank','noopener,noreferrer'),1200)"
                        class="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold px-4 py-2.5 rounded-xl text-[11px] transition-all shadow-md">
@@ -420,7 +419,6 @@
                         <button onclick="navigator.clipboard.writeText('+9647506045491').then(()=>showAlert('Copied!','success'))"
                             class="bg-white/10 hover:bg-amber-500 hover:text-black px-3 py-1 rounded-xl text-[10px] font-bold transition-all">Copy</button>
                     </div>
-                    <!-- Deep link: tries fib:// app scheme first, falls back to web -->
                     <a href="fib://transfer?phone=9647506045491"
                        onclick="setTimeout(()=>window.open('https://firstiraqibank.com','_blank','noopener,noreferrer'),1200)"
                        class="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-black font-bold px-4 py-2.5 rounded-xl text-[11px] transition-all shadow-md">
