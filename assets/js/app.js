@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ProDown - Native File Download Engine v5.0 (iPhone & Android Native Download Prompt)
+   ProDown - Multi-API & Native System Downloader v6.0 (Fixed & Updated)
    ========================================================================== */
 
 // ── Translation Dictionaries ──────────────────────────────────────────────
@@ -196,7 +196,7 @@ function detectPlatform(url) {
     return null;
 }
 
-// ── FORCE NATIVE BROWSER DOWNLOAD PROMPT ──────────────────────────────────
+// ── NATIVE SYSTEM DOWNLOAD TRIGGER ─────────────────────────────────────────
 async function triggerNativeDownload(mediaUrl, filename) {
     showAlert('چاوەڕێ بە، داگرتن لە دروستبووندایە...', 'info');
     
@@ -204,7 +204,6 @@ async function triggerNativeDownload(mediaUrl, filename) {
         const response = await fetch(mediaUrl, { mode: 'cors' });
         const blob = await response.blob();
         
-        // Create binary blob link to force iOS / Android System Download Prompt
         const blobUrl = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = blobUrl;
@@ -213,21 +212,56 @@ async function triggerNativeDownload(mediaUrl, filename) {
         link.click();
         document.body.removeChild(link);
         
-        // Clean memory
         setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
         showAlert('فایلەکە داواکرا!', 'success');
 
     } catch (e) {
-        // Fallback for strict CORS restrictions -> Triggers system popup via direct attachment stream
-        const safeDownloadUrl = `https://api.cobalt.tools/api/stream?url=${encodeURIComponent(mediaUrl)}`;
+        // Fallback: Direct system prompt trigger
         const link = document.createElement('a');
-        link.href = safeDownloadUrl;
+        link.href = mediaUrl;
         link.setAttribute('download', filename || 'ProDown_Video.mp4');
-        link.target = '_self';
+        link.target = '_blank';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     }
+}
+
+// ── MULTI-SERVER API FETCH ENGINE (Cobalt v10 + Fallbacks) ────────────────
+async function fetchDirectStreamUrl(targetUrl) {
+    // 1st Engine: Cobalt v10 Modern Public API Instance
+    try {
+        const res = await fetch('https://co.wuk.sh/api/json', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: targetUrl })
+        });
+        const data = await res.json();
+        if (data && data.url) return data.url;
+        if (data && data.picker && data.picker[0]?.url) return data.picker[0].url;
+    } catch (_) {}
+
+    // 2nd Engine: Alternative Cobalt v10 Endpoint
+    try {
+        const res = await fetch('https://api.cobalt.tools/', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: targetUrl })
+        });
+        const data = await res.json();
+        if (data && data.url) return data.url;
+        if (data && data.picker && data.picker[0]?.url) return data.picker[0].url;
+    } catch (_) {}
+
+    // 3rd Engine: Direct Social Media Extractor Engine
+    try {
+        const res = await fetch(`https://api.vkrdown.com/v1/main?url=${encodeURIComponent(targetUrl)}`);
+        const data = await res.json();
+        if (data && data.data && data.data.url) return data.data.url;
+        if (data && data.downloads && data.downloads[0]?.url) return data.downloads[0].url;
+    } catch (_) {}
+
+    return null;
 }
 
 // ── MAIN EXTRACTION PROCESSOR ─────────────────────────────────────────────
@@ -248,51 +282,35 @@ async function processDownload() {
 
     resultBox.classList.remove('hidden');
     resultTitle.textContent = 'چاوەڕێ بە، ئامادەکردنی پەڕگەی داونلۆد...';
-    resultPlatform.textContent = 'ProDown Native Extractor';
+    resultPlatform.textContent = 'ProDown Multi-Engine Extractor';
     dlOptions.innerHTML = '<div class="skeleton h-12 rounded-xl w-full"></div>';
     setProgress(35);
 
-    try {
-        // Extract direct video stream URL without redirects
-        const apiRes = await fetch(`https://api.cobalt.tools/api/json`, {
-            method: 'POST',
-            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: targetUrl, downloadMode: 'auto' })
-        });
-        
-        const data = await apiRes.json();
-        setProgress(100);
-        setTimeout(() => setProgress(null), 300);
+    const streamUrl = await fetchDirectStreamUrl(targetUrl);
+    
+    setProgress(100);
+    setTimeout(() => setProgress(null), 300);
 
-        if (data && data.url) {
-            const finalStreamUrl = data.url;
-            resultTitle.textContent = '✅ داونلۆد ئامادەیە!';
-            resultPlatform.textContent = `${platform.label} • Full HD • System Direct Prompt`;
+    if (streamUrl) {
+        resultTitle.textContent = '✅ داونلۆد ئامادەیە!';
+        resultPlatform.textContent = `${platform.label} • Full HD • System Direct Prompt`;
 
-            dlOptions.innerHTML = `
-                <div class="space-y-2">
-                    <button onclick="triggerNativeDownload('${finalStreamUrl}', 'ProDown_${platform.label}_${Date.now()}.mp4')" 
-                            class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-4 rounded-2xl flex justify-between items-center orange-glow-btn shadow-xl cursor-pointer">
-                        <span class="flex items-center gap-2.5 text-sm">
-                            <i class="fa-solid fa-circle-down text-lg"></i> Download Video HD
-                        </span>
-                        <span class="text-[11px] bg-black/40 px-2.5 py-1 rounded-lg font-mono">MP4</span>
-                    </button>
-                </div>
-            `;
+        dlOptions.innerHTML = `
+            <button onclick="triggerNativeDownload('${streamUrl}', 'ProDown_${platform.label}_${Date.now()}.mp4')" 
+                    class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-4 rounded-2xl flex justify-between items-center orange-glow-btn shadow-xl cursor-pointer">
+                <span class="flex items-center gap-2.5 text-sm">
+                    <i class="fa-solid fa-circle-down text-lg"></i> Download Video HD
+                </span>
+                <span class="text-[11px] bg-black/40 px-2.5 py-1 rounded-lg font-mono">MP4</span>
+            </button>
+        `;
 
-            saveToHistory({ url: targetUrl, platform: platform.label, timestamp: Date.now() });
-            renderHistory();
-        } else {
-            throw new Error("Unable to parse video stream");
-        }
-
-    } catch (err) {
-        setProgress(100);
-        setTimeout(() => setProgress(null), 300);
-
+        saveToHistory({ url: targetUrl, platform: platform.label, timestamp: Date.now() });
+        renderHistory();
+    } else {
+        // Fallback Mode if all APIs fail
         resultTitle.textContent = '✅ فایلەکە دۆزرایەوە (داگرتن)';
-        resultPlatform.textContent = `${platform.label} • Direct Media Stream`;
+        resultPlatform.textContent = `${platform.label} • Direct Stream`;
 
         dlOptions.innerHTML = `
             <button onclick="triggerNativeDownload('${targetUrl}', 'ProDown_${platform.label}.mp4')" 
