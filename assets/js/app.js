@@ -2,9 +2,9 @@
    ProDown - Multi-API & Native System Downloader v6.0 (Fixed & Updated)
    ========================================================================== */
 
-// ── Backend Config ────────────────────────────────────────────────────────
-// ⚠️ ل شوێنا ئەڤی لینکی، لینکی سێرڤەرێ خۆ یێ Render یان Local (http://localhost:5000/api/download) دابنێ
-const BACKEND_API_URL = 'http://localhost:5000/api/download';
+// ── Backend Configuration ──────────────────────────────────────────────────
+// ⚠️ ل شوێنا ئەڤی لینکی، لینکی سێرڤەرێ خۆ یێ Vercel (https://your-app.vercel.app/api/download) یان Localhost دابنێ
+const BACKEND_API_URL = '/api/download';
 
 // ── Translation Dictionaries ──────────────────────────────────────────────
 const i18nData = {
@@ -231,27 +231,26 @@ async function triggerNativeDownload(mediaUrl, filename) {
     }
 }
 
-// ── MULTI-SERVER API FETCH ENGINE (Node.js Backend + Fallbacks) ───────────
+// ── MULTI-SERVER API FETCH ENGINE (Node.js Backend Proxy + Fallbacks) ──────
 async function fetchDirectStreamUrl(targetUrl) {
-    // 01. Node.js Backend API Call (Handles CORS & Pro Engine)
+    // 1st Priority Engine: ProDown Node.js Serverless Express Backend (Vercel/Local)
     try {
         const res = await fetch(BACKEND_API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: targetUrl })
         });
-        
         if (res.ok) {
             const data = await res.json();
             if (data && data.success && data.downloadUrl) {
                 return data.downloadUrl;
             }
         }
-    } catch (err) {
-        console.warn('Backend server unreachable, trying public fallback engines...', err);
+    } catch (_) {
+        console.warn('Backend server response pending/failed, attempting direct fallbacks...');
     }
 
-    // 02. Fallback Engine 1: Cobalt Public Instance
+    // 2nd Engine: Cobalt v10 Modern Public API Instance
     try {
         const res = await fetch('https://co.wuk.sh/api/json', {
             method: 'POST',
@@ -263,7 +262,7 @@ async function fetchDirectStreamUrl(targetUrl) {
         if (data && data.picker && data.picker[0]?.url) return data.picker[0].url;
     } catch (_) {}
 
-    // 03. Fallback Engine 2: Alternative Cobalt Endpoint
+    // 3rd Engine: Alternative Cobalt v10 Endpoint
     try {
         const res = await fetch('https://api.cobalt.tools/', {
             method: 'POST',
@@ -275,7 +274,7 @@ async function fetchDirectStreamUrl(targetUrl) {
         if (data && data.picker && data.picker[0]?.url) return data.picker[0].url;
     } catch (_) {}
 
-    // 04. Fallback Engine 3: VKRDown Extractor
+    // 4th Engine: Direct Social Media Extractor Engine (VKRDown)
     try {
         const res = await fetch(`https://api.vkrdown.com/v1/main?url=${encodeURIComponent(targetUrl)}`);
         const data = await res.json();
