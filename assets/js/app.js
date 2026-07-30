@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ProDown - Self-Contained Direct Media Downloader Engine v4.0
+   ProDown - Native File Download Engine v5.0 (iPhone & Android Native Download Prompt)
    ========================================================================== */
 
 // ── Translation Dictionaries ──────────────────────────────────────────────
@@ -196,27 +196,41 @@ function detectPlatform(url) {
     return null;
 }
 
-// ── DIRECT DOWNLOAD ENGINE (NO REDIRECTS) ──────────────────────────────────
-async function downloadDirectMedia(mediaUrl, filename) {
-    showAlert('داونلۆدکردن دەستی پێکرد...', 'info');
+// ── FORCE NATIVE BROWSER DOWNLOAD PROMPT ──────────────────────────────────
+async function triggerNativeDownload(mediaUrl, filename) {
+    showAlert('چاوەڕێ بە، داگرتن لە دروستبووندایە...', 'info');
+    
     try {
-        const response = await fetch(mediaUrl);
+        const response = await fetch(mediaUrl, { mode: 'cors' });
         const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = filename || 'ProDown_Media.mp4';
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        showAlert('فایلەکە بە سەرکەوتوویی داونلۆد بوو!', 'success');
+        
+        // Create binary blob link to force iOS / Android System Download Prompt
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = filename || `ProDown_${Date.now()}.mp4`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean memory
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+        showAlert('فایلەکە داواکرا!', 'success');
+
     } catch (e) {
-        // Fallback: Opens blob directly in browser for saving if CORS blocks blob fetch
-        window.open(mediaUrl, '_blank');
+        // Fallback for strict CORS restrictions -> Triggers system popup via direct attachment stream
+        const safeDownloadUrl = `https://api.cobalt.tools/api/stream?url=${encodeURIComponent(mediaUrl)}`;
+        const link = document.createElement('a');
+        link.href = safeDownloadUrl;
+        link.setAttribute('download', filename || 'ProDown_Video.mp4');
+        link.target = '_self';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 }
 
+// ── MAIN EXTRACTION PROCESSOR ─────────────────────────────────────────────
 async function processDownload() {
     const inputEl = document.getElementById('inputUrl');
     const resultBox = document.getElementById('resultBox');
@@ -233,55 +247,60 @@ async function processDownload() {
     const platform = detectPlatform(targetUrl) || { label: 'Social Media' };
 
     resultBox.classList.remove('hidden');
-    resultTitle.textContent = 'چاوەڕێ بە، دەرهێنانی لینکەکە بەردەوامە...';
-    resultPlatform.textContent = 'ProDown Extraction Engine';
+    resultTitle.textContent = 'چاوەڕێ بە، ئامادەکردنی پەڕگەی داونلۆد...';
+    resultPlatform.textContent = 'ProDown Native Extractor';
     dlOptions.innerHTML = '<div class="skeleton h-12 rounded-xl w-full"></div>';
-    setProgress(30);
+    setProgress(35);
 
-    // Multi-API Direct Extractors (No external websites, purely background fetching)
     try {
-        let extractedMediaUrl = null;
+        // Extract direct video stream URL without redirects
+        const apiRes = await fetch(`https://api.cobalt.tools/api/json`, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: targetUrl, downloadMode: 'auto' })
+        });
         
-        // Attempt Direct Backend Extraction
-        const res = await fetch(`https://api.vkrdown.com/v1/main?url=${encodeURIComponent(targetUrl)}`);
-        const data = await res.json();
-        
-        if (data && data.data && data.data.url) {
-            extractedMediaUrl = data.data.url;
-        } else if (data && data.downloads && data.downloads.length > 0) {
-            extractedMediaUrl = data.downloads[0].url;
-        }
-
+        const data = await apiRes.json();
         setProgress(100);
         setTimeout(() => setProgress(null), 300);
 
-        if (extractedMediaUrl) {
-            resultTitle.textContent = '✅ فایلەکە ئامادەیە!';
-            resultPlatform.textContent = `${platform.label} • HD Quality • No Watermark`;
+        if (data && data.url) {
+            const finalStreamUrl = data.url;
+            resultTitle.textContent = '✅ داونلۆد ئامادەیە!';
+            resultPlatform.textContent = `${platform.label} • Full HD • System Direct Prompt`;
 
             dlOptions.innerHTML = `
-                <button onclick="downloadDirectMedia('${extractedMediaUrl}', 'ProDown_${platform.label}_Video.mp4')" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold p-3.5 rounded-xl flex justify-between items-center orange-glow-btn shadow-lg cursor-pointer">
-                    <span class="flex items-center gap-2"><i class="fa-solid fa-download"></i> داونلۆدکردنی ڕاستەوخۆ (HD Video)</span>
-                    <span class="text-[10px] bg-black/40 px-2 py-1 rounded-lg">MP4</span>
-                </button>
+                <div class="space-y-2">
+                    <button onclick="triggerNativeDownload('${finalStreamUrl}', 'ProDown_${platform.label}_${Date.now()}.mp4')" 
+                            class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-4 rounded-2xl flex justify-between items-center orange-glow-btn shadow-xl cursor-pointer">
+                        <span class="flex items-center gap-2.5 text-sm">
+                            <i class="fa-solid fa-circle-down text-lg"></i> Download Video HD
+                        </span>
+                        <span class="text-[11px] bg-black/40 px-2.5 py-1 rounded-lg font-mono">MP4</span>
+                    </button>
+                </div>
             `;
+
             saveToHistory({ url: targetUrl, platform: platform.label, timestamp: Date.now() });
             renderHistory();
         } else {
-            throw new Error("Could not extract direct stream");
+            throw new Error("Unable to parse video stream");
         }
+
     } catch (err) {
-        // Backup direct stream generator without external links
         setProgress(100);
         setTimeout(() => setProgress(null), 300);
-        
-        resultTitle.textContent = '✅ فایلەکە دۆزرایەوە (ڕاستەوخۆ داونلۆدی بکە)';
-        resultPlatform.textContent = `${platform.label} • Direct Download`;
+
+        resultTitle.textContent = '✅ فایلەکە دۆزرایەوە (داگرتن)';
+        resultPlatform.textContent = `${platform.label} • Direct Media Stream`;
 
         dlOptions.innerHTML = `
-            <button onclick="downloadDirectMedia('${targetUrl}', 'ProDown_${platform.label}.mp4')" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold p-3.5 rounded-xl flex justify-between items-center orange-glow-btn shadow-lg cursor-pointer">
-                <span class="flex items-center gap-2"><i class="fa-solid fa-download"></i> ڕاستەوخۆ داونلۆدی بکە بۆ مۆبایل</span>
-                <span class="text-[10px] bg-black/40 px-2 py-1 rounded-lg">Direct</span>
+            <button onclick="triggerNativeDownload('${targetUrl}', 'ProDown_${platform.label}.mp4')" 
+                    class="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-extrabold p-4 rounded-2xl flex justify-between items-center orange-glow-btn shadow-xl cursor-pointer">
+                <span class="flex items-center gap-2.5 text-sm">
+                    <i class="fa-solid fa-circle-down text-lg"></i> Download Video
+                </span>
+                <span class="text-[11px] bg-black/40 px-2.5 py-1 rounded-lg font-mono">Direct</span>
             </button>
         `;
     }
