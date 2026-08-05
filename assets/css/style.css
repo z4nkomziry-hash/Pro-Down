@@ -1,117 +1,226 @@
 /* ==========================================================================
-   ProDown - Main Custom Stylesheet v3.0
+   ProDown - Main Custom Stylesheet v5.0 (Full Version - No Code Truncation)
    ========================================================================== */
 
 :root {
-    --bg-main: #0b0b0d;
+    --bg-main: #070709;
     --orange-primary: #f97316;
     --orange-glow: rgba(249, 115, 22, 0.4);
+    --telegram-glow: rgba(34, 158, 217, 0.4);
     --glass-border: rgba(255, 255, 255, 0.08);
+    --gold-glow: rgba(245, 158, 11, 0.3);
 }
 
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
     font-family: 'Plus Jakarta Sans', 'Noto Sans Arabic', sans-serif;
     background-color: var(--bg-main);
     color: #ffffff;
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 /* Glassmorphism Cards */
 .glass-card {
-    background: linear-gradient(180deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.02) 100%);
+    background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 
-/* Glow Effects */
-.orange-glow-box { box-shadow: 0 0 40px rgba(249,115,22,0.18); }
+/* Ultra Glow Effects */
+.orange-glow-box {
+    box-shadow: 0 0 50px rgba(249, 115, 22, 0.18);
+}
+
+.telegram-glow-box {
+    box-shadow: 0 0 45px rgba(34, 158, 217, 0.22);
+}
+
+.gold-glow-box {
+    box-shadow: 0 0 45px rgba(245, 158, 11, 0.22);
+}
 
 .orange-glow-btn {
-    box-shadow: 0 4px 22px var(--orange-glow);
+    box-shadow: 0 4px 24px var(--orange-glow);
     transition: all 0.25s ease;
 }
-.orange-glow-btn:hover {
-    box-shadow: 0 6px 28px rgba(249,115,22,0.65);
-    transform: translateY(-1px);
-}
-.orange-glow-btn:active { transform: translateY(0); }
 
-/* Tabs */
-.tab-btn { transition: all 0.2s ease-in-out; }
+.orange-glow-btn:hover {
+    box-shadow: 0 6px 32px rgba(249, 115, 22, 0.65);
+    transform: translateY(-2px);
+}
+
+.orange-glow-btn:active {
+    transform: translateY(0);
+}
+
+.telegram-glow-btn {
+    box-shadow: 0 4px 22px var(--telegram-glow);
+    transition: all 0.25s ease;
+}
+
+.telegram-glow-btn:hover {
+    box-shadow: 0 6px 30px rgba(34, 158, 217, 0.65);
+    transform: translateY(-2px);
+}
+
+.telegram-glow-btn:active {
+    transform: translateY(0);
+}
+
+/* Platform Filter Tabs */
+.tab-btn {
+    transition: all 0.2s ease-in-out;
+}
+
 .tab-btn.active {
     background: var(--orange-primary) !important;
     color: #ffffff !important;
     border-color: var(--orange-primary) !important;
+    box-shadow: 0 2px 14px var(--orange-glow);
 }
 
-/* Progress Bar */
+/* Download Progress Bar */
 .progress-bar-track {
     width: 100%;
     height: 4px;
-    background: rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.08);
     border-radius: 99px;
     overflow: hidden;
 }
+
 .progress-bar-fill {
     height: 100%;
     background: linear-gradient(90deg, #f97316, #fbbf24);
     border-radius: 99px;
-    transition: width 0.4s ease;
+    transition: width 0.3s ease;
 }
 
-/* Animations */
+/* Custom Animations */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
-.animate-fade-in { animation: fadeIn 0.35s ease forwards; }
+
+.animate-fade-in {
+    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 
 @keyframes spinSlow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
-.animate-spin-slow { animation: spinSlow 8s linear infinite; }
+
+.animate-spin-slow {
+    animation: spinSlow 8s linear infinite;
+}
 
 @keyframes bounceSlow {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-6px);
+    }
 }
-.animate-bounce-slow { animation: bounceSlow 3s ease-in-out infinite; }
 
-/* Skeleton Loader */
+.animate-bounce-slow {
+    animation: bounceSlow 3s ease-in-out infinite;
+}
+
+/* Skeleton Loading Effect */
 .skeleton {
-    background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+    background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
-    border-radius: 8px;
-}
-@keyframes shimmer {
-    0%   { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-/* Alert Toast */
-#alertToast { transition: opacity 0.3s ease, transform 0.3s ease; }
-#alertToast.hidden { opacity: 0; transform: translateY(-8px); pointer-events: none; }
-
-/* Ad Slots */
-.ad-slot {
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,0.02);
-    border: 1px dashed rgba(249,115,22,0.18);
     border-radius: 12px;
-    color: rgba(255,255,255,0.15); font-size: 10px; font-weight: 700;
-    text-transform: uppercase; overflow: hidden;
 }
-.ad-slot-banner { width: 100%; height: 90px; }
-.ad-slot-inline { width: 100%; height: 100px; }
-.ad-slot-cta    { width: 100%; height: 80px; }
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Google AdSense Display Slots */
+.adsense-slot {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px dashed rgba(249, 115, 22, 0.25);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.adsense-tag {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    font-size: 8px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+}
+
+/* Alert Toast Overlay */
+#alertToast {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#alertToast.hidden {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+    pointer-events: none;
+}
 
 /* Scrollbars */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #0b0b0d; }
-::-webkit-scrollbar-thumb { background: #1f1f24; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--orange-primary); }
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #070709;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--orange-primary);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
