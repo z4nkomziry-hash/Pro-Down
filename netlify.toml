@@ -1,27 +1,52 @@
-# ==========================================================================
-# ProDown - Netlify Configuration File
-# Path: ./netlify.toml
-# ==========================================================================
-
+==========================================================================
+ProDown - Netlify Deployment & Security Configuration v3.0
+==========================================================================
 [build]
-  # Directory where the site built output is located
-  publish = "."
-  
-  # Default build command (Not required for pure HTML/JS)
-  command = ""
-
-# --- Security Headers & CORS Configurations ---
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "no-referrer-when-downgrade"
-    Access-Control-Allow-Origin = "*"
-
-# --- Fallback Redirect Rules for Single Page Application (SPA) ---
+publish = "."
+command = "echo 'Build completed successfully for ProDown Application'"
+── API REWRITES & PROXIES ────────────────────────────────────────────────
+Redirect API calls to backend function server or external API
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/api/*"
+to = "/.netlify/functions/:splat"
+status = 200
+force = true
+Fallback for Single Page Application routing
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+── SECURITY & GLOBAL HEADERS ──────────────────────────────────────────────
+[[headers]]
+for = "/"
+[headers.values]
+X-Frame-Options = "SAMEORIGIN"
+X-XSS-Protection = "1; mode=block"
+X-Content-Type-Options = "nosniff"
+Referrer-Policy = "strict-origin-when-cross-origin"
+Access-Control-Allow-Origin = ""
+Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+Access-Control-Allow-Headers = "Content-Type, Authorization, X-Requested-With"
+── CACHING OPTIMIZATION FOR ASSETS ───────────────────────────────────────
+[[headers]]
+for = "/assets/css/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+[[headers]]
+for = "/assets/js/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+[[headers]]
+for = "/assets/images/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+[[headers]]
+for = "/manifest.json"
+[headers.values]
+Cache-Control = "public, max-age=0, must-revalidate"
+Content-Type = "application/manifest+json"
+[[headers]]
+for = "/sw.js"
+[headers.values]
+Cache-Control = "public, max-age=0, must-revalidate"
+Content-Type = "application/javascript"
