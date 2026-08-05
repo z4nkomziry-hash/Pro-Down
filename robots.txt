@@ -1,4 +1,21 @@
+==========================================================================
+ProDown - Search Engine Robots Configuration v2.0
+==========================================================================
+Rules for all search engine web crawlers
 User-agent: *
 Allow: /
-
-Sitemap: https://pro-down.netlify.app/sitemap.xml
+Allow: /index.html
+Allow: /assets/
+Allow: /assets/css/
+Allow: /assets/js/
+Allow: /assets/images/
+Allow: /manifest.json
+Allow: /sw.js
+Disallow indexing of private backend endpoints and configurations
+Disallow: /api/
+Disallow: /.netlify/
+Disallow: /server.js
+Disallow: /package.json
+Disallow: /netlify.toml
+Specify sitemap location
+Sitemap: https://prodown.vercel.app/sitemap.xml
