@@ -1,65 +1,102 @@
 /* ==========================================================================
-   ProDown Service Worker — Offline-first static asset cache
+   ProDown - Progressive Web App Service Worker Engine v2.0
    ========================================================================== */
 
-const CACHE_NAME    = 'prodown-v1';
-const OFFLINE_URL   = '/';
+const CACHE_NAME = 'prodown-v1';
 
-const PRECACHE_ASSETS = [
+// فۆڵدەر و فایلێن پێویست بۆ پاشەکەوتکرن د کەش دا (Offline Cache Assets)
+const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
-    '/about.html',
-    '/contact.html',
-    '/privacy-policy.html',
-    '/terms-of-service.html',
     '/assets/css/style.css',
     '/assets/js/app.js',
+    '/manifest.json',
     '/assets/images/logo.png',
-    '/manifest.json'
+    'https://cdn.tailwindcss.com',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+    'https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap'
 ];
 
-/* ── Install: pre-cache all static assets ───────────────────────────────── */
-self.addEventListener('install', event => {
+// ڕووداوا دابەزاندن و دامەزراندنا Service Worker (Install Event)
+self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE_ASSETS))
+        caches.open(CACHE_NAME)
+            .then((cache) => {
+                console.log('[ProDown SW] Caching app shell and static assets...');
+                return cache.addAll(ASSETS_TO_CACHE);
+            })
+            .then(() => {
+                return self.skipWaiting();
+            })
+            .catch((error) => {
+                console.error('[ProDown SW] Installation failed:', error);
+            })
     );
-    self.skipWaiting();
 });
 
-/* ── Activate: remove stale caches ─────────────────────────────────────── */
-self.addEventListener('activate', event => {
+// ڕووداوا چالاککرن و پاقژکرنا کەشێن کۆن (Activate Event)
+self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then(keys =>
-            Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-        )
+        caches.keys()
+            .then((cacheNames) => {
+                return Promise.all(
+                    cacheNames.map((cache) => {
+                        if (cache !== CACHE_NAME) {
+                            console.log('[ProDown SW] Deleting old cache:', cache);
+                            return caches.delete(cache);
+                        }
+                    })
+                );
+            })
+            .then(() => {
+                console.log('[ProDown SW] Service worker activated successfully.');
+                return self.clients.claim();
+            })
     );
-    self.clients.claim();
 });
 
-/* ── Fetch: network-first for API calls, cache-first for static assets ───── */
-self.addEventListener('fetch', event => {
-    const { request } = event;
-    const url = new URL(request.url);
-
-    // Skip non-GET, cross-origin API calls (download engines), and chrome-extension
-    if (request.method !== 'GET') return;
-    if (url.protocol === 'chrome-extension:') return;
-    if (url.origin !== self.location.origin) return; // Let API calls go to network directly
+// بەڕێوەبرتنا داواکاریێن تۆڕێ (Fetch Strategy: Network First with Cache Fallback)
+self.addEventListener('fetch', (event) => {
+    // ڕەتکرنەوەیا داواکاریێن غیر-GET یان API هەتا کێشە بۆ داونلۆدکرنێ دروست نەبێت
+    if (event.request.method !== 'GET') return;
+    
+    // فلتەرکرنا داواکاریێن API بۆ ئەوەی ڕاستەوخۆ بچنە سێرڤەر
+    if (event.request.url.includes('/api/') || event.request.url.includes('co.wuk.sh') || event.request.url.includes('cobalt.tools')) {
+        return;
+    }
 
     event.respondWith(
-        caches.match(request).then(cached => {
-            if (cached) return cached;
-            return fetch(request).then(response => {
-                // Cache successful same-origin GET responses
-                if (response && response.status === 200 && response.type === 'basic') {
-                    const clone = response.clone();
-                    caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+        fetch(event.request)
+            .then((networkResponse) => {
+                // ئەگەر وەڵامێ سێرڤەری سەرکەوتوو بوو، کۆپیەکێ د کەش دا نوو بکە
+                if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+                    const responseToCache = networkResponse.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseToCache);
+                    });
                 }
-                return response;
-            }).catch(() => {
-                // Offline fallback: serve the homepage for navigation requests
-                if (request.mode === 'navigate') return caches.match(OFFLINE_URL);
-            });
-        })
+                return networkResponse;
+            })
+            .catch(() => {
+                // ئەگەر ئینتەرنێت نەبوو، فایلی پاشەکەوتکری د کەش دا ڤەگەڕێنە
+                return caches.match(event.request)
+                    .then((cachedResponse) => {
+                        if (cachedResponse) {
+                            return cachedResponse;
+                        }
+                        // وەڵامێ سادە بۆ دەمێ ئۆفلاین
+                        if (event.request.headers.get('accept').includes('text/html')) {
+                            return caches.match('/index.html');
+                        }
+                    });
+            })
     );
 });
+
+// بەڕێوەبرتنا پەیامێن ناوەکی (Message Event)
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
+
