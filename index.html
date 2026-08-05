@@ -4,19 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Primary SEO -->
-    <title>ProDown — Ultimate Social Media Downloader</title>
-    <meta name="description" content="Download TikTok, Instagram Reels & Stories, Facebook Videos, YouTube Shorts & Ended Lives, and Snapchat Spotlights free in HD/4K quality without watermark.">
-    <meta name="keywords" content="TikTok downloader, Instagram Reels downloader, Instagram Story downloader, Facebook video downloader, YouTube Shorts downloader, Snapchat Spotlight downloader, no watermark, free HD, ProDown">
+    <!-- SEO سەرەکی -->
+    <title>ProDown — Ultimate Social Media Downloader (HD/4K)</title>
+    <meta name="description" content="Free online downloader for TikTok videos without watermark, Instagram Reels & Stories, Facebook HD Videos, YouTube Shorts, and Snapchat Spotlights. Fast & safe.">
+    <meta name="keywords" content="TikTok downloader no watermark, Instagram Reels downloader, Instagram Story downloader, Facebook video downloader, YouTube Shorts downloader, Snapchat Spotlight downloader, free HD downloader, ProDown">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://prodown.vercel.app/">
 
     <!-- Open Graph -->
     <meta property="og:type"        content="website">
     <meta property="og:url"         content="https://prodown.vercel.app/">
-    <meta property="og:title"       content="ProDown — Free Social Media Downloader">
+    <meta property="og:title"       content="ProDown — Free Social Media Media Downloader">
     <meta property="og:description" content="Download TikTok, Instagram, Facebook, YouTube & Snapchat media instantly. No watermark, HD quality, free.">
     <meta property="og:image"       content="assets/images/logo.png">
+
+    <!-- زانیاری رێکخراوی FAQ بۆ گووگڵ SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "How to download TikTok videos without watermark for free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Copy the TikTok video link, paste it into ProDown input box, and click Download to save the video directly in HD without any logo or watermark."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Can I download Instagram Reels and Stories?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, paste the Instagram post/reel link or enter the public account @username to download stories and highlights instantly."
+        }
+      }]
+    }
+    </script>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,7 +53,8 @@
                             500: '#f97316',
                             600: '#ea580c',
                             400: '#fb923c'
-                        } 
+                        },
+                        telegram: '#229ed9'
                     } 
                 } 
             }
@@ -43,12 +67,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Styles -->
+    <!-- فایلی پەیڕەوکراوی Manifest بۆ PWA -->
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIlByb0Rvd24gU29jaWFsIERvd25sb2FkZXIiLAogICJzaG9ydF9uYW1lIjogIlByb0Rvd24iLAogICJzdGFydF91cmwiOiAiLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzA3MDcwOSIsCiAgInRoZW1lX2NvbG9yIjogIiNmOTczMTYiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJhc3NldHMvaW1hZ2VzL2xvZ28ucG5nIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9CiAgXQp9">
+
+    <!-- شێوازەکان (CSS) -->
     <style>
         :root {
             --bg-main: #070709;
             --orange-primary: #f97316;
             --orange-glow: rgba(249, 115, 22, 0.4);
+            --telegram-glow: rgba(34, 158, 217, 0.4);
             --glass-border: rgba(255, 255, 255, 0.08);
             --gold-glow: rgba(245, 158, 11, 0.3);
         }
@@ -62,7 +90,7 @@
             scroll-behavior: smooth;
         }
 
-        /* Glassmorphism Cards */
+        /* کارتەکانی شوشەیی */
         .glass-card {
             background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
             border: 1px solid var(--glass-border);
@@ -70,8 +98,9 @@
             -webkit-backdrop-filter: blur(18px);
         }
 
-        /* Ultra Glow Effects */
+        /* درەوشانەوەی ئالترا */
         .orange-glow-box { box-shadow: 0 0 50px rgba(249,115,22,0.18); }
+        .telegram-glow-box { box-shadow: 0 0 45px rgba(34,158,217,0.22); }
         .gold-glow-box { box-shadow: 0 0 45px rgba(245,158,11,0.22); }
 
         .orange-glow-btn {
@@ -82,9 +111,17 @@
             box-shadow: 0 6px 32px rgba(249,115,22,0.65);
             transform: translateY(-2px);
         }
-        .orange-glow-btn:active { transform: translateY(0); }
 
-        /* Tabs Styling */
+        .telegram-glow-btn {
+            box-shadow: 0 4px 22px var(--telegram-glow);
+            transition: all 0.25s ease;
+        }
+        .telegram-glow-btn:hover {
+            box-shadow: 0 6px 30px rgba(34,158,217,0.65);
+            transform: translateY(-2px);
+        }
+
+        /* شێوازی تابەکان */
         .tab-btn { transition: all 0.2s ease-in-out; }
         .tab-btn.active {
             background: var(--orange-primary) !important;
@@ -93,7 +130,7 @@
             box-shadow: 0 2px 14px var(--orange-glow);
         }
 
-        /* Progress Bar */
+        /* هێڵی پێشکەوتن */
         .progress-bar-track {
             width: 100%;
             height: 4px;
@@ -108,14 +145,14 @@
             transition: width 0.3s ease;
         }
 
-        /* Animations */
+        /* ئەنیمەیشنەکان */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-        /* Skeleton Loading Effect */
+        /* کاریگەری بارکردن (Skeleton) */
         .skeleton {
             background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
             background-size: 200% 100%;
@@ -126,7 +163,7 @@
             100% { background-position: -200% 0; }
         }
 
-        /* Ad Slots */
+        /* شوێنی ڕیکلامەکان */
         .adsense-slot {
             background: rgba(255,255,255,0.015);
             border: 1px dashed rgba(249,115,22,0.25);
@@ -145,7 +182,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* Scrollbars */
+        /* هێڵی سکرۆڵ */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #070709; }
         ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
@@ -155,19 +192,19 @@
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 
-    <!-- Google AdSense Script -->
+    <!-- کودی Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7926552217625654" crossorigin="anonymous"></script>
 
-    <!-- PWA Theme -->
+    <!-- ڕەنگی بابەتی PWA -->
     <meta name="theme-color" content="#f97316">
 </head>
 <body class="min-h-screen flex flex-col items-center antialiased bg-[#070709] text-white selection:bg-orange-500 selection:text-white">
 
-    <!-- ── ONBOARDING & LANGUAGE MODAL ────────────────────────────────────── -->
+    <!-- ── مۆداڵی پێشوازی و هەڵبژاردنی زمان ────────────────────────────────────── -->
     <div id="onboardingModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl transition-all duration-500">
         <div class="glass-card w-full max-w-md rounded-3xl p-6 md:p-8 border border-orange-500/30 text-center space-y-6 shadow-2xl relative overflow-hidden orange-glow-box">
             
-            <!-- STEP 1: WELCOME SCREEN -->
+            <!-- هەنگاوی ١: شاشەی پێشوازی -->
             <div id="stepWelcome" class="space-y-5 animate-fade-in">
                 <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-4xl text-white shadow-xl">
                     <i class="fa-solid fa-cloud-arrow-down"></i>
@@ -182,7 +219,7 @@
                 </button>
             </div>
 
-            <!-- STEP 2: LANGUAGE SELECTION -->
+            <!-- هەنگاوی ٢: هەڵبژاردنی زمان -->
             <div id="stepLang" class="hidden space-y-5 animate-fade-in">
                 <div class="w-16 h-16 mx-auto rounded-2xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-3xl">
                     <i class="fa-solid fa-language"></i>
@@ -209,10 +246,10 @@
         </div>
     </div>
 
-    <!-- ALERT TOAST -->
+    <!-- ئاگاداریی خێرا (Toast) -->
     <div id="alertToast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl text-xs font-bold text-white shadow-2xl flex items-center gap-2 max-w-xs text-center transition-all"></div>
 
-    <!-- ── STRATEGIC ADSENSE SLOT #1: TOP BANNER ────────────────── -->
+    <!-- ── شوێنی ڕیکلامی گووگڵ #١: بانیری سەرەوە ────────────────── -->
     <div class="w-full max-w-2xl px-4 pt-3">
         <div class="adsense-slot w-full h-20 flex items-center justify-center">
             <span class="adsense-tag">Advertisement</span>
@@ -226,7 +263,7 @@
         </div>
     </div>
 
-    <!-- ── NAVIGATION HEADER ────────────────────────────────────── -->
+    <!-- ── هێڵی سەرەوە (Header) ────────────────────────────────────── -->
     <header class="w-full max-w-2xl px-5 py-4 flex justify-between items-center border-b border-white/5 sticky top-0 bg-[#070709]/90 backdrop-blur-md z-40">
         <a href="/" class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white text-xl font-black shadow-lg">
@@ -236,14 +273,20 @@
         </a>
 
         <div class="flex items-center gap-2">
-            <!-- Language Switcher Dropdown -->
+            <!-- دوگمەی دابەزاندنی ئەپ PWA -->
+            <button id="pwaInstallBtn" onclick="installPWA()" class="hidden bg-orange-500/20 hover:bg-orange-500 text-orange-400 hover:text-white px-3 py-1.5 rounded-xl border border-orange-500/30 text-xs font-extrabold transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+                <span data-i18n="pwaInstall">دابەزاندنی ئەپ</span>
+            </button>
+
+            <!-- لیستی هەڵبژاردنی زمان -->
             <select id="langSelectHeader" onchange="setAppLanguage(this.value)" class="bg-white/5 border border-white/10 text-xs font-bold text-slate-200 px-2.5 py-1.5 rounded-xl focus:outline-none focus:border-orange-500 cursor-pointer">
                 <option value="en" class="bg-[#070709]">🇺🇸 EN</option>
                 <option value="ku_bad" class="bg-[#070709]">☀️ بەهدینی</option>
                 <option value="ku_sor" class="bg-[#070709]">☀️ سۆڕانی</option>
             </select>
 
-            <!-- Share Button -->
+            <!-- دوگمەی هاوبەشکردن -->
             <div class="relative">
                 <button id="shareBtn" onclick="toggleShareMenu()" class="w-9 h-9 rounded-xl glass-card flex items-center justify-center text-slate-300 hover:text-orange-400 transition-all" title="Share ProDown">
                     <i class="fa-solid fa-share-nodes text-sm"></i>
@@ -262,53 +305,56 @@
                 </div>
             </div>
 
-            <!-- Mobile Hamburger Menu Button -->
+            <!-- دوگمەی مێنیوی مۆبایل -->
             <button id="menuBtn" onclick="toggleMobileMenu()" class="w-9 h-9 rounded-xl glass-card flex items-center justify-center text-slate-300 hover:text-white transition-all">
                 <i class="fa-solid fa-bars text-sm"></i>
             </button>
         </div>
     </header>
 
-    <!-- MOBILE NAVIGATION DROPDOWN -->
+    <!-- مێنیوی دابەزیوی مۆبایل -->
     <div id="mobileMenu" class="hidden fixed inset-x-0 top-[65px] bg-[#070709]/98 backdrop-blur-2xl border-b border-white/10 p-5 z-30 space-y-2 max-w-2xl mx-auto shadow-2xl">
         <a href="/" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
-            <i class="fa-solid fa-download mr-2 text-orange-500"></i> <span data-i18n="navDownloader">Downloader</span>
+            <i class="fa-solid fa-download mr-2 text-orange-500"></i> <span data-i18n="navDownloader">داونلۆدکەر</span>
+        </a>
+        <a href="#telegramBotSection" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
+            <i class="fa-brands fa-telegram mr-2 text-sky-400"></i> <span data-i18n="telegramBotTitle">بۆتی تەلەگرام</span>
         </a>
         <a href="#sponsorSection" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
-            <i class="fa-solid fa-crown mr-2 text-amber-400"></i> <span data-i18n="sponsorTitle">Become a Sponsor</span>
+            <i class="fa-solid fa-crown mr-2 text-amber-400"></i> <span data-i18n="sponsorTitle">ببە بە سپۆنسەر</span>
         </a>
-        <a href="#tutorial" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
-            <i class="fa-solid fa-graduation-cap mr-2 text-orange-500"></i> <span data-i18n="tutTitle">Tutorial & Instructions</span>
+        <a href="#seoArticles" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
+            <i class="fa-solid fa-newspaper mr-2 text-orange-500"></i> <span data-i18n="blogTitle">وتارەکانی SEO</span>
         </a>
         <a href="#contact" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
-            <i class="fa-solid fa-headset mr-2 text-orange-500"></i> <span data-i18n="navContact">Contact</span>
+            <i class="fa-solid fa-headset mr-2 text-orange-500"></i> <span data-i18n="navContact">پەیوەندی</span>
         </a>
     </div>
 
-    <!-- ── MAIN CONTENT AREA ────────────────────────────────────── -->
+    <!-- ── ناوەرۆکی سەرەکی ────────────────────────────────────── -->
     <main class="w-full max-w-2xl px-4 py-6 space-y-8 flex-1" id="downloader">
 
-        <!-- HERO & DOWNLOAD CARD -->
+        <!-- کاردی سەرەکیی داونلۆد -->
         <div class="relative overflow-hidden glass-card rounded-3xl p-6 md:p-8 orange-glow-box space-y-6 border border-white/10 shadow-2xl">
 
-            <!-- Badge -->
+            <!-- نیشانە (Badge) -->
             <div class="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 px-3.5 py-1.5 rounded-full">
                 <i class="fa-solid fa-bolt text-orange-500 text-xs animate-pulse"></i>
                 <span class="text-xs font-bold text-orange-400 tracking-wide" data-i18n="heroBadge">No Watermark • HD/4K Quality • Fast Speed</span>
             </div>
 
-            <!-- Headline -->
+            <!-- سەر دێڕ -->
             <h1 class="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight text-white">
-                <span data-i18n="heroTitle1">Download</span> <span class="text-orange-500" data-i18n="heroTitle2">Social Media Content</span><br><span data-i18n="heroTitle3">Fast & Directly</span>
+                <span data-i18n="heroTitle1">داونلۆدکردنی</span> <span class="text-orange-500" data-i18n="heroTitle2">میدیای سۆشیال میدیا</span><br><span data-i18n="heroTitle3">بە خێرائی و ڕاستەوخۆ</span>
             </h1>
             <p class="text-slate-400 text-xs md:text-sm font-normal leading-relaxed" data-i18n="heroDesc">
-                Download TikTok (Videos, Photos, Stories), Instagram (Reels, Stories, Feed Posts), Facebook, YouTube (Shorts & Ended Lives), and Snapchat Spotlights & Stories instantly!
+                داونلۆدکردنی تیک تۆک (ڤیدیۆ، وێنە، ستۆری)، ئینستاگرام (ڕێڵز، ستۆری، هایلایت، پۆست)، فەیسبووک، یوتیوب (شۆرتس و ڵایڤی کۆتایی پێهاتوو)، و سناپچات (سپۆتلایت و ستۆری) بە باشترین کوالێتی!
             </p>
 
-            <!-- PLATFORM TABS -->
+            <!-- تابەکانی پلاتفۆڕم -->
             <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs scrollbar-hide">
                 <button onclick="selectTab('all')" id="tab-all" class="tab-btn active px-3.5 py-2 rounded-xl font-bold border border-white/10 transition-all flex items-center gap-1.5 flex-shrink-0">
-                    <i class="fa-solid fa-globe"></i> <span data-i18n="tabAll">All Platforms</span>
+                    <i class="fa-solid fa-globe"></i> <span data-i18n="tabAll">هەموو پلاتفۆڕمەکان</span>
                 </button>
                 <button onclick="selectTab('tt')" id="tab-tt" class="tab-btn px-3.5 py-2 rounded-xl font-bold border border-white/10 bg-white/5 transition-all flex items-center gap-1.5 flex-shrink-0 text-slate-300">
                     <i class="fa-brands fa-tiktok text-cyan-400"></i> TikTok
@@ -327,7 +373,7 @@
                 </button>
             </div>
 
-            <!-- INPUT BOX & PASTE ACTION -->
+            <!-- سندوقی داخڵکردنی لینک -->
             <div class="relative flex flex-col sm:flex-row gap-2 bg-[#121215] border border-white/10 rounded-2xl p-2 transition-all focus-within:border-orange-500/80">
                 <div class="flex items-center pl-3 pr-2 py-2 sm:py-0 flex-1">
                     <i class="fa-solid fa-link text-slate-500 mr-2 text-sm flex-shrink-0"></i>
@@ -340,7 +386,7 @@
                     >
                     <button onclick="pasteFromClipboard()" class="text-xs bg-white/10 hover:bg-white/20 text-slate-300 px-2.5 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1 flex-shrink-0" title="Paste Link">
                         <i class="fa-regular fa-clipboard"></i>
-                        <span class="hidden sm:inline" data-i18n="btnPaste">Paste</span>
+                        <span class="hidden sm:inline" data-i18n="btnPaste">پەیست</span>
                     </button>
                 </div>
                 <button
@@ -348,16 +394,16 @@
                     class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black px-6 py-3.5 rounded-xl text-sm transition-all orange-glow-btn flex items-center justify-center gap-2 shadow-lg flex-shrink-0"
                 >
                     <i class="fa-solid fa-cloud-arrow-down text-base"></i>
-                    <span data-i18n="btnDownload">Download</span>
+                    <span data-i18n="btnDownload">داونلۆدکردن</span>
                 </button>
             </div>
 
-            <!-- PROGRESS BAR -->
+            <!-- هێڵی پێشکەوتن -->
             <div id="progressWrap" class="progress-bar-track hidden">
                 <div id="progressFill" class="progress-bar-fill" style="width:0%"></div>
             </div>
 
-            <!-- INTERACTIVE RESULT & MEDIA PREVIEW CARD -->
+            <!-- کاردی پیشاندانی ئەنجامی داونلۆد -->
             <div id="resultBox" class="hidden glass-card p-5 rounded-2xl border border-orange-500/40 space-y-4 animate-fade-in">
                 <div class="flex flex-col sm:flex-row items-center gap-4 border-b border-white/10 pb-4">
                     <div id="previewContainer" class="w-full sm:w-24 h-24 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center overflow-hidden flex-shrink-0 relative">
@@ -371,13 +417,47 @@
                     </div>
                 </div>
 
-                <!-- DOWNLOAD OPTIONS BUTTONS -->
+                <!-- دوگمەکانی داونلۆد -->
                 <div class="space-y-2.5 text-xs" id="downloadOptions"></div>
             </div>
 
         </div>
 
-        <!-- ── STRATEGIC ADSENSE SLOT #2: IN-FEED / MID CONTENT ─────── -->
+        <!-- ── بەشی بەستنەوە بە بۆتی تەلەگرام ─────────────── -->
+        <section id="telegramBotSection" class="relative glass-card rounded-3xl p-6 border border-sky-500/30 telegram-glow-box overflow-hidden space-y-4">
+            <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-400 to-blue-600 flex items-center justify-center text-white text-3xl shadow-lg flex-shrink-0">
+                        <i class="fa-brands fa-telegram"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="inline-block px-2.5 py-0.5 rounded-md bg-sky-500/20 text-sky-400 text-[10px] font-black uppercase tracking-wider">
+                            Telegram Assistant
+                        </span>
+                        <h3 class="text-base font-extrabold text-white" data-i18n="telegramBotTitle">
+                            داونلۆد لە ڕێگەی بۆتی تەلەگرامیش بەردەستە!
+                        </h3>
+                        <p class="text-xs text-slate-300" data-i18n="telegramBotDesc">
+                            لینکی هەر ڤیدیۆیەکی سۆشیال میدیا بنێرە بۆ بۆتی فەرمیمان لە تەلەگرام و ڕاستەوخۆ لینکەکانی داونلۆد بە خێرایی بەرز لە ناو تەلەگرامدا وەربگرە!
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto">
+                    <a href="https://t.me/ProDownOfficial_Bot" target="_blank" class="w-full sm:w-auto bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-extrabold px-5 py-3 rounded-2xl text-xs transition-all telegram-glow-btn flex items-center justify-center gap-2 shadow-lg">
+                        <i class="fa-brands fa-telegram text-base"></i>
+                        <span data-i18n="telegramBotBtn">کردنەوەی بۆتی تەلەگرام</span>
+                    </a>
+                    <button onclick="copyText('@ProDownOfficial_Bot')" class="bg-white/10 hover:bg-white/20 text-slate-200 p-3 rounded-2xl text-xs transition-all" title="Copy Bot Username">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── شوێنی ڕیکلامی گووگڵ #٢: ڕیکلامی نێوان پەڕە ─────── -->
         <div class="adsense-slot w-full h-24 flex items-center justify-center">
             <span class="adsense-tag">Sponsored Ad</span>
             <ins class="adsbygoogle"
@@ -389,7 +469,7 @@
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
 
-        <!-- ── ULTRA-PROFESSIONAL SPONSOR SECTION ─────────────────── -->
+        <!-- ── بەشی ئالترا پرۆفێشیناڵی سپۆنسەران ─────────────────── -->
         <section id="sponsorSection" class="relative glass-card rounded-3xl p-6 md:p-8 border border-amber-500/30 gold-glow-box overflow-hidden space-y-5">
             <div class="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
@@ -399,32 +479,32 @@
                         <i class="fa-solid fa-crown text-amber-400"></i> Official Sponsorship Space
                     </span>
                     <h2 class="text-lg md:text-xl font-black text-white tracking-tight" data-i18n="sponsorTitle">
-                        Become an Official Sponsor of ProDown
+                        ببە بە سپۆنسەری فەرمی ProDown
                     </h2>
                     <p class="text-xs text-slate-300 max-w-md leading-relaxed" data-i18n="sponsorDesc">
-                        Promote your brand, company, or app here to thousands of daily active users! Contact us to lock this premium banner slot.
+                        براند یان ئەپەکەت لەم بەشەدا پێشان بدە بۆ هەزاران بەکارهێنەری ڕۆژانە! نامەمان بۆ بنێرە بۆ گرتنی ئەم شوێنە تایبەتە.
                     </p>
                 </div>
 
                 <a href="#contact" onclick="openSponsorModal()" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-black font-black px-5 py-3 rounded-2xl text-xs transition-all shadow-lg flex items-center justify-center gap-2 flex-shrink-0 cursor-pointer">
                     <i class="fa-solid fa-paper-plane"></i>
-                    <span data-i18n="sponsorBtn">Become a Sponsor</span>
+                    <span data-i18n="sponsorBtn">پەیوەندیمان پێوە بکە</span>
                 </a>
             </div>
 
-            <!-- Placeholder Sponsor Slot Showcase -->
+            <!-- شوێنی نیشاندانی نموونەی ڕیکلامی سپۆنسەر -->
             <div class="p-4 rounded-2xl bg-black/40 border border-amber-500/20 text-center space-y-2">
                 <p class="text-[11px] font-bold text-amber-300/80" data-i18n="sponsorSlotAvailable">
-                    ✨ Platinum Banner Slot Available
+                    ✨ شوێنی پۆستەری پلاتینۆم بەردەستە
                 </p>
                 <div class="flex items-center justify-center gap-2 text-xs text-slate-400">
                     <i class="fa-solid fa-bullhorn text-amber-400 animate-bounce"></i>
-                    <span data-i18n="sponsorMessagePrompt">Do you want to see your logo or banner right here? Send us a message today!</span>
+                    <span data-i18n="sponsorMessagePrompt">دەتەوێت لۆگۆ یان پۆستەرەکەت لێرە دابنرێت؟ هەر ئێستا نامەیەکی ناردن بکە!</span>
                 </div>
             </div>
         </section>
 
-        <!-- DOWNLOAD HISTORY -->
+        <!-- مێژووی داونلۆدەکان -->
         <div id="historySection" class="hidden space-y-3">
             <div class="flex items-center justify-between">
                 <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
@@ -437,50 +517,87 @@
             <div id="historyList" class="space-y-2"></div>
         </div>
 
-        <!-- TUTORIAL / HOW TO USE GUIDE -->
+        <!-- ── بەشی وتارەکانی SEO و فێرکاری ───────────────────────── -->
+        <section id="seoArticles" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-newspaper text-orange-500"></i> <span data-i18n="blogTitle">وتارەکانی SEO و فێرکاری</span>
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- وتاری ١ -->
+                <article class="glass-card rounded-2xl p-5 border border-white/5 hover:border-orange-500/40 transition-all space-y-3">
+                    <div class="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-base">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </div>
+                    <h3 class="text-sm font-extrabold text-white" data-i18n="art1Title">
+                        چۆن ڤیدیۆی تیکتۆک بێ واتەرمارک داونلۆد بکەم؟
+                    </h3>
+                    <p class="text-xs text-slate-400 leading-relaxed" data-i18n="art1Desc">
+                        تیکتۆک لۆگۆیەک دەخاتە سەر ڤیدیۆ خەزنکراوەکان. لە ڕێگەی ProDown تەنها لینکی ڤیدیۆکە کۆپی بکە و لێرە پەیستی بکە بۆ داونلۆدکردنی فایلی خاوێنی MP4 بە کوالێتی فول HD!
+                    </p>
+                </article>
+
+                <!-- وتاری ٢ -->
+                <article class="glass-card rounded-2xl p-5 border border-white/5 hover:border-pink-500/40 transition-all space-y-3">
+                    <div class="w-8 h-8 rounded-xl bg-pink-500/10 text-pink-400 flex items-center justify-center text-base">
+                        <i class="fa-brands fa-instagram"></i>
+                    </div>
+                    <h3 class="text-sm font-extrabold text-white" data-i18n="art2Title">
+                        داونلۆدکردنی ڕێڵز و ستۆریی ئینستاگرام بە بەرزترین کوالێتی
+                    </h3>
+                    <p class="text-xs text-slate-400 leading-relaxed" data-i18n="art2Desc">
+                        خەزنکردنی ڕێڵز، پۆست و ستۆریی ئەکاونتە گشتییەکانی ئینستاگرام ڕاستەوخۆ بۆ سەر مۆبایل یان کۆمپیوتەرەکەت. هەروەها دەتوانیت دەنگی MP3 لە هەر ڕێڵزێک دەربێنیت.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <!-- ڕێنمایی و فێرکاری بەکار‌هێنان -->
         <div id="tutorial" class="glass-card rounded-3xl p-6 border border-white/5 space-y-4">
-            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider text-center" data-i18n="tutTitle">Tutorial & Instructions</h2>
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider text-center" data-i18n="tutTitle">فێرکاری و ڕێنمایی</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Text Instructions -->
+                <!-- ڕێنمایی دەقی -->
                 <div class="space-y-3 text-xs">
                     <div class="flex items-start gap-3 bg-black/40 p-3.5 rounded-2xl border border-white/5">
                         <span class="w-6 h-6 rounded-lg bg-orange-500 text-white font-extrabold flex items-center justify-center flex-shrink-0 text-[11px]">1</span>
                         <div>
-                            <p class="font-bold text-white" data-i18n="tutStep1T">Copy Video / Story Link</p>
-                            <p class="text-[10px] text-slate-400 mt-0.5" data-i18n="tutStep1D">Open Instagram, TikTok, Facebook, YouTube, or Snapchat and copy link.</p>
+                            <p class="font-bold text-white" data-i18n="tutStep1T">کۆپیکردنی لینک</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5" data-i18n="tutStep1D">ئەپی ئینستا، تیک تۆک، فەیسبووک، یوتیوب یان سناپچات بکەرەوە و لینک کۆپی بکە.</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 bg-black/40 p-3.5 rounded-2xl border border-white/5">
                         <span class="w-6 h-6 rounded-lg bg-orange-500 text-white font-extrabold flex items-center justify-center flex-shrink-0 text-[11px]">2</span>
                         <div>
-                            <p class="font-bold text-white" data-i18n="tutStep2T">Stories & Highlights by Username</p>
-                            <p class="text-[10px] text-slate-400 mt-0.5" data-i18n="tutStep2D">To download Instagram or TikTok Stories from public accounts, simply paste the account @username!</p>
+                            <p class="font-bold text-white" data-i18n="tutStep2T">ستۆری و هایلایت بە ناوی بەکارهێنەر (Username)</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5" data-i18n="tutStep2D">بۆ داونلۆدکردنی ستۆری تیک تۆک و ئینستاگرام لە ئەکاونتی گشتی، تەنها ناوی بەکارهێنەر (@username) بنووسە!</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 bg-black/40 p-3.5 rounded-2xl border border-white/5">
                         <span class="w-6 h-6 rounded-lg bg-orange-500 text-white font-extrabold flex items-center justify-center flex-shrink-0 text-[11px]">3</span>
                         <div>
-                            <p class="font-bold text-white" data-i18n="tutStep3T">Paste & Download</p>
-                            <p class="text-[10px] text-slate-400 mt-0.5" data-i18n="tutStep3D">Paste the link or username above and click Download to save instantly.</p>
+                            <p class="font-bold text-white" data-i18n="tutStep3T">پەیست و داونلۆد</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5" data-i18n="tutStep3D">لینک یان یوزەرنەیپ لە سەرەوە پەیست بکە و دگمەی داونلۆد داگرە.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Video Tutorial Interactive Card -->
+                <!-- فێرکاری ڤیدیۆیی -->
                 <div class="bg-black/50 rounded-2xl border border-orange-500/20 p-5 flex flex-col justify-center items-center text-center space-y-3">
                     <div class="w-14 h-14 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl animate-pulse">
                         <i class="fa-solid fa-circle-play"></i>
                     </div>
-                    <p class="text-xs font-bold text-white" data-i18n="tutVidTitle">Quick Video Guide</p>
-                    <p class="text-[10px] text-slate-400 leading-relaxed" data-i18n="tutVidDesc">Copy post/story link ➔ Paste into ProDown ➔ Choose HD Video or MP3 ➔ Save directly to phone gallery!</p>
+                    <p class="text-xs font-bold text-white" data-i18n="tutVidTitle">فێرکاری کورتی ڤیدیۆیی</p>
+                    <p class="text-[10px] text-slate-400 leading-relaxed" data-i18n="tutVidDesc">کۆپیکردنی لینک ➔ پەیستکردن لە وێبسایت ➔ هەڵبژاردنی HD یان MP3 ➔ ڕاستەوخۆ خەزنکردن لە گەلەری!</p>
                 </div>
             </div>
         </div>
 
-        <!-- SUPPORTED PLATFORMS GRID -->
+        <!-- لیستی پلاتفۆڕمە پاڵپشتیکراوەکان -->
         <div class="space-y-3 text-center">
-            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="platTitle">Supported Features & Platforms</h2>
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="platTitle">تایبەتمەندی و پلاتفۆڕمە پاڵپشتیکراوەکان</h2>
             <div class="grid grid-cols-5 gap-2">
                 <div class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md">
                     <i class="fa-brands fa-tiktok text-xl text-white"></i>
@@ -505,7 +622,7 @@
             </div>
         </div>
 
-        <!-- CONTACT & SUPPORT BUTTONS -->
+        <!-- دوگمەکانی پەیوەندی و پشتیوانی -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="contact">
             <a href="https://t.me/prodown_support" target="_blank" class="glass-card p-4 rounded-2xl border border-white/10 flex items-center justify-between hover:border-orange-500/50 transition-all group shadow-lg">
                 <div class="flex items-center gap-3">
@@ -513,8 +630,8 @@
                         <i class="fa-solid fa-headset text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-xs font-bold text-white" data-i18n="suppContact">Contact Support</h3>
-                        <p class="text-[10px] text-slate-400" data-i18n="suppHelp">Get technical help</p>
+                        <h3 class="text-xs font-bold text-white" data-i18n="suppContact">پەیوەندی بە پشتیوانی</h3>
+                        <p class="text-[10px] text-slate-400" data-i18n="suppHelp">وەرگرتنی یارمه‌تی تەکنیکی</p>
                     </div>
                 </div>
                 <i class="fa-solid fa-chevron-right text-xs text-slate-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all"></i>
@@ -526,15 +643,15 @@
                         <i class="fa-solid fa-heart text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-xs font-bold text-white" data-i18n="suppUs">Support Us</h3>
-                        <p class="text-[10px] text-slate-400" data-i18n="suppFree">Keep ProDown free</p>
+                        <h3 class="text-xs font-bold text-white" data-i18n="suppUs">پشتیوانیمان بکە</h3>
+                        <p class="text-[10px] text-slate-400" data-i18n="suppFree">بۆ هێشتنەوەی وێبسایت بە بەلاش</p>
                     </div>
                 </div>
                 <i class="fa-solid fa-chevron-down text-xs text-slate-500 group-hover:text-pink-400 transition-all"></i>
             </button>
         </div>
 
-        <!-- SUPPORT PAYMENT GATEWAYS -->
+        <!-- سندوقی دراو و هەژمارەکانی پشتیوانی مالی -->
         <div id="supportBox" class="hidden glass-card rounded-3xl p-5 space-y-3 border border-pink-500/30 shadow-2xl animate-fade-in">
             <h4 class="text-xs font-black text-pink-400 uppercase tracking-wider flex items-center gap-2">
                 <i class="fa-solid fa-gem"></i> Support Gateways
@@ -555,24 +672,25 @@
 
     </main>
 
-    <!-- ── FOOTER ────────────────────────────────────────────────── -->
+    <!-- ── ژێرپەڕە (Footer) ───────────────────────────────────────── -->
     <footer class="w-full max-w-2xl px-5 py-8 border-t border-white/5 space-y-4">
         <div class="flex flex-wrap justify-center gap-4 text-[11px] text-slate-400">
-            <a href="#" class="hover:text-orange-400 transition-colors" data-i18n="navDownloader">Downloader</a>
-            <a href="#sponsorSection" class="hover:text-amber-400 transition-colors" data-i18n="sponsorTitle">Sponsors</a>
-            <a href="#tutorial" class="hover:text-orange-400 transition-colors" data-i18n="tutTitle">Tutorial</a>
-            <a href="#contact" class="hover:text-orange-400 transition-colors" data-i18n="navContact">Contact</a>
+            <a href="#" class="hover:text-orange-400 transition-colors" data-i18n="navDownloader">داونلۆدکەر</a>
+            <a href="#telegramBotSection" class="hover:text-sky-400 transition-colors" data-i18n="telegramBotTitle">بۆتی تەلەگرام</a>
+            <a href="#sponsorSection" class="hover:text-amber-400 transition-colors" data-i18n="sponsorTitle">سپۆنسەران</a>
+            <a href="#seoArticles" class="hover:text-orange-400 transition-colors" data-i18n="blogTitle">وتارەکان</a>
+            <a href="#contact" class="hover:text-orange-400 transition-colors" data-i18n="navContact">پەیوەندی</a>
         </div>
         <p class="text-center text-[11px] text-slate-500">
             &copy; 2026 ProDown. All rights reserved.
         </p>
     </footer>
 
-    <!-- ── APPLICATION JAVASCRIPT ──────────────────────────────── -->
+    <!-- ── کۆدەکانی جافاسکریپت (JavaScript Logic) ──────────────── -->
     <script>
         const BACKEND_API_URL = '/api/download';
 
-        // Complete Multi-Language Dictionaries
+        // فەرهەنگی وەرگێڕانی سێ زمانی (EN, Kurdish Badini, Kurdish Sorani)
         const i18nData = {
             en: {
                 dir: 'ltr',
@@ -589,6 +707,7 @@
                 navContact: "Contact",
                 histTitle: "Recent Downloads",
                 histClear: "Clear All",
+                pwaInstall: "Install App",
                 tutTitle: "Tutorial & Instructions",
                 tutStep1T: "Copy Video / Story Link",
                 tutStep1D: "Open Instagram, TikTok, Facebook, YouTube, or Snapchat and copy link.",
@@ -609,6 +728,14 @@
                 sponsorBtn: "Become a Sponsor",
                 sponsorSlotAvailable: "✨ Platinum Banner Slot Available",
                 sponsorMessagePrompt: "Do you want to see your logo or banner right here? Send us a message today!",
+                telegramBotTitle: "Download via Telegram Bot is Also Available!",
+                telegramBotDesc: "Send any social media video link to our official Telegram Bot and get instant high-speed download links inside Telegram!",
+                telegramBotBtn: "Open Telegram Bot",
+                blogTitle: "SEO Articles & Guides",
+                art1Title: "How to Download TikTok Videos Without Watermark?",
+                art1Desc: "TikTok applies a floating watermark to saved videos. With ProDown, simply copy the video link from TikTok app, paste it into our search bar, and download the original clean MP4 in full HD resolution!",
+                art2Title: "Download Instagram Reels & Stories in Highest Quality",
+                art2Desc: "Save Instagram Reels, posts, and public account stories directly to your mobile phone or computer. You can also extract audio MP3 from any reel with one click.",
             },
             ku_bad: {
                 dir: 'rtl',
@@ -625,6 +752,7 @@
                 navContact: "پەیوەندی",
                 histTitle: "داونلۆدێن دوماهیێ",
                 histClear: "پاقژکرنا هەمیا",
+                pwaInstall: "دابەزاندنا ئەپێ",
                 tutTitle: "فێرکاری و ڕێنمایی",
                 tutStep1T: "کۆپیکرنا لینکی",
                 tutStep1D: "ئەپێ انستا، تیک توک، فەیسبووک، یوتیوب یان سناپچات ڤەکە و لینکی کۆپی بکە.",
@@ -645,6 +773,14 @@
                 sponsorBtn: "نامەیەکێ بۆ مە بنێرە",
                 sponsorSlotAvailable: "✨ شوێنێ ڕیکلامێ یێ پلاتینیۆم بەردەستە",
                 sponsorMessagePrompt: "تە دڤێت لۆگۆ یان پۆستەرێ تە ل ڤێرێ دیار ببت؟ نوکە نامەیەکێ بۆ مە بنێرە!",
+                telegramBotTitle: "داونلۆد ب ڕێکا بۆتێ تەلەگرامێ ژی بەردەستە!",
+                telegramBotDesc: "لینکا هەر ڤیدیۆیەکا سۆشیال میدیایێ بنێرە بۆ بۆتێ مە یێ فەرمی ل تەلەگرامێ و ڕاستەوخۆ لینکێن داونلۆدکرنێ ب خێراییا بەرز د ناڤ تەلەگرامێ دا وەرگرە!",
+                telegramBotBtn: "ڤەکرنا بۆتێ تەلەگرامێ",
+                blogTitle: "وتارێن فێرکاری و زانیاری (SEO)",
+                art1Title: "چەوا ڤیدیۆیێن تیک تۆک بێ واتەرمارک داونلۆد بکەم؟",
+                art1Desc: "تیک تۆک لوگۆیەکێ بزاڤکەر ددەتە سەر ڤیدیۆیێن پاشەکەوتکری. ب ڕێکا ProDown بتنێ لینکا ڤیدیۆیێ کۆپی بکە و پەیست بکە دا ب بەرزترین کوالێتی و بێ واتەرمارک دابەزینی!",
+                art2Title: "داونلۆدکرنا ڕیلز و ستۆریێن انستاگرامی ب بەرزترین کوالێتی",
+                art2Desc: "پاشەکەوتکرنا ڕیلز، پۆست و ستۆریێن ئەکاونتێن عام یێن انستاگرامی ب شێوەیەکێ ڕاستەوخۆ بۆ سەر مۆبایل یان کۆمپیوتەرێ تە. هەروەسا دەنگێ MP3 ژی ب یەک کلیک دابەزینە.",
             },
             ku_sor: {
                 dir: 'rtl',
@@ -661,6 +797,7 @@
                 navContact: "پەیوەندی",
                 histTitle: "داونلۆدە دوایینەکان",
                 histClear: "سڕینەوەی هەمووی",
+                pwaInstall: "دابەزاندنی ئەپ",
                 tutTitle: "فێرکاری و ڕێنمایی",
                 tutStep1T: "کۆپیکردنی لینک",
                 tutStep1D: "ئەپی ئینستا، تیک تۆک، فەیسبووک، یوتیوب یان سناپچات بکەرەوە و لینک کۆپی بکە.",
@@ -681,6 +818,14 @@
                 sponsorBtn: "پەیوەندیمان پێوە بکە",
                 sponsorSlotAvailable: "✨ شوێنی پۆستەری پلاتینۆم بەردەستە",
                 sponsorMessagePrompt: "دەتەوێت لۆگۆ یان پۆستەرەکەت لێرە دابنرێت؟ هەر ئێستا نامەیەکی ناردن بکە!",
+                telegramBotTitle: "داونلۆد لە ڕێگەی بۆتی تەلەگرامیش بەردەستە!",
+                telegramBotDesc: "لینکی هەر ڤیدیۆیەکی سۆشیال میدیا بنێرە بۆ بۆتی فەرمیمان لە تەلەگرام و ڕاستەوخۆ لینکەکانی داونلۆد بە خێرایی بەرز لە ناو تەلەگرامدا وەربگرە!",
+                telegramBotBtn: "کردنەوەی بۆتی تەلەگرام",
+                blogTitle: "وتارەکانی SEO و فێرکاری",
+                art1Title: "چۆن ڤیدیۆی تیکتۆک بێ واتەرمارک داونلۆد بکەم؟",
+                art1Desc: "تیکتۆک لۆگۆیەک دەخاتە سەر ڤیدیۆ خەزنکراوەکان. لە ڕێگەی ProDown تەنها لینکی ڤیدیۆکە کۆپی بکە و لێرە پەیستی بکە بۆ داونلۆدکردنی فایلی خاوێنی MP4 بە کوالێتی فول HD!",
+                art2Title: "داونلۆدکردنی ڕێڵز و ستۆریی ئینستاگرام بە بەرزترین کوالێتی",
+                art2Desc: "خەزنکردنی ڕێڵز، پۆست و ستۆریی ئەکاونتە گشتییەکانی ئینستاگرام ڕاستەوخۆ بۆ سەر مۆبایل یان کۆمپیوتەرەکەت. هەروەسا دەتوانیت دەنگی MP3 لە هەر ڕێڵزێک دەربێنیت.",
             }
         };
 
@@ -728,7 +873,7 @@
             if (input) input.placeholder = dict.placeholderAll;
         }
 
-        // Alert Toast Helper
+        // ئاگاداریی خێرا (Toast)
         function showAlert(msg, type = 'info') {
             const toast = document.getElementById('alertToast');
             if (!toast) return;
@@ -803,7 +948,7 @@
             window.location.href = "mailto:sponsor@prodown.app?subject=Sponsorship Inquiry ProDown";
         }
 
-        // Native Download Trigger
+        // پێکهاتەی داونلۆدکردنی بەکارهێنەر
         async function triggerNativeDownload(mediaUrl, filename) {
             showAlert('چاوەڕێ بە، داگرتن دەستی پێکرد...', 'info');
             
@@ -832,7 +977,7 @@
             }
         }
 
-        // Extraction Engines
+        // سێرڤەرەکانی دەرهێنانی لینک (API Engines)
         async function fetchDirectStreamUrl(targetUrl) {
             // Priority 1: Custom Backend API
             try {
@@ -941,8 +1086,8 @@
             renderHistory();
         }
 
-        // History Management
-        const HISTORY_KEY = 'prodown_history_v4';
+        // بەڕێوەبردنی مێژوو
+        const HISTORY_KEY = 'prodown_history_v5';
 
         function saveToHistory(entry) {
             let history = loadHistory();
@@ -999,6 +1144,39 @@
 
             if (shareUrl) window.open(shareUrl, '_blank');
             toggleShareMenu();
+        }
+
+        // پرۆسەی پێشنیاری دابەزاندنی PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('pwaInstallBtn');
+            if (btn) btn.classList.remove('hidden');
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showAlert('سوپاس بۆ دابەزاندنی ئەپەکە!', 'success');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                showAlert('دەتوانیت لە ڕێگەی بڕاوسەرەکەتا Add to Home Screen بکەیت.', 'info');
+            }
+        }
+
+        // تۆمارکردنی Service Worker بۆ PWA
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                self.addEventListener('install', e => self.skipWaiting());
+                self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
+            `;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
         }
 
         document.addEventListener('DOMContentLoaded', () => {
