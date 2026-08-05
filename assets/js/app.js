@@ -1,12 +1,10 @@
 /* ==========================================================================
-   ProDown - Multi-API & Native System Downloader v6.0 (Fixed & Updated)
+   ProDown - Main Multi-API Logic & Language Engine v8.0 (Complete Version)
    ========================================================================== */
 
-// ── Backend Configuration ──────────────────────────────────────────────────
-// ⚠️ ل شوێنا ئەڤی لینکی، لینکی سێرڤەرێ خۆ یێ Vercel (https://your-app.vercel.app/api/download) یان Localhost دابنێ
 const BACKEND_API_URL = '/api/download';
 
-// ── Translation Dictionaries ──────────────────────────────────────────────
+// فەرهەنگی وەرگێڕانی سێ زمانی (English, Kurdish Badini, Kurdish Sorani)
 const i18nData = {
     en: {
         dir: 'ltr',
@@ -16,15 +14,14 @@ const i18nData = {
         heroTitle3: "Fast & Directly",
         heroDesc: "Download TikTok (Videos, Photos, Stories), Instagram (Reels, Stories, Feed Posts), Facebook, YouTube (Shorts & Ended Lives), and Snapchat Spotlights & Stories instantly!",
         btnDownload: "Download",
+        btnPaste: "Paste",
         tabAll: "All Platforms",
         shareTitle: "Share ProDown",
         navDownloader: "Downloader",
-        navAbout: "About",
         navContact: "Contact",
-        navPrivacy: "Privacy Policy",
-        navTerms: "Terms of Service",
         histTitle: "Recent Downloads",
         histClear: "Clear All",
+        pwaInstall: "Install App",
         tutTitle: "Tutorial & Instructions",
         tutStep1T: "Copy Video / Story Link",
         tutStep1D: "Open Instagram, TikTok, Facebook, YouTube, or Snapchat and copy link.",
@@ -40,6 +37,19 @@ const i18nData = {
         suppUs: "Support Us",
         suppFree: "Keep ProDown free",
         placeholderAll: "Paste a link or @username for TikTok, Instagram, FB, YT, Snap...",
+        sponsorTitle: "Become an Official Sponsor of ProDown",
+        sponsorDesc: "Promote your brand, company, or app here to thousands of daily active users! Contact us to lock this premium banner slot.",
+        sponsorBtn: "Become a Sponsor",
+        sponsorSlotAvailable: "✨ Platinum Banner Slot Available",
+        sponsorMessagePrompt: "Do you want to see your logo or banner right here? Send us a message today!",
+        telegramBotTitle: "Download via Telegram Bot is Also Available!",
+        telegramBotDesc: "Send any social media video link to our official Telegram Bot and get instant high-speed download links inside Telegram!",
+        telegramBotBtn: "Open Telegram Bot",
+        blogTitle: "SEO Articles & Guides",
+        art1Title: "How to Download TikTok Videos Without Watermark?",
+        art1Desc: "TikTok applies a floating watermark to saved videos. With ProDown, simply copy the video link from TikTok app, paste it into our search bar, and download the original clean MP4 in full HD resolution!",
+        art2Title: "Download Instagram Reels & Stories in Highest Quality",
+        art2Desc: "Save Instagram Reels, posts, and public account stories directly to your mobile phone or computer. You can also extract audio MP3 from any reel with one click.",
     },
     ku_bad: {
         dir: 'rtl',
@@ -49,15 +59,14 @@ const i18nData = {
         heroTitle3: "ب زووی و ب ڕاستەوخۆیی",
         heroDesc: "داونلۆدکرنا تیک کۆک (ڤیدیو، وێنە، ستۆری)، انستاگرام (ڕیلز، ستۆری، هایلایت، پوست)، فەیسبووک، یوتیوب (شوڕتس و ڵایڤێن دوماهیک هاتی)، و سناپچات (سپۆتلایت و ستۆری) ب جوانترین دیزاین!",
         btnDownload: "داونلۆدکرن",
+        btnPaste: "پەیست",
         tabAll: "هەمی پلاتفۆرم",
         shareTitle: "بەلاڤکرنا ProDown",
         navDownloader: "داونلۆدکەر",
-        navAbout: "دەربارەی مە",
         navContact: "پەیوەندی",
-        navPrivacy: "پۆلیسی تایبەتمەندی",
-        navTerms: "مەرجێن بکارئینانێ",
         histTitle: "داونلۆدێن دوماهیێ",
         histClear: "پاقژکرنا هەمیا",
+        pwaInstall: "دابەزاندنا ئەپێ",
         tutTitle: "فێرکاری و ڕێنمایی",
         tutStep1T: "کۆپیکرنا لینکی",
         tutStep1D: "ئەپێ انستا، تیک توک، فەیسبووک، یوتیوب یان سناپچات ڤەکە و لینکی کۆپی بکە.",
@@ -73,6 +82,19 @@ const i18nData = {
         suppUs: "پشتیوانیا مە بکە",
         suppFree: "بۆ هێلانا وێبسایتی بەلاش",
         placeholderAll: "لینکی یان ناڤێ بکارهێنەری پەیست بکە بۆ تیک توک، انستا، فەیسبووک، یوتیوب...",
+        sponsorTitle: "ببە ب سپۆنسەرێ فەرمی یێ ProDown",
+        sponsorDesc: "کۆمپانیا خۆ، بەرهەمێ خۆ، یان ئەپێ خۆ ل ڤێرێ بگەهینە هەزاران بکارهێنەرێن ڕۆژانە! نامەیەکێ بۆ مە بنێرە دا شوێنێ خۆ بپاریزی.",
+        sponsorBtn: "نامەیەکێ بۆ مە بنێرە",
+        sponsorSlotAvailable: "✨ شوێنێ ڕیکلامێ یێ پلاتینیۆم بەردەستە",
+        sponsorMessagePrompt: "تە دڤێت لۆگۆ یان پۆستەرێ تە ل ڤێرێ دیار ببت؟ نوکە نامەیەکێ بۆ مە بنێرە!",
+        telegramBotTitle: "داونلۆد ب ڕێکا بۆتێ تەلەگرامێ ژی بەردەستە!",
+        telegramBotDesc: "لینکا هەر ڤیدیۆیەکا سۆشیال میدیایێ بنێرە بۆ بۆتێ مە یێ فەرمی ل تەلەگرامێ و ڕاستەوخۆ لینکێن داونلۆدکرنێ ب خێراییا بەرز د ناڤ تەلەگرامێ دا وەرگرە!",
+        telegramBotBtn: "ڤەکرنا بۆتێ تەلەگرامێ",
+        blogTitle: "وتارێن فێرکاری و زانیاری (SEO)",
+        art1Title: "چەوا ڤیدیۆیێن تیک تۆک بێ واتەرمارک داونلۆد بکەم؟",
+        art1Desc: "تیک تۆک لوگۆیەکێ بزاڤکەر ددەتە سەر ڤیدیۆیێن پاشەکەوتکری. ب ڕێکا ProDown بتنێ لینکا ڤیدیۆیێ کۆپی بکە و پەیست بکە دا ب بەرزترین کوالێتی و بێ واتەرمارک دابەزینی!",
+        art2Title: "داونلۆدکرنا ڕیلز و ستۆریێن انستاگرامی ب بەرزترین کوالێتی",
+        art2Desc: "پاشەکەوتکرنا ڕیلز، پۆست و ستۆریێن ئەکاونتێن عام یێن انستاگرامی ب شێوەیەکێ ڕاستەوخۆ بۆ سەر مۆبایل یان کۆمپیوتەرێ تە. هەروەسا دەنگێ MP3 ژی ب یەک کلیک دابەزینە.",
     },
     ku_sor: {
         dir: 'rtl',
@@ -82,15 +104,14 @@ const i18nData = {
         heroTitle3: "بە خێرائی و ڕاستەوخۆ",
         heroDesc: "داونلۆدکردنی تیک تۆک (ڤیدیۆ، وێنە، ستۆری)، ئینستاگرام (ڕێڵز، ستۆری، هایلایت، پۆست)، فەیسبووک، یوتیوب (شۆرتس و ڵایڤی کۆتایی پێهاتوو)، و سناپچات (سپۆتلایت و ستۆری) بە باشترین کوالێتی!",
         btnDownload: "داونلۆدکردن",
+        btnPaste: "پەیست",
         tabAll: "هەموو پلاتفۆڕمەکان",
         shareTitle: "شێرکردنی ProDown",
         navDownloader: "داونلۆدکەر",
-        navAbout: "دەربارەی ئێمە",
         navContact: "پەیوەندی",
-        navPrivacy: "پۆلیسی تایبەتمەندی",
-        navTerms: "مەرجەکانی بەکارهێنان",
         histTitle: "داونلۆدە دوایینەکان",
         histClear: "سڕینەوەی هەمووی",
+        pwaInstall: "دابەزاندنی ئەپ",
         tutTitle: "فێرکاری و ڕێنمایی",
         tutStep1T: "کۆپیکردنی لینک",
         tutStep1D: "ئەپی ئینستا، تیک تۆک، فەیسبووک، یوتیوب یان سناپچات بکەرەوە و لینک کۆپی بکە.",
@@ -106,10 +127,22 @@ const i18nData = {
         suppUs: "پشتیوانیمان بکە",
         suppFree: "بۆ هێشتنەوەی وێبسایت بە بەلاش",
         placeholderAll: "لینک یان یوزەرنەیم پەیست بکە بۆ تیک تۆک، ئینستا، فەیسبووک، یوتیوب...",
+        sponsorTitle: "ببە بە سپۆنسەری فەرمی ProDown",
+        sponsorDesc: "براند یان ئەپەکەت لەم بەشەدا پێشان بدە بۆ هەزاران بەکارهێنەری ڕۆژانە! نامەمان بۆ بنێرە بۆ گرتنی ئەم شوێنە تایبەتە.",
+        sponsorBtn: "پەیوەندیمان پێوە بکە",
+        sponsorSlotAvailable: "✨ شوێنی پۆستەری پلاتینۆم بەردەستە",
+        sponsorMessagePrompt: "دەتەوێت لۆگۆ یان پۆستەرەکەت لێرە دابنرێت؟ هەر ئێستا نامەیەکی ناردن بکە!",
+        telegramBotTitle: "داونلۆد لە ڕێگەی بۆتی تەلەگرامیش بەردەستە!",
+        telegramBotDesc: "لینکی هەر ڤیدیۆیەکی سۆشیال میدیا بنێرە بۆ بۆتی فەرمیمان لە تەلەگرام و ڕاستەوخۆ لینکەکانی داونلۆد بە خێرایی بەرز لە ناو تەلەگرامدا وەربگرە!",
+        telegramBotBtn: "کردنەوەی بۆتی تەلەگرام",
+        blogTitle: "وتارەکانی SEO و فێرکاری",
+        art1Title: "چۆن ڤیدیۆی تیکتۆک بێ واتەرمارک داونلۆد بکەم؟",
+        art1Desc: "تیکتۆک لۆگۆیەک دەخاتە سەر ڤیدیۆ خەزنکراوەکان. لە ڕێگەی ProDown تەنها لینکی ڤیدیۆکە کۆپی بکە و لێرە پەیستی بکە بۆ داونلۆدکردنی فایلی خاوێنی MP4 بە کوالێتی فول HD!",
+        art2Title: "داونلۆدکردنی ڕێڵز و ستۆریی ئینستاگرام بە بەرزترین کوالێتی",
+        art2Desc: "خەزنکردنی ڕێڵز، پۆست و ستۆریی ئەکاونتە گشتییەکانی ئینستاگرام ڕاستەوخۆ بۆ سەر مۆبایل یان کۆمپیوتەرەکەت. هەروەها دەتوانیت دەنگی MP3 لە هەر ڕێڵزێک دەربێنیت.",
     }
 };
 
-// ── Language Management ──────────────────────────────────────────────────
 const LANG_STORAGE_KEY = 'prodown_lang_choice';
 
 function initAppLanguage() {
@@ -139,7 +172,7 @@ function setAppLanguage(langKey) {
 
 function applyLanguage(lang) {
     const dict = i18nData[lang] || i18nData.en;
-    document.documentElement.lang = lang === 'ku_bad' || lang === 'ku_sor' ? 'ku' : 'en';
+    document.documentElement.lang = lang.startsWith('ku') ? 'ku' : 'en';
     document.documentElement.dir = dict.dir;
 
     const select = document.getElementById('langSelectHeader');
@@ -154,19 +187,19 @@ function applyLanguage(lang) {
     if (input) input.placeholder = dict.placeholderAll;
 }
 
-// ── Alert Toast & Progress ───────────────────────────────────────────────
+// ئاگاداریی خێرا (Toast Notification)
 function showAlert(msg, type = 'info') {
     const toast = document.getElementById('alertToast');
     if (!toast) return;
-    const colors = { info: 'bg-orange-500/90', success: 'bg-emerald-500/90', error: 'bg-red-500/90', warn: 'bg-amber-500/90' };
+    const colors = { info: 'bg-orange-500/95', success: 'bg-emerald-500/95', error: 'bg-red-500/95', warn: 'bg-amber-500/95' };
     const icons  = { info: 'fa-circle-info', success: 'fa-circle-check', error: 'fa-triangle-exclamation', warn: 'fa-triangle-exclamation' };
-    toast.className = `fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl text-xs font-bold text-white shadow-2xl flex items-center gap-2 max-w-xs text-center ${colors[type] || colors.info}`;
-    const icon = document.createElement('i');
-    icon.className = `fa-solid ${icons[type] || 'fa-circle-info'}`;
-    toast.replaceChildren(icon, document.createTextNode(' ' + msg));
+    
+    toast.className = `fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl text-xs font-bold text-white shadow-2xl flex items-center gap-2 max-w-xs text-center ${colors[type] || colors.info} animate-fade-in`;
+    toast.innerHTML = `<i class="fa-solid ${icons[type] || 'fa-circle-info'}"></i> <span>${msg}</span>`;
     toast.classList.remove('hidden');
+    
     clearTimeout(toast._timer);
-    toast._timer = setTimeout(() => toast.classList.add('hidden'), 4500);
+    toast._timer = setTimeout(() => toast.classList.add('hidden'), 4000);
 }
 
 function setProgress(pct) {
@@ -181,6 +214,31 @@ function setProgress(pct) {
 function toggleMobileMenu() { document.getElementById('mobileMenu')?.classList.toggle('hidden'); }
 function toggleSupportBox() { document.getElementById('supportBox')?.classList.toggle('hidden'); }
 function toggleShareMenu() { document.getElementById('shareMenu')?.classList.toggle('hidden'); }
+
+function copyText(text) {
+    const el = document.createElement('textarea');
+    el.value = text;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    showAlert('کۆپی کرا!', 'success');
+}
+
+async function pasteFromClipboard() {
+    try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+            const input = document.getElementById('inputUrl');
+            if (input) input.value = text;
+            showAlert('لینکەکە کۆپی کرا!', 'info');
+            const p = detectPlatform(text);
+            if (p) selectTab(p.key);
+        }
+    } catch (_) {
+        showAlert('تکایە بە دەست لینکەکە پەیست بکە.', 'warn');
+    }
+}
 
 function selectTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -200,9 +258,13 @@ function detectPlatform(url) {
     return null;
 }
 
-// ── NATIVE SYSTEM DOWNLOAD TRIGGER ─────────────────────────────────────────
+function openSponsorModal() {
+    window.location.href = "mailto:sponsor@prodown.app?subject=Sponsorship Inquiry ProDown";
+}
+
+// پێکهاتەی داونلۆدکردنی بەکارهێنەر
 async function triggerNativeDownload(mediaUrl, filename) {
-    showAlert('چاوەڕێ بە، داگرتن لە دروستبووندایە...', 'info');
+    showAlert('چاوەڕێ بە، داگرتن دەستی پێکرد...', 'info');
     
     try {
         const response = await fetch(mediaUrl, { mode: 'cors' });
@@ -218,9 +280,7 @@ async function triggerNativeDownload(mediaUrl, filename) {
         
         setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
         showAlert('فایلەکە داواکرا!', 'success');
-
     } catch (e) {
-        // Fallback: Direct system prompt trigger
         const link = document.createElement('a');
         link.href = mediaUrl;
         link.setAttribute('download', filename || 'ProDown_Video.mp4');
@@ -231,9 +291,9 @@ async function triggerNativeDownload(mediaUrl, filename) {
     }
 }
 
-// ── MULTI-SERVER API FETCH ENGINE (Node.js Backend Proxy + Fallbacks) ──────
+// سێرڤەرەکانی دەرهێنانی لینک (Multi-API Extraction Engines)
 async function fetchDirectStreamUrl(targetUrl) {
-    // 1st Priority Engine: ProDown Node.js Serverless Express Backend (Vercel/Local)
+    // Priority 1: Custom Backend API Express Server
     try {
         const res = await fetch(BACKEND_API_URL, {
             method: 'POST',
@@ -242,15 +302,11 @@ async function fetchDirectStreamUrl(targetUrl) {
         });
         if (res.ok) {
             const data = await res.json();
-            if (data && data.success && data.downloadUrl) {
-                return data.downloadUrl;
-            }
+            if (data && data.success && data.downloadUrl) return data;
         }
-    } catch (_) {
-        console.warn('Backend server response pending/failed, attempting direct fallbacks...');
-    }
+    } catch (_) {}
 
-    // 2nd Engine: Cobalt v10 Modern Public API Instance
+    // Priority 2: Cobalt Public Multi Engine
     try {
         const res = await fetch('https://co.wuk.sh/api/json', {
             method: 'POST',
@@ -258,11 +314,11 @@ async function fetchDirectStreamUrl(targetUrl) {
             body: JSON.stringify({ url: targetUrl })
         });
         const data = await res.json();
-        if (data && data.url) return data.url;
-        if (data && data.picker && data.picker[0]?.url) return data.picker[0].url;
+        if (data && data.url) return { downloadUrl: data.url, audioUrl: data.audio };
+        if (data && data.picker && data.picker[0]?.url) return { downloadUrl: data.picker[0].url, thumb: data.picker[0].thumb };
     } catch (_) {}
 
-    // 3rd Engine: Alternative Cobalt v10 Endpoint
+    // Priority 3: Alternative Endpoint Engine
     try {
         const res = await fetch('https://api.cobalt.tools/', {
             method: 'POST',
@@ -270,28 +326,20 @@ async function fetchDirectStreamUrl(targetUrl) {
             body: JSON.stringify({ url: targetUrl })
         });
         const data = await res.json();
-        if (data && data.url) return data.url;
-        if (data && data.picker && data.picker[0]?.url) return data.picker[0].url;
-    } catch (_) {}
-
-    // 4th Engine: Direct Social Media Extractor Engine (VKRDown)
-    try {
-        const res = await fetch(`https://api.vkrdown.com/v1/main?url=${encodeURIComponent(targetUrl)}`);
-        const data = await res.json();
-        if (data && data.data && data.data.url) return data.data.url;
-        if (data && data.downloads && data.downloads[0]?.url) return data.downloads[0].url;
+        if (data && data.url) return { downloadUrl: data.url };
     } catch (_) {}
 
     return null;
 }
 
-// ── MAIN EXTRACTION PROCESSOR ─────────────────────────────────────────────
 async function processDownload() {
     const inputEl = document.getElementById('inputUrl');
     const resultBox = document.getElementById('resultBox');
     const resultTitle = document.getElementById('resultTitle');
     const resultPlatform = document.getElementById('resultPlatform');
     const dlOptions = document.getElementById('downloadOptions');
+    const previewImg = document.getElementById('mediaPreviewImg');
+    const previewIcon = document.getElementById('previewPlaceholderIcon');
 
     if (!inputEl || !inputEl.value.trim()) {
         showAlert('تکایە سەرەتا لینک یان ناوی بەکارهێنەر پەیست بکە.', 'warn');
@@ -304,55 +352,62 @@ async function processDownload() {
     resultBox.classList.remove('hidden');
     resultTitle.textContent = 'چاوەڕێ بە، ئامادەکردنی پەڕگەی داونلۆد...';
     resultPlatform.textContent = 'ProDown Multi-Engine Extractor';
-    dlOptions.innerHTML = '<div class="skeleton h-12 rounded-xl w-full"></div>';
-    setProgress(35);
+    
+    previewImg.classList.add('hidden');
+    previewIcon.classList.remove('hidden');
 
-    const streamUrl = await fetchDirectStreamUrl(targetUrl);
+    dlOptions.innerHTML = '<div class="skeleton h-12 rounded-xl w-full"></div>';
+    setProgress(40);
+
+    const resultData = await fetchDirectStreamUrl(targetUrl);
     
     setProgress(100);
     setTimeout(() => setProgress(null), 300);
 
-    if (streamUrl) {
-        resultTitle.textContent = '✅ داونلۆد ئامادەیە!';
-        resultPlatform.textContent = `${platform.label} • Full HD • System Direct Prompt`;
+    const downloadUrl = resultData?.downloadUrl || targetUrl;
+    const audioUrl = resultData?.audioUrl;
+    const thumbnail = resultData?.thumb;
 
-        dlOptions.innerHTML = `
-            <button onclick="triggerNativeDownload('${streamUrl}', 'ProDown_${platform.label}_${Date.now()}.mp4')" 
-                    class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-4 rounded-2xl flex justify-between items-center orange-glow-btn shadow-xl cursor-pointer">
-                <span class="flex items-center gap-2.5 text-sm">
-                    <i class="fa-solid fa-circle-down text-lg"></i> Download Video HD
-                </span>
-                <span class="text-[11px] bg-black/40 px-2.5 py-1 rounded-lg font-mono">MP4</span>
-            </button>
-        `;
-
-        saveToHistory({ url: targetUrl, platform: platform.label, timestamp: Date.now() });
-        renderHistory();
-    } else {
-        // Fallback Mode if all APIs fail
-        resultTitle.textContent = '✅ فایلەکە دۆزرایەوە (داگرتن)';
-        resultPlatform.textContent = `${platform.label} • Direct Stream`;
-
-        dlOptions.innerHTML = `
-            <button onclick="triggerNativeDownload('${targetUrl}', 'ProDown_${platform.label}.mp4')" 
-                    class="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-extrabold p-4 rounded-2xl flex justify-between items-center orange-glow-btn shadow-xl cursor-pointer">
-                <span class="flex items-center gap-2.5 text-sm">
-                    <i class="fa-solid fa-circle-down text-lg"></i> Download Video
-                </span>
-                <span class="text-[11px] bg-black/40 px-2.5 py-1 rounded-lg font-mono">Direct</span>
-            </button>
-        `;
+    if (thumbnail) {
+        previewImg.src = thumbnail;
+        previewImg.classList.remove('hidden');
+        previewIcon.classList.add('hidden');
     }
+
+    resultTitle.textContent = '✅ داونلۆد ئامادەیە!';
+    resultPlatform.textContent = `${platform.label} • Full HD Quality`;
+
+    dlOptions.innerHTML = `
+        <button onclick="triggerNativeDownload('${downloadUrl}', 'ProDown_${platform.label}_${Date.now()}.mp4')" 
+                class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-3.5 rounded-xl flex justify-between items-center orange-glow-btn shadow-lg cursor-pointer">
+            <span class="flex items-center gap-2.5 text-xs sm:text-sm">
+                <i class="fa-solid fa-circle-down text-lg"></i> Download Video HD
+            </span>
+            <span class="text-[10px] bg-black/40 px-2 py-1 rounded-md font-mono">MP4</span>
+        </button>
+        ${audioUrl ? `
+        <button onclick="triggerNativeDownload('${audioUrl}', 'ProDown_Audio_${Date.now()}.mp3')" 
+                class="w-full bg-white/10 hover:bg-white/20 text-slate-200 font-extrabold p-3.5 rounded-xl flex justify-between items-center transition-all cursor-pointer border border-white/10">
+            <span class="flex items-center gap-2.5 text-xs sm:text-sm">
+                <i class="fa-solid fa-music text-lg text-amber-400"></i> Download Audio MP3
+            </span>
+            <span class="text-[10px] bg-black/40 px-2 py-1 rounded-md font-mono">MP3</span>
+        </button>
+        ` : ''}
+    `;
+
+    saveToHistory({ url: targetUrl, platform: platform.label, timestamp: Date.now() });
+    renderHistory();
 }
 
-// ── History Management ──────────────────────────────────────────────────
-const HISTORY_KEY = 'prodown_history_v2';
+// بەڕێوەبردنی مێژوو (History Management)
+const HISTORY_KEY = 'prodown_history_v5';
 
 function saveToHistory(entry) {
     let history = loadHistory();
     history = history.filter(h => h.url !== entry.url);
     history.unshift(entry);
-    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 10))); } catch (_) {}
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 8))); } catch (_) {}
 }
 
 function loadHistory() {
@@ -378,7 +433,7 @@ function renderHistory() {
 
     history.forEach(item => {
         const div = document.createElement('div');
-        div.className = 'glass-card p-3 rounded-2xl flex items-center justify-between text-xs border border-white/5';
+        div.className = 'glass-card p-3 rounded-2xl flex items-center justify-between text-xs border border-white/5 hover:border-orange-500/30 transition-all';
         div.innerHTML = `
             <div class="truncate pr-2">
                 <p class="font-bold text-orange-400">${item.platform}</p>
@@ -392,7 +447,52 @@ function renderHistory() {
     });
 }
 
-// ── DOM Setup ───────────────────────────────────────────────────────────
+function shareVia(platform) {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent('Download social media videos for free with ProDown!');
+    let shareUrl = '';
+
+    if (platform === 'whatsapp') shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
+    if (platform === 'telegram') shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
+    if (platform === 'facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+
+    if (shareUrl) window.open(shareUrl, '_blank');
+    toggleShareMenu();
+}
+
+// پرۆسەی پێشنیاری دابەزاندنی PWA (Progressive Web App)
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const btn = document.getElementById('pwaInstallBtn');
+    if (btn) btn.classList.remove('hidden');
+});
+
+function installPWA() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                showAlert('سوپاس بۆ دابەزاندنی ئەپەکە!', 'success');
+            }
+            deferredPrompt = null;
+        });
+    } else {
+        showAlert('دەتوانیت لە ڕێگەی بڕاوسەرەکەتا Add to Home Screen بکەیت.', 'info');
+    }
+}
+
+// تۆمارکردنی Service Worker بۆ PWA
+if ('serviceWorker' in navigator) {
+    const swCode = `
+        self.addEventListener('install', e => self.skipWaiting());
+        self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
+    `;
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initAppLanguage();
 
@@ -405,20 +505,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (p) selectTab(p.key);
         });
 
-        input.addEventListener('focus', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                if (text && !input.value && /https?:\/\//i.test(text)) {
-                    input.value = text;
-                    showAlert('لینکەکە کۆپی کرا!', 'info');
-                    const p = detectPlatform(text);
-                    if (p) selectTab(p.key);
-                }
-            } catch (_) {}
-        });
-
         input.addEventListener('keydown', e => { if (e.key === 'Enter') processDownload(); });
     }
 
     renderHistory();
 });
+
