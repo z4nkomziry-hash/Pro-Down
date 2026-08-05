@@ -1,85 +1,148 @@
+/* ==========================================================================
+   ProDown - Node.js Express Backend API Extractor Server v3.0
+   ========================================================================== */
+
 const express = require('express');
 const cors = require('cors');
-const axios = require('axios');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
-// Enable CORS for all routes (Connect Frontend to Backend seamlessly)
-app.use(cors());
-app.use(express.json());
+// چالاککردنی CORS و بەکارهێنانی فۆرماتی JSON
+app.use(cors({ origin: '*' }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
 
-// ── Multi-Engine Extractor Route ──────────────────────────────────
-app.post('/api/download', async (req, res) => {
-    const { url } = req.body;
-
-    if (!url) {
-        return res.status(400).json({ success: false, error: 'URL field is required.' });
-    }
-
-    // Engine 1: Cobalt Main Endpoint
-    try {
-        const response = await axios.post('https://co.wuk.sh/api/json', 
-            { url }, 
-            { headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }, timeout: 8000 }
-        );
-        const data = response.data;
-        const mediaUrl = data.url || (data.picker && data.picker[0]?.url);
-        
-        if (mediaUrl) {
-            return res.json({ success: true, engine: 'Cobalt-Primary', downloadUrl: mediaUrl });
-        }
-    } catch (err) {
-        console.warn('Engine 1 failed, switching to Engine 2...');
-    }
-
-    // Engine 2: Cobalt Alternative Endpoint
-    try {
-        const response = await axios.post('https://api.cobalt.tools/', 
-            { url }, 
-            { headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }, timeout: 8000 }
-        );
-        const data = response.data;
-        const mediaUrl = data.url || (data.picker && data.picker[0]?.url);
-
-        if (mediaUrl) {
-            return res.json({ success: true, engine: 'Cobalt-Secondary', downloadUrl: mediaUrl });
-        }
-    } catch (err) {
-        console.warn('Engine 2 failed, switching to Engine 3...');
-    }
-
-    // Engine 3: VKRDown Extractor Endpoint
-    try {
-        const response = await axios.get(`https://api.vkrdown.com/v1/main?url=${encodeURIComponent(url)}`, { timeout: 8000 });
-        const data = response.data;
-        const mediaUrl = data?.data?.url || (data?.downloads && data?.downloads[0]?.url);
-
-        if (mediaUrl) {
-            return res.json({ success: true, engine: 'VKRDown Engine', downloadUrl: mediaUrl });
-        }
-    } catch (err) {
-        console.warn('Engine 3 failed.');
-    }
-
-    // Fallback response if all third-party engines fail
-    return res.status(502).json({ 
-        success: false, 
-        error: 'Unable to extract stream from provided link. Please check if the link is public.' 
+// ڕووتی سەرەکی بۆ پشکنینی سێرڤەر
+app.get('/', (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: 'ProDown Multi-Engine API Server is running smoothly!',
+        timestamp: new Date().toISOString()
     });
 });
 
-// Health check endpoint
-app.get('/', (req, res) => {
-    res.send('ProDown Backend API Server is running smoothly! 🚀');
+// ڕووتی سەرەکیی دەرهێنانی لینکی داونلۆد (POST /api/download)
+app.post('/api/download', async (req, res) => {
+    try {
+        const { url } = req.body;
+
+        if (!url || typeof url !== 'string' || !url.trim()) {
+            return res.status(400).json({
+                success: false,
+                error: 'تکایە لینکێکی دروست بنێرە.'
+            });
+        }
+
+        const targetUrl = url.trim();
+
+        // 1. تاقیکردنەوە لە ڕێگەی Cobalt API Engine
+        try {
+            const cobaltResponse = await fetch('https://co.wuk.sh/api/json', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                },
+                body: JSON.stringify({
+                    url: targetUrl,
+                    vCodec: 'h264',
+                    vQuality: 'max',
+                    aFormat: 'mp3',
+                    filenamePattern: 'nerd'
+                })
+            });
+
+            if (cobaltResponse.ok) {
+                const cobaltData = await cobaltResponse.json();
+
+                if (cobaltData.url) {
+                    return res.status(200).json({
+                        success: true,
+                        platform: detectPlatform(targetUrl),
+                        downloadUrl: cobaltData.url,
+                        audioUrl: cobaltData.audio || null,
+                        thumb: cobaltData.thumb || null,
+                        source: 'Cobalt Engine'
+                    });
+                }
+
+                if (cobaltData.picker && cobaltData.picker.length > 0) {
+                    return res.status(200).json({
+                        success: true,
+                        platform: detectPlatform(targetUrl),
+                        downloadUrl: cobaltData.picker[0].url,
+                        thumb: cobaltData.picker[0].thumb || null,
+                        source: 'Cobalt Picker'
+                    });
+                }
+            }
+        } catch (cobaltError) {
+            console.warn('[ProDown Backend] Cobalt API primary failed, trying secondary engines...');
+        }
+
+        // 2. تاقیکردنەوە لە ڕێگەی Backup Cobalt Instance Engine
+        try {
+            const altCobaltResponse = await fetch('https://api.cobalt.tools/', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'Mozilla/5.0'
+                },
+                body: JSON.stringify({ url: targetUrl })
+            });
+
+            if (altCobaltResponse.ok) {
+                const altData = await altCobaltResponse.json();
+                if (altData.url) {
+                    return res.status(200).json({
+                        success: true,
+                        platform: detectPlatform(targetUrl),
+                        downloadUrl: altData.url,
+                        audioUrl: altData.audio || null,
+                        source: 'Secondary Cobalt Engine'
+                    });
+                }
+            }
+        } catch (altError) {
+            console.warn('[ProDown Backend] Secondary Cobalt API failed...');
+        }
+
+        // 3. ڕاگەیاندنی لینکی ڕاستەوخۆ (Direct Stream Fallback)
+        return res.status(200).json({
+            success: true,
+            platform: detectPlatform(targetUrl),
+            downloadUrl: targetUrl,
+            source: 'Direct Stream Fallback'
+        });
+
+    } catch (globalError) {
+        console.error('[ProDown Backend Error]:', globalError);
+        return res.status(500).json({
+            success: false,
+            error: 'کێشەیەک لە سێرڤەردا ڕوویدا، تکایە دواتر هەوڵ بدەرەوە.'
+        });
+    }
 });
 
-// Export app for Vercel Serverless Environments
+// فەنکشنی دیاریکردنی پلاتفۆڕم لە ڕێگەی لینکەوە
+function detectPlatform(url) {
+    if (/tiktok\.com|vt\.tiktok\.com/i.test(url)) return 'TikTok';
+    if (/instagram\.com/i.test(url)) return 'Instagram';
+    if (/(facebook\.com|fb\.watch)/i.test(url)) return 'Facebook';
+    if (/(youtube\.com|youtu\.be)/i.test(url)) return 'YouTube';
+    if (/snapchat\.com/i.test(url)) return 'Snapchat';
+    return 'Social Media';
+}
+
+// دەستپێکردنی سێرڤەر
+app.listen(PORT, () => {
+    console.log(`==================================================`);
+    console.log(`🚀 ProDown Backend API is active on port ${PORT}`);
+    console.log(`==================================================`);
+});
+
 module.exports = app;
 
-// Run stand-alone server locally (Only if not running on Vercel)
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-    app.listen(PORT, () => {
-        console.log(`Server running locally on port ${PORT}`);
-    });
-}
