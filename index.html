@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Primary SEO -->
-    <title>ProDown — Ultimate Social Media Media Downloader</title>
-    <meta name="description" content="Download TikTok, Instagram Reels & Stories, Facebook Videos, YouTube Shorts & Ended Lives, and Snapchat Spotlights free in HD/4K quality.">
+    <title>ProDown — Ultimate Social Media Downloader</title>
+    <meta name="description" content="Download TikTok, Instagram Reels & Stories, Facebook Videos, YouTube Shorts & Ended Lives, and Snapchat Spotlights free in HD/4K quality without watermark.">
     <meta name="keywords" content="TikTok downloader, Instagram Reels downloader, Instagram Story downloader, Facebook video downloader, YouTube Shorts downloader, Snapchat Spotlight downloader, no watermark, free HD, ProDown">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://prodown.vercel.app/">
@@ -16,14 +16,24 @@
     <meta property="og:url"         content="https://prodown.vercel.app/">
     <meta property="og:title"       content="ProDown — Free Social Media Downloader">
     <meta property="og:description" content="Download TikTok, Instagram, Facebook, YouTube & Snapchat media instantly. No watermark, HD quality, free.">
-    <meta property="og:image"       content="https://prodown.vercel.app/assets/images/logo.png">
+    <meta property="og:image"       content="assets/images/logo.png">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: { extend: { colors: { brand: '#f97316' } } }
+            theme: { 
+                extend: { 
+                    colors: { 
+                        brand: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                            400: '#fb923c'
+                        } 
+                    } 
+                } 
+            }
         }
     </script>
 
@@ -33,17 +43,125 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Styles -->
+    <style>
+        :root {
+            --bg-main: #070709;
+            --orange-primary: #f97316;
+            --orange-glow: rgba(249, 115, 22, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --gold-glow: rgba(245, 158, 11, 0.3);
+        }
 
-    <!-- Google AdSense Code -->
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Noto Sans Arabic', sans-serif;
+            background-color: var(--bg-main);
+            color: #ffffff;
+            scroll-behavior: smooth;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        /* Ultra Glow Effects */
+        .orange-glow-box { box-shadow: 0 0 50px rgba(249,115,22,0.18); }
+        .gold-glow-box { box-shadow: 0 0 45px rgba(245,158,11,0.22); }
+
+        .orange-glow-btn {
+            box-shadow: 0 4px 24px var(--orange-glow);
+            transition: all 0.25s ease;
+        }
+        .orange-glow-btn:hover {
+            box-shadow: 0 6px 32px rgba(249,115,22,0.65);
+            transform: translateY(-2px);
+        }
+        .orange-glow-btn:active { transform: translateY(0); }
+
+        /* Tabs Styling */
+        .tab-btn { transition: all 0.2s ease-in-out; }
+        .tab-btn.active {
+            background: var(--orange-primary) !important;
+            color: #ffffff !important;
+            border-color: var(--orange-primary) !important;
+            box-shadow: 0 2px 14px var(--orange-glow);
+        }
+
+        /* Progress Bar */
+        .progress-bar-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f97316, #fbbf24);
+            border-radius: 99px;
+            transition: width 0.3s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* Skeleton Loading Effect */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Ad Slots */
+        .adsense-slot {
+            background: rgba(255,255,255,0.015);
+            border: 1px dashed rgba(249,115,22,0.25);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .adsense-tag {
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            font-size: 8px;
+            font-weight: 800;
+            color: rgba(255,255,255,0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #070709; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--orange-primary); }
+
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+
+    <!-- Google AdSense Script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7926552217625654" crossorigin="anonymous"></script>
 
-    <!-- PWA Manifest & Theme -->
-    <link rel="manifest" href="/manifest.json">
+    <!-- PWA Theme -->
     <meta name="theme-color" content="#f97316">
 </head>
-<body class="min-h-screen flex flex-col items-center antialiased bg-[#0b0b0d] text-white selection:bg-orange-500 selection:text-white">
+<body class="min-h-screen flex flex-col items-center antialiased bg-[#070709] text-white selection:bg-orange-500 selection:text-white">
 
     <!-- ── ONBOARDING & LANGUAGE MODAL ────────────────────────────────────── -->
     <div id="onboardingModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl transition-all duration-500">
@@ -51,7 +169,7 @@
             
             <!-- STEP 1: WELCOME SCREEN -->
             <div id="stepWelcome" class="space-y-5 animate-fade-in">
-                <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-4xl text-white shadow-xl animate-bounce-slow">
+                <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-4xl text-white shadow-xl">
                     <i class="fa-solid fa-cloud-arrow-down"></i>
                 </div>
                 <h2 class="text-2xl font-black tracking-tight text-white">Welcome to <span class="text-orange-500">ProDown</span></h2>
@@ -59,7 +177,7 @@
                     The ultimate platform to download videos, reels, stories, highlights, and audio from TikTok, Instagram, Facebook, YouTube, and Snapchat with high speed and maximum quality!
                 </p>
                 <button onclick="goToLangStep()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold py-3.5 rounded-2xl text-sm transition-all orange-glow-btn flex items-center justify-center gap-2 shadow-lg">
-                    <span>Next</span>
+                    <span>Next / بەردەوامبە</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
@@ -70,7 +188,7 @@
                     <i class="fa-solid fa-language"></i>
                 </div>
                 <h3 class="text-xl font-extrabold text-white">Select Your Language</h3>
-                <p class="text-xs text-slate-400">هەڵبژارتنا زمانی بگەهینە / زمانەکەی خۆت هەڵبژێرە</p>
+                <p class="text-xs text-slate-400">زمانەکەت هەڵبژێرە / هەڵبژارتنا زمانی بگەهینە</p>
 
                 <div class="space-y-3 pt-2">
                     <button onclick="setAppLanguage('ku_bad')" class="w-full glass-card p-4 rounded-2xl border border-white/10 hover:border-orange-500 flex items-center justify-between text-sm font-bold hover:bg-orange-500/10 transition-all group">
@@ -92,36 +210,38 @@
     </div>
 
     <!-- ALERT TOAST -->
-    <div id="alertToast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl text-xs font-bold text-white shadow-2xl flex items-center gap-2 max-w-xs text-center bg-orange-500/90"></div>
+    <div id="alertToast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl text-xs font-bold text-white shadow-2xl flex items-center gap-2 max-w-xs text-center transition-all"></div>
 
-    <!-- ── TOP BANNER AD SLOT ─────────────────────────────────────── -->
+    <!-- ── STRATEGIC ADSENSE SLOT #1: TOP BANNER ────────────────── -->
     <div class="w-full max-w-2xl px-4 pt-3">
-        <div class="ad-slot ad-slot-banner" id="adSlotTop">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7926552217625654" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        <div class="adsense-slot w-full h-20 flex items-center justify-center">
+            <span class="adsense-tag">Advertisement</span>
+            <ins class="adsbygoogle"
+                 style="display:block; width: 100%; height: 100%;"
+                 data-ad-client="ca-pub-7926552217625654"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
     </div>
 
-    <!-- ── NAVIGATION ────────────────────────────────────────────── -->
-    <header class="w-full max-w-2xl px-5 py-4 flex justify-between items-center border-b border-white/5 sticky top-0 bg-[#0b0b0d]/90 backdrop-blur-md z-40">
+    <!-- ── NAVIGATION HEADER ────────────────────────────────────── -->
+    <header class="w-full max-w-2xl px-5 py-4 flex justify-between items-center border-b border-white/5 sticky top-0 bg-[#070709]/90 backdrop-blur-md z-40">
         <a href="/" class="flex items-center gap-3">
-            <img src="assets/images/logo.png" alt="ProDown Logo" class="w-10 h-10 object-contain"
-                 onerror="this.src='https://ui-avatars.com/api/?name=PD&background=f97316&color=fff'">
+            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white text-xl font-black shadow-lg">
+                P
+            </div>
             <span class="text-xl font-black tracking-tight text-white">Pro<span class="text-orange-500">Down</span></span>
         </a>
 
         <div class="flex items-center gap-2">
-            <!-- Language Switcher Dropdown in Header -->
+            <!-- Language Switcher Dropdown -->
             <select id="langSelectHeader" onchange="setAppLanguage(this.value)" class="bg-white/5 border border-white/10 text-xs font-bold text-slate-200 px-2.5 py-1.5 rounded-xl focus:outline-none focus:border-orange-500 cursor-pointer">
-                <option value="en" class="bg-[#0b0b0d]">🇺🇸 EN</option>
-                <option value="ku_bad" class="bg-[#0b0b0d]">☀️ بەهدینی</option>
-                <option value="ku_sor" class="bg-[#0b0b0d]">☀️ سۆڕانی</option>
+                <option value="en" class="bg-[#070709]">🇺🇸 EN</option>
+                <option value="ku_bad" class="bg-[#070709]">☀️ بەهدینی</option>
+                <option value="ku_sor" class="bg-[#070709]">☀️ سۆڕانی</option>
             </select>
-
-            <!-- PWA Install Button -->
-            <button id="installPwaBtn" class="hidden w-9 h-9 rounded-xl glass-card flex items-center justify-center text-slate-300 hover:text-orange-400 transition-all" title="Install ProDown App">
-                <i class="fa-solid fa-mobile-screen-button text-sm"></i>
-            </button>
 
             <!-- Share Button -->
             <div class="relative">
@@ -142,37 +262,34 @@
                 </div>
             </div>
 
-            <!-- Mobile Hamburger -->
+            <!-- Mobile Hamburger Menu Button -->
             <button id="menuBtn" onclick="toggleMobileMenu()" class="w-9 h-9 rounded-xl glass-card flex items-center justify-center text-slate-300 hover:text-white transition-all">
                 <i class="fa-solid fa-bars text-sm"></i>
             </button>
         </div>
     </header>
 
-    <!-- MOBILE DROPDOWN -->
-    <div id="mobileMenu" class="hidden fixed inset-x-0 top-[65px] bg-[#0b0b0d]/97 backdrop-blur-xl border-b border-white/10 p-5 z-30 space-y-2 max-w-2xl mx-auto shadow-2xl">
+    <!-- MOBILE NAVIGATION DROPDOWN -->
+    <div id="mobileMenu" class="hidden fixed inset-x-0 top-[65px] bg-[#070709]/98 backdrop-blur-2xl border-b border-white/10 p-5 z-30 space-y-2 max-w-2xl mx-auto shadow-2xl">
         <a href="/" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
             <i class="fa-solid fa-download mr-2 text-orange-500"></i> <span data-i18n="navDownloader">Downloader</span>
         </a>
-        <a href="/about.html" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
-            <i class="fa-solid fa-circle-info mr-2 text-orange-500"></i> <span data-i18n="navAbout">About</span>
+        <a href="#sponsorSection" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
+            <i class="fa-solid fa-crown mr-2 text-amber-400"></i> <span data-i18n="sponsorTitle">Become a Sponsor</span>
         </a>
-        <a href="/contact.html" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
+        <a href="#tutorial" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
+            <i class="fa-solid fa-graduation-cap mr-2 text-orange-500"></i> <span data-i18n="tutTitle">Tutorial & Instructions</span>
+        </a>
+        <a href="#contact" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
             <i class="fa-solid fa-headset mr-2 text-orange-500"></i> <span data-i18n="navContact">Contact</span>
-        </a>
-        <a href="/privacy-policy.html" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
-            <i class="fa-solid fa-shield-halved mr-2 text-orange-500"></i> <span data-i18n="navPrivacy">Privacy Policy</span>
-        </a>
-        <a href="/terms-of-service.html" onclick="toggleMobileMenu()" class="block p-3 rounded-xl hover:bg-white/5 font-semibold text-sm text-slate-200">
-            <i class="fa-solid fa-file-contract mr-2 text-orange-500"></i> <span data-i18n="navTerms">Terms of Service</span>
         </a>
     </div>
 
-    <!-- ── MAIN CONTENT ──────────────────────────────────────────── -->
+    <!-- ── MAIN CONTENT AREA ────────────────────────────────────── -->
     <main class="w-full max-w-2xl px-4 py-6 space-y-8 flex-1" id="downloader">
 
-        <!-- HERO / DOWNLOADER CARD -->
-        <div class="relative overflow-hidden glass-card rounded-3xl p-6 md:p-8 orange-glow-box space-y-5 border border-white/10 shadow-2xl">
+        <!-- HERO & DOWNLOAD CARD -->
+        <div class="relative overflow-hidden glass-card rounded-3xl p-6 md:p-8 orange-glow-box space-y-6 border border-white/10 shadow-2xl">
 
             <!-- Badge -->
             <div class="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 px-3.5 py-1.5 rounded-full">
@@ -194,7 +311,7 @@
                     <i class="fa-solid fa-globe"></i> <span data-i18n="tabAll">All Platforms</span>
                 </button>
                 <button onclick="selectTab('tt')" id="tab-tt" class="tab-btn px-3.5 py-2 rounded-xl font-bold border border-white/10 bg-white/5 transition-all flex items-center gap-1.5 flex-shrink-0 text-slate-300">
-                    <i class="fa-brands fa-tiktok text-cyan-400 animate-spin-slow"></i> TikTok
+                    <i class="fa-brands fa-tiktok text-cyan-400"></i> TikTok
                 </button>
                 <button onclick="selectTab('ig')" id="tab-ig" class="tab-btn px-3.5 py-2 rounded-xl font-bold border border-white/10 bg-white/5 transition-all flex items-center gap-1.5 flex-shrink-0 text-slate-300">
                     <i class="fa-brands fa-instagram text-pink-500"></i> Instagram
@@ -210,10 +327,10 @@
                 </button>
             </div>
 
-            <!-- INPUT BOX -->
-            <div class="relative flex flex-col sm:flex-row gap-2 bg-[#141418] border border-white/10 rounded-2xl p-2 transition-all focus-within:border-orange-500/60">
-                <div class="flex items-center pl-3 py-2 sm:py-0 flex-1">
-                    <i class="fa-solid fa-link text-slate-500 mr-3 text-sm flex-shrink-0"></i>
+            <!-- INPUT BOX & PASTE ACTION -->
+            <div class="relative flex flex-col sm:flex-row gap-2 bg-[#121215] border border-white/10 rounded-2xl p-2 transition-all focus-within:border-orange-500/80">
+                <div class="flex items-center pl-3 pr-2 py-2 sm:py-0 flex-1">
+                    <i class="fa-solid fa-link text-slate-500 mr-2 text-sm flex-shrink-0"></i>
                     <input
                         type="url"
                         id="inputUrl"
@@ -221,10 +338,14 @@
                         class="w-full bg-transparent text-sm text-white placeholder-slate-500 focus:outline-none"
                         autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                     >
+                    <button onclick="pasteFromClipboard()" class="text-xs bg-white/10 hover:bg-white/20 text-slate-300 px-2.5 py-1.5 rounded-lg font-bold transition-all flex items-center gap-1 flex-shrink-0" title="Paste Link">
+                        <i class="fa-regular fa-clipboard"></i>
+                        <span class="hidden sm:inline" data-i18n="btnPaste">Paste</span>
+                    </button>
                 </div>
                 <button
                     onclick="processDownload()"
-                    class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black px-6 py-3.5 rounded-xl text-sm transition-all orange-glow-btn flex items-center justify-center gap-2 shadow-lg"
+                    class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black px-6 py-3.5 rounded-xl text-sm transition-all orange-glow-btn flex items-center justify-center gap-2 shadow-lg flex-shrink-0"
                 >
                     <i class="fa-solid fa-cloud-arrow-down text-base"></i>
                     <span data-i18n="btnDownload">Download</span>
@@ -236,27 +357,72 @@
                 <div id="progressFill" class="progress-bar-fill" style="width:0%"></div>
             </div>
 
-            <!-- IN-CONTENT AD SLOT -->
-            <div class="ad-slot ad-slot-inline" id="adSlotInline">
-                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7926552217625654" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
-
-            <!-- RESULT BOX -->
-            <div id="resultBox" class="hidden glass-card p-4 rounded-2xl border border-orange-500/30 space-y-4">
-                <div class="flex items-center gap-3 border-b border-white/10 pb-3">
-                    <div class="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-500 text-xl">
-                        <i class="fa-solid fa-file-video"></i>
+            <!-- INTERACTIVE RESULT & MEDIA PREVIEW CARD -->
+            <div id="resultBox" class="hidden glass-card p-5 rounded-2xl border border-orange-500/40 space-y-4 animate-fade-in">
+                <div class="flex flex-col sm:flex-row items-center gap-4 border-b border-white/10 pb-4">
+                    <div id="previewContainer" class="w-full sm:w-24 h-24 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center overflow-hidden flex-shrink-0 relative">
+                        <i class="fa-solid fa-file-video text-orange-500 text-2xl" id="previewPlaceholderIcon"></i>
+                        <img id="mediaPreviewImg" class="hidden w-full h-full object-cover" alt="[Media Preview]">
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="text-xs font-bold text-white truncate" id="resultTitle">Processing Media</h4>
-                        <p class="text-[10px] text-slate-400" id="resultPlatform">ProDown Extraction Engine</p>
+                    <div class="flex-1 min-w-0 text-center sm:text-left space-y-1">
+                        <span id="resultBadge" class="inline-block px-2.5 py-0.5 rounded-md bg-orange-500/20 text-orange-400 text-[10px] font-black uppercase tracking-wider">Social Media</span>
+                        <h4 class="text-xs font-bold text-white line-clamp-2 leading-snug" id="resultTitle">Extracting Content...</h4>
+                        <p class="text-[11px] text-slate-400" id="resultPlatform">ProDown Multi-Engine Extractor</p>
                     </div>
                 </div>
-                <div class="space-y-2 text-xs" id="downloadOptions"></div>
+
+                <!-- DOWNLOAD OPTIONS BUTTONS -->
+                <div class="space-y-2.5 text-xs" id="downloadOptions"></div>
             </div>
 
         </div>
+
+        <!-- ── STRATEGIC ADSENSE SLOT #2: IN-FEED / MID CONTENT ─────── -->
+        <div class="adsense-slot w-full h-24 flex items-center justify-center">
+            <span class="adsense-tag">Sponsored Ad</span>
+            <ins class="adsbygoogle"
+                 style="display:block; width: 100%; height: 100%;"
+                 data-ad-client="ca-pub-7926552217625654"
+                 data-ad-slot="0987654321"
+                 data-ad-format="horizontal"
+                 data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <!-- ── ULTRA-PROFESSIONAL SPONSOR SECTION ─────────────────── -->
+        <section id="sponsorSection" class="relative glass-card rounded-3xl p-6 md:p-8 border border-amber-500/30 gold-glow-box overflow-hidden space-y-5">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                <div class="space-y-1.5">
+                    <span class="inline-flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full text-[10px] font-black text-amber-400 tracking-wider uppercase">
+                        <i class="fa-solid fa-crown text-amber-400"></i> Official Sponsorship Space
+                    </span>
+                    <h2 class="text-lg md:text-xl font-black text-white tracking-tight" data-i18n="sponsorTitle">
+                        Become an Official Sponsor of ProDown
+                    </h2>
+                    <p class="text-xs text-slate-300 max-w-md leading-relaxed" data-i18n="sponsorDesc">
+                        Promote your brand, company, or app here to thousands of daily active users! Contact us to lock this premium banner slot.
+                    </p>
+                </div>
+
+                <a href="#contact" onclick="openSponsorModal()" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-black font-black px-5 py-3 rounded-2xl text-xs transition-all shadow-lg flex items-center justify-center gap-2 flex-shrink-0 cursor-pointer">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span data-i18n="sponsorBtn">Become a Sponsor</span>
+                </a>
+            </div>
+
+            <!-- Placeholder Sponsor Slot Showcase -->
+            <div class="p-4 rounded-2xl bg-black/40 border border-amber-500/20 text-center space-y-2">
+                <p class="text-[11px] font-bold text-amber-300/80" data-i18n="sponsorSlotAvailable">
+                    ✨ Platinum Banner Slot Available
+                </p>
+                <div class="flex items-center justify-center gap-2 text-xs text-slate-400">
+                    <i class="fa-solid fa-bullhorn text-amber-400 animate-bounce"></i>
+                    <span data-i18n="sponsorMessagePrompt">Do you want to see your logo or banner right here? Send us a message today!</span>
+                </div>
+            </div>
+        </section>
 
         <!-- DOWNLOAD HISTORY -->
         <div id="historySection" class="hidden space-y-3">
@@ -271,39 +437,39 @@
             <div id="historyList" class="space-y-2"></div>
         </div>
 
-        <!-- TUTORIAL / HOW TO USE (Text & Video Guide) -->
-        <div class="glass-card rounded-3xl p-6 border border-white/5 space-y-4">
+        <!-- TUTORIAL / HOW TO USE GUIDE -->
+        <div id="tutorial" class="glass-card rounded-3xl p-6 border border-white/5 space-y-4">
             <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider text-center" data-i18n="tutTitle">Tutorial & Instructions</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Text Instructions -->
                 <div class="space-y-3 text-xs">
-                    <div class="flex items-start gap-3 bg-black/30 p-3 rounded-2xl border border-white/5">
+                    <div class="flex items-start gap-3 bg-black/40 p-3.5 rounded-2xl border border-white/5">
                         <span class="w-6 h-6 rounded-lg bg-orange-500 text-white font-extrabold flex items-center justify-center flex-shrink-0 text-[11px]">1</span>
                         <div>
                             <p class="font-bold text-white" data-i18n="tutStep1T">Copy Video / Story Link</p>
-                            <p class="text-[10px] text-slate-400" data-i18n="tutStep1D">Open Instagram, TikTok, Facebook, YouTube, or Snapchat and copy link.</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5" data-i18n="tutStep1D">Open Instagram, TikTok, Facebook, YouTube, or Snapchat and copy link.</p>
                         </div>
                     </div>
-                    <div class="flex items-start gap-3 bg-black/30 p-3 rounded-2xl border border-white/5">
+                    <div class="flex items-start gap-3 bg-black/40 p-3.5 rounded-2xl border border-white/5">
                         <span class="w-6 h-6 rounded-lg bg-orange-500 text-white font-extrabold flex items-center justify-center flex-shrink-0 text-[11px]">2</span>
                         <div>
                             <p class="font-bold text-white" data-i18n="tutStep2T">Stories & Highlights by Username</p>
-                            <p class="text-[10px] text-slate-400" data-i18n="tutStep2D">To download Instagram or TikTok Stories from public accounts, simply paste the account @username!</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5" data-i18n="tutStep2D">To download Instagram or TikTok Stories from public accounts, simply paste the account @username!</p>
                         </div>
                     </div>
-                    <div class="flex items-start gap-3 bg-black/30 p-3 rounded-2xl border border-white/5">
+                    <div class="flex items-start gap-3 bg-black/40 p-3.5 rounded-2xl border border-white/5">
                         <span class="w-6 h-6 rounded-lg bg-orange-500 text-white font-extrabold flex items-center justify-center flex-shrink-0 text-[11px]">3</span>
                         <div>
                             <p class="font-bold text-white" data-i18n="tutStep3T">Paste & Download</p>
-                            <p class="text-[10px] text-slate-400" data-i18n="tutStep3D">Paste the link or username above and click Download to save instantly.</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5" data-i18n="tutStep3D">Paste the link or username above and click Download to save instantly.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Interactive Tutorial Mockup -->
-                <div class="bg-black/40 rounded-2xl border border-orange-500/20 p-4 flex flex-col justify-center items-center text-center space-y-3">
-                    <div class="w-12 h-12 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl animate-pulse">
+                <!-- Video Tutorial Interactive Card -->
+                <div class="bg-black/50 rounded-2xl border border-orange-500/20 p-5 flex flex-col justify-center items-center text-center space-y-3">
+                    <div class="w-14 h-14 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl animate-pulse">
                         <i class="fa-solid fa-circle-play"></i>
                     </div>
                     <p class="text-xs font-bold text-white" data-i18n="tutVidTitle">Quick Video Guide</p>
@@ -316,77 +482,32 @@
         <div class="space-y-3 text-center">
             <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="platTitle">Supported Features & Platforms</h2>
             <div class="grid grid-cols-5 gap-2">
-                <a href="#tiktok-downloader" class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md hover:border-orange-500/30 transition-all">
+                <div class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md">
                     <i class="fa-brands fa-tiktok text-xl text-white"></i>
                     <span class="text-[9px] font-semibold text-slate-300">TikTok</span>
-                </a>
-                <a href="#instagram-downloader" class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md hover:border-pink-500/30 transition-all">
+                </div>
+                <div class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md">
                     <i class="fa-brands fa-instagram text-xl text-pink-500"></i>
                     <span class="text-[9px] font-semibold text-slate-300">Instagram</span>
-                </a>
-                <a href="#facebook-downloader" class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md hover:border-blue-500/30 transition-all">
+                </div>
+                <div class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md">
                     <i class="fa-brands fa-facebook text-xl text-blue-500"></i>
                     <span class="text-[9px] font-semibold text-slate-300">Facebook</span>
-                </a>
-                <a href="#youtube-downloader" class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md hover:border-red-500/30 transition-all">
+                </div>
+                <div class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md">
                     <i class="fa-brands fa-youtube text-xl text-red-500"></i>
                     <span class="text-[9px] font-semibold text-slate-300">YouTube</span>
-                </a>
-                <a href="#snapchat-downloader" class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md hover:border-yellow-400/30 transition-all">
+                </div>
+                <div class="glass-card p-3 rounded-2xl border border-white/5 flex flex-col items-center gap-1.5 shadow-md">
                     <i class="fa-brands fa-snapchat text-xl text-yellow-400"></i>
                     <span class="text-[9px] font-semibold text-slate-300">Snapchat</span>
-                </a>
+                </div>
             </div>
         </div>
 
-        <!-- SEO LANDING SECTIONS -->
-        <div class="space-y-6">
-
-            <section id="tiktok-downloader" class="glass-card rounded-3xl p-6 border border-white/5">
-                <div class="flex items-center gap-3 mb-3">
-                    <i class="fa-brands fa-tiktok text-2xl text-white"></i>
-                    <h2 class="text-base font-extrabold text-white">TikTok Downloader — Videos, Photos, Live & Stories</h2>
-                </div>
-                <p class="text-xs text-slate-400 leading-relaxed">Download TikTok videos without watermark, photo carousels, Live Photos, and public Stories/Highlight Stories. Search by link or username.</p>
-            </section>
-
-            <section id="instagram-downloader" class="glass-card rounded-3xl p-6 border border-white/5">
-                <div class="flex items-center gap-3 mb-3">
-                    <i class="fa-brands fa-instagram text-2xl text-pink-500"></i>
-                    <h2 class="text-base font-extrabold text-white">Instagram Downloader — Reels, Feed, Stories & Highlights</h2>
-                </div>
-                <p class="text-xs text-slate-400 leading-relaxed">Save Instagram Reels, Feed posts, Stories, and Highlight Stories directly from public accounts in HD quality without sign up.</p>
-            </section>
-
-            <section id="facebook-downloader" class="glass-card rounded-3xl p-6 border border-white/5">
-                <div class="flex items-center gap-3 mb-3">
-                    <i class="fa-brands fa-facebook text-2xl text-blue-500"></i>
-                    <h2 class="text-base font-extrabold text-white">Facebook Video & Post Downloader</h2>
-                </div>
-                <p class="text-xs text-slate-400 leading-relaxed">Download public Facebook videos, Reels, photo posts, and comment media in HD or SD quality with one click.</p>
-            </section>
-
-            <section id="youtube-downloader" class="glass-card rounded-3xl p-6 border border-white/5">
-                <div class="flex items-center gap-3 mb-3">
-                    <i class="fa-brands fa-youtube text-2xl text-red-500"></i>
-                    <h2 class="text-base font-extrabold text-white">YouTube Shorts & Live Stream Downloader</h2>
-                </div>
-                <p class="text-xs text-slate-400 leading-relaxed">Save YouTube Shorts, standard videos, and ended Live Streams directly to your device as MP4 or MP3 audio.</p>
-            </section>
-
-            <section id="snapchat-downloader" class="glass-card rounded-3xl p-6 border border-white/5">
-                <div class="flex items-center gap-3 mb-3">
-                    <i class="fa-brands fa-snapchat text-2xl text-yellow-400"></i>
-                    <h2 class="text-base font-extrabold text-white">Snapchat Spotlight & Story Downloader</h2>
-                </div>
-                <p class="text-xs text-slate-400 leading-relaxed">Download Snapchat Spotlight videos and public Snaps/Stories instantly in full quality.</p>
-            </section>
-
-        </div>
-
-        <!-- CONTACT & SUPPORT -->
+        <!-- CONTACT & SUPPORT BUTTONS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="contact">
-            <a href="/contact.html" class="glass-card p-4 rounded-2xl border border-white/10 flex items-center justify-between hover:border-orange-500/50 transition-all group shadow-lg">
+            <a href="https://t.me/prodown_support" target="_blank" class="glass-card p-4 rounded-2xl border border-white/10 flex items-center justify-between hover:border-orange-500/50 transition-all group shadow-lg">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
                         <i class="fa-solid fa-headset text-lg"></i>
@@ -413,25 +534,21 @@
             </button>
         </div>
 
-        <!-- SUPPORT PAYMENT EXPANDABLE -->
-        <div id="supportBox" class="hidden glass-card rounded-3xl p-5 space-y-3 border border-pink-500/30 shadow-2xl">
+        <!-- SUPPORT PAYMENT GATEWAYS -->
+        <div id="supportBox" class="hidden glass-card rounded-3xl p-5 space-y-3 border border-pink-500/30 shadow-2xl animate-fade-in">
             <h4 class="text-xs font-black text-pink-400 uppercase tracking-wider flex items-center gap-2">
                 <i class="fa-solid fa-gem"></i> Support Gateways
             </h4>
             <div class="space-y-2 text-xs">
                 <!-- FastPay -->
-                <div class="bg-black/50 p-3 rounded-2xl border border-white/5 space-y-2">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-slate-200">FastPay: <strong class="text-white">+964 750 604 5491</strong></span>
-                        <button onclick="navigator.clipboard.writeText('+9647506045491').then(()=>showAlert('Copied!','success'))" class="bg-white/10 hover:bg-pink-500 hover:text-white px-3 py-1 rounded-xl text-[10px] font-bold transition-all">Copy</button>
-                    </div>
+                <div class="bg-black/50 p-3.5 rounded-2xl border border-white/5 flex justify-between items-center">
+                    <span class="font-bold text-slate-200">FastPay: <strong class="text-white">+964 750 604 5491</strong></span>
+                    <button onclick="copyText('+9647506045491')" class="bg-white/10 hover:bg-pink-500 hover:text-white px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all">Copy</button>
                 </div>
                 <!-- FIB -->
-                <div class="bg-black/50 p-3 rounded-2xl border border-white/5 space-y-2">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-slate-200">FIB: <strong class="text-white">+964 750 604 5491</strong></span>
-                        <button onclick="navigator.clipboard.writeText('+9647506045491').then(()=>showAlert('Copied!','success'))" class="bg-white/10 hover:bg-amber-500 hover:text-black px-3 py-1 rounded-xl text-[10px] font-bold transition-all">Copy</button>
-                    </div>
+                <div class="bg-black/50 p-3.5 rounded-2xl border border-white/5 flex justify-between items-center">
+                    <span class="font-bold text-slate-200">FIB: <strong class="text-white">+964 750 604 5491</strong></span>
+                    <button onclick="copyText('+9647506045491')" class="bg-white/10 hover:bg-amber-500 hover:text-black px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all">Copy</button>
                 </div>
             </div>
         </div>
@@ -441,17 +558,467 @@
     <!-- ── FOOTER ────────────────────────────────────────────────── -->
     <footer class="w-full max-w-2xl px-5 py-8 border-t border-white/5 space-y-4">
         <div class="flex flex-wrap justify-center gap-4 text-[11px] text-slate-400">
-            <a href="/about.html" class="hover:text-orange-400 transition-colors" data-i18n="navAbout">About</a>
-            <a href="/contact.html" class="hover:text-orange-400 transition-colors" data-i18n="navContact">Contact</a>
-            <a href="/privacy-policy.html" class="hover:text-orange-400 transition-colors" data-i18n="navPrivacy">Privacy Policy</a>
-            <a href="/terms-of-service.html" class="hover:text-orange-400 transition-colors" data-i18n="navTerms">Terms of Service</a>
+            <a href="#" class="hover:text-orange-400 transition-colors" data-i18n="navDownloader">Downloader</a>
+            <a href="#sponsorSection" class="hover:text-amber-400 transition-colors" data-i18n="sponsorTitle">Sponsors</a>
+            <a href="#tutorial" class="hover:text-orange-400 transition-colors" data-i18n="tutTitle">Tutorial</a>
+            <a href="#contact" class="hover:text-orange-400 transition-colors" data-i18n="navContact">Contact</a>
         </div>
         <p class="text-center text-[11px] text-slate-500">
             &copy; 2026 ProDown. All rights reserved.
         </p>
     </footer>
 
-    <!-- Custom JS -->
-    <script src="assets/js/app.js"></script>
+    <!-- ── APPLICATION JAVASCRIPT ──────────────────────────────── -->
+    <script>
+        const BACKEND_API_URL = '/api/download';
+
+        // Complete Multi-Language Dictionaries
+        const i18nData = {
+            en: {
+                dir: 'ltr',
+                heroBadge: "No Watermark • HD/4K Quality • Fast Speed",
+                heroTitle1: "Download",
+                heroTitle2: "Social Media Content",
+                heroTitle3: "Fast & Directly",
+                heroDesc: "Download TikTok (Videos, Photos, Stories), Instagram (Reels, Stories, Feed Posts), Facebook, YouTube (Shorts & Ended Lives), and Snapchat Spotlights & Stories instantly!",
+                btnDownload: "Download",
+                btnPaste: "Paste",
+                tabAll: "All Platforms",
+                shareTitle: "Share ProDown",
+                navDownloader: "Downloader",
+                navContact: "Contact",
+                histTitle: "Recent Downloads",
+                histClear: "Clear All",
+                tutTitle: "Tutorial & Instructions",
+                tutStep1T: "Copy Video / Story Link",
+                tutStep1D: "Open Instagram, TikTok, Facebook, YouTube, or Snapchat and copy link.",
+                tutStep2T: "Stories & Highlights by Username",
+                tutStep2D: "To download Instagram or TikTok Stories from public accounts, simply paste the account @username!",
+                tutStep3T: "Paste & Download",
+                tutStep3D: "Paste the link or username above and click Download to save instantly.",
+                tutVidTitle: "Quick Video Guide",
+                tutVidDesc: "Copy post/story link ➔ Paste into ProDown ➔ Choose HD Video or MP3 ➔ Save directly to phone gallery!",
+                platTitle: "Supported Features & Platforms",
+                suppContact: "Contact Support",
+                suppHelp: "Get technical help",
+                suppUs: "Support Us",
+                suppFree: "Keep ProDown free",
+                placeholderAll: "Paste a link or @username for TikTok, Instagram, FB, YT, Snap...",
+                sponsorTitle: "Become an Official Sponsor of ProDown",
+                sponsorDesc: "Promote your brand, company, or app here to thousands of daily active users! Contact us to lock this premium banner slot.",
+                sponsorBtn: "Become a Sponsor",
+                sponsorSlotAvailable: "✨ Platinum Banner Slot Available",
+                sponsorMessagePrompt: "Do you want to see your logo or banner right here? Send us a message today!",
+            },
+            ku_bad: {
+                dir: 'rtl',
+                heroBadge: "بێ واتەرمارک • کوالێتی HD/4K • تیژڕەو",
+                heroTitle1: "داونلۆدکرنا",
+                heroTitle2: "میدیایا سۆشیال میدیا",
+                heroTitle3: "ب زووی و ب ڕاستەوخۆیی",
+                heroDesc: "داونلۆدکرنا تیک کۆک (ڤیدیو، وێنە، ستۆری)، انستاگرام (ڕیلز، ستۆری، هایلایت، پوست)، فەیسبووک، یوتیوب (شوڕتس و ڵایڤێن دوماهیک هاتی)، و سناپچات (سپۆتلایت و ستۆری) ب جوانترین دیزاین!",
+                btnDownload: "داونلۆدکرن",
+                btnPaste: "پەیست",
+                tabAll: "هەمی پلاتفۆرم",
+                shareTitle: "بەلاڤکرنا ProDown",
+                navDownloader: "داونلۆدکەر",
+                navContact: "پەیوەندی",
+                histTitle: "داونلۆدێن دوماهیێ",
+                histClear: "پاقژکرنا هەمیا",
+                tutTitle: "فێرکاری و ڕێنمایی",
+                tutStep1T: "کۆپیکرنا لینکی",
+                tutStep1D: "ئەپێ انستا، تیک توک، فەیسبووک، یوتیوب یان سناپچات ڤەکە و لینکی کۆپی بکە.",
+                tutStep2T: "ستۆری و هایلایت ب ناڤێ بکارهێنەری (Username)",
+                tutStep2D: "بۆ داونلۆدکرنا ستۆریێن تیک کۆک و انستاگرام یێن ئەکاونتێن عام، بتنێ ناڤێ بکارهێنەری (@username) بنڤێسە!",
+                tutStep3T: "پەیست و داونلۆد",
+                tutStep3D: "لینکی یان ناڤێ بکارهێنەری ل سەروی پەیست بکە و دوکمەیا داونلۆد کلیک بکە.",
+                tutVidTitle: "فێرکاریا کورتا ڤیدیۆیی",
+                tutVidDesc: "کۆپیکرنا لینکی ➔ پەیستکرن د وێبسایتی دا ➔ هەڵبژارتنا HD یان MP3 ➔ پاشەکەوتکرن ڕاستەوخۆ د گەلەریێ دا!",
+                platTitle: "تایبەتمەندی و پلاتفۆرمێن پشتەڤانیکری",
+                suppContact: "پەیوەندی ب پشتیوانیێ",
+                suppHelp: "وەرگرتنا هاریکاریا تەکنیکی",
+                suppUs: "پشتیوانیا مە بکە",
+                suppFree: "بۆ هێلانا وێبسایتی بەلاش",
+                placeholderAll: "لینکی یان ناڤێ بکارهێنەری پەیست بکە بۆ تیک توک، انستا، فەیسبووک، یوتیوب...",
+                sponsorTitle: "ببە ب سپۆنسەرێ فەرمی یێ ProDown",
+                sponsorDesc: "کۆمپانیا خۆ، بەرهەمێ خۆ، یان ئەپێ خۆ ل ڤێرێ بگەهینە هەزاران بکارهێنەرێن ڕۆژانە! نامەیەکێ بۆ مە بنێرە دا شوێنێ خۆ بپاریزی.",
+                sponsorBtn: "نامەیەکێ بۆ مە بنێرە",
+                sponsorSlotAvailable: "✨ شوێنێ ڕیکلامێ یێ پلاتینیۆم بەردەستە",
+                sponsorMessagePrompt: "تە دڤێت لۆگۆ یان پۆستەرێ تە ل ڤێرێ دیار ببت؟ نوکە نامەیەکێ بۆ مە بنێرە!",
+            },
+            ku_sor: {
+                dir: 'rtl',
+                heroBadge: "بێ واتەرمارک • کوالێتی HD/4K • خێرایی بەرز",
+                heroTitle1: "داونلۆدکردنی",
+                heroTitle2: "میدیای سۆشیال میدیا",
+                heroTitle3: "بە خێرائی و ڕاستەوخۆ",
+                heroDesc: "داونلۆدکردنی تیک تۆک (ڤیدیۆ، وێنە، ستۆری)، ئینستاگرام (ڕێڵز، ستۆری، هایلایت، پۆست)، فەیسبووک، یوتیوب (شۆرتس و ڵایڤی کۆتایی پێهاتوو)، و سناپچات (سپۆتلایت و ستۆری) بە باشترین کوالێتی!",
+                btnDownload: "داونلۆدکردن",
+                btnPaste: "پەیست",
+                tabAll: "هەموو پلاتفۆڕمەکان",
+                shareTitle: "شێرکردنی ProDown",
+                navDownloader: "داونلۆدکەر",
+                navContact: "پەیوەندی",
+                histTitle: "داونلۆدە دوایینەکان",
+                histClear: "سڕینەوەی هەمووی",
+                tutTitle: "فێرکاری و ڕێنمایی",
+                tutStep1T: "کۆپیکردنی لینک",
+                tutStep1D: "ئەپی ئینستا، تیک تۆک، فەیسبووک، یوتیوب یان سناپچات بکەرەوە و لینک کۆپی بکە.",
+                tutStep2T: "ستۆری و هایلایت بە ناوی بەکارهێنەر (Username)",
+                tutStep2D: "بۆ داونلۆدکردنی ستۆری تیک تۆک و ئینستاگرام لە ئەکاونتی گشتی، تەنها ناوی بەکارهێنەر (@username) بنووسە!",
+                tutStep3T: "پەیست و داونلۆد",
+                tutStep3D: "لینک یان یوزەرنەیپ لە سەرەوە پەیست بکە و دگمەی داونلۆد داگرە.",
+                tutVidTitle: "فێرکاری کورتی ڤیدیۆیی",
+                tutVidDesc: "کۆپیکردنی لینک ➔ پەیستکردن لە وێبسایت ➔ هەڵبژاردنی HD یان MP3 ➔ ڕاستەوخۆ خەزنکردن لە گەلەری!",
+                platTitle: "تایبەتمەندی و پلاتفۆڕمە پاڵپشتیکراوەکان",
+                suppContact: "پەیوەندی بە پشتیوانی",
+                suppHelp: "وەرگرتنی یارمه‌تی تەکنیکی",
+                suppUs: "پشتیوانیمان بکە",
+                suppFree: "بۆ هێشتنەوەی وێبسایت بە بەلاش",
+                placeholderAll: "لینک یان یوزەرنەیم پەیست بکە بۆ تیک تۆک، ئینستا، فەیسبووک، یوتیوب...",
+                sponsorTitle: "ببە بە سپۆنسەری فەرمی ProDown",
+                sponsorDesc: "براند یان ئەپەکەت لەم بەشەدا پێشان بدە بۆ هەزاران بەکارهێنەری ڕۆژانە! نامەمان بۆ بنێرە بۆ گرتنی ئەم شوێنە تایبەتە.",
+                sponsorBtn: "پەیوەندیمان پێوە بکە",
+                sponsorSlotAvailable: "✨ شوێنی پۆستەری پلاتینۆم بەردەستە",
+                sponsorMessagePrompt: "دەتەوێت لۆگۆ یان پۆستەرەکەت لێرە دابنرێت؟ هەر ئێستا نامەیەکی ناردن بکە!",
+            }
+        };
+
+        const LANG_STORAGE_KEY = 'prodown_lang_choice';
+
+        function initAppLanguage() {
+            const savedLang = localStorage.getItem(LANG_STORAGE_KEY);
+            const modal = document.getElementById('onboardingModal');
+
+            if (!savedLang) {
+                if (modal) modal.classList.remove('hidden');
+                applyLanguage('en');
+            } else {
+                if (modal) modal.classList.add('hidden');
+                applyLanguage(savedLang);
+            }
+        }
+
+        function goToLangStep() {
+            document.getElementById('stepWelcome')?.classList.add('hidden');
+            document.getElementById('stepLang')?.classList.remove('hidden');
+        }
+
+        function setAppLanguage(langKey) {
+            localStorage.setItem(LANG_STORAGE_KEY, langKey);
+            applyLanguage(langKey);
+            const modal = document.getElementById('onboardingModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function applyLanguage(lang) {
+            const dict = i18nData[lang] || i18nData.en;
+            document.documentElement.lang = lang.startsWith('ku') ? 'ku' : 'en';
+            document.documentElement.dir = dict.dir;
+
+            const select = document.getElementById('langSelectHeader');
+            if (select) select.value = lang;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[key]) el.textContent = dict[key];
+            });
+
+            const input = document.getElementById('inputUrl');
+            if (input) input.placeholder = dict.placeholderAll;
+        }
+
+        // Alert Toast Helper
+        function showAlert(msg, type = 'info') {
+            const toast = document.getElementById('alertToast');
+            if (!toast) return;
+            const colors = { info: 'bg-orange-500/95', success: 'bg-emerald-500/95', error: 'bg-red-500/95', warn: 'bg-amber-500/95' };
+            const icons  = { info: 'fa-circle-info', success: 'fa-circle-check', error: 'fa-triangle-exclamation', warn: 'fa-triangle-exclamation' };
+            
+            toast.className = `fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl text-xs font-bold text-white shadow-2xl flex items-center gap-2 max-w-xs text-center ${colors[type] || colors.info} animate-fade-in`;
+            toast.innerHTML = `<i class="fa-solid ${icons[type] || 'fa-circle-info'}"></i> <span>${msg}</span>`;
+            toast.classList.remove('hidden');
+            
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => toast.classList.add('hidden'), 4000);
+        }
+
+        function setProgress(pct) {
+            const fill = document.getElementById('progressFill');
+            const wrap = document.getElementById('progressWrap');
+            if (!fill || !wrap) return;
+            if (pct === null) { wrap.classList.add('hidden'); return; }
+            wrap.classList.remove('hidden');
+            fill.style.width = pct + '%';
+        }
+
+        function toggleMobileMenu() { document.getElementById('mobileMenu')?.classList.toggle('hidden'); }
+        function toggleSupportBox() { document.getElementById('supportBox')?.classList.toggle('hidden'); }
+        function toggleShareMenu() { document.getElementById('shareMenu')?.classList.toggle('hidden'); }
+
+        function copyText(text) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showAlert('کۆپی کرا!', 'success');
+        }
+
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text) {
+                    const input = document.getElementById('inputUrl');
+                    if (input) input.value = text;
+                    showAlert('لینکەکە کۆپی کرا!', 'info');
+                    const p = detectPlatform(text);
+                    if (p) selectTab(p.key);
+                }
+            } catch (_) {
+                showAlert('تکایە بە دەست لینکەکە پەیست بکە.', 'warn');
+            }
+        }
+
+        function selectTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('bg-white/5');
+            });
+            const active = document.getElementById('tab-' + tab);
+            if (active) { active.classList.add('active'); active.classList.remove('bg-white/5'); }
+        }
+
+        function detectPlatform(url) {
+            if (/tiktok\.com|vt\.tiktok\.com/i.test(url)) return { key: 'tt', label: 'TikTok' };
+            if (/instagram\.com/i.test(url)) return { key: 'ig', label: 'Instagram' };
+            if (/(facebook\.com|fb\.watch)/i.test(url)) return { key: 'fb', label: 'Facebook' };
+            if (/(youtube\.com|youtu\.be)/i.test(url)) return { key: 'yt', label: 'YouTube' };
+            if (/snapchat\.com/i.test(url)) return { key: 'snap', label: 'Snapchat' };
+            return null;
+        }
+
+        function openSponsorModal() {
+            window.location.href = "mailto:sponsor@prodown.app?subject=Sponsorship Inquiry ProDown";
+        }
+
+        // Native Download Trigger
+        async function triggerNativeDownload(mediaUrl, filename) {
+            showAlert('چاوەڕێ بە، داگرتن دەستی پێکرد...', 'info');
+            
+            try {
+                const response = await fetch(mediaUrl, { mode: 'cors' });
+                const blob = await response.blob();
+                
+                const blobUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename || `ProDown_${Date.now()}.mp4`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+                showAlert('فایلەکە داواکرا!', 'success');
+            } catch (e) {
+                const link = document.createElement('a');
+                link.href = mediaUrl;
+                link.setAttribute('download', filename || 'ProDown_Video.mp4');
+                link.target = '_blank';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        // Extraction Engines
+        async function fetchDirectStreamUrl(targetUrl) {
+            // Priority 1: Custom Backend API
+            try {
+                const res = await fetch(BACKEND_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: targetUrl })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.success && data.downloadUrl) return data;
+                }
+            } catch (_) {}
+
+            // Priority 2: Cobalt Public Multi Engine
+            try {
+                const res = await fetch('https://co.wuk.sh/api/json', {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: targetUrl })
+                });
+                const data = await res.json();
+                if (data && data.url) return { downloadUrl: data.url, audioUrl: data.audio };
+                if (data && data.picker && data.picker[0]?.url) return { downloadUrl: data.picker[0].url, thumb: data.picker[0].thumb };
+            } catch (_) {}
+
+            // Priority 3: Alternative Engine
+            try {
+                const res = await fetch('https://api.cobalt.tools/', {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: targetUrl })
+                });
+                const data = await res.json();
+                if (data && data.url) return { downloadUrl: data.url };
+            } catch (_) {}
+
+            return null;
+        }
+
+        async function processDownload() {
+            const inputEl = document.getElementById('inputUrl');
+            const resultBox = document.getElementById('resultBox');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultPlatform = document.getElementById('resultPlatform');
+            const dlOptions = document.getElementById('downloadOptions');
+            const previewImg = document.getElementById('mediaPreviewImg');
+            const previewIcon = document.getElementById('previewPlaceholderIcon');
+
+            if (!inputEl || !inputEl.value.trim()) {
+                showAlert('تکایە سەرەتا لینک یان ناوی بەکارهێنەر پەیست بکە.', 'warn');
+                return;
+            }
+
+            const targetUrl = inputEl.value.trim();
+            const platform = detectPlatform(targetUrl) || { label: 'Social Media' };
+
+            resultBox.classList.remove('hidden');
+            resultTitle.textContent = 'چاوەڕێ بە، ئامادەکردنی پەڕگەی داونلۆد...';
+            resultPlatform.textContent = 'ProDown Multi-Engine Extractor';
+            
+            previewImg.classList.add('hidden');
+            previewIcon.classList.remove('hidden');
+
+            dlOptions.innerHTML = '<div class="skeleton h-12 rounded-xl w-full"></div>';
+            setProgress(40);
+
+            const resultData = await fetchDirectStreamUrl(targetUrl);
+            
+            setProgress(100);
+            setTimeout(() => setProgress(null), 300);
+
+            const downloadUrl = resultData?.downloadUrl || targetUrl;
+            const audioUrl = resultData?.audioUrl;
+            const thumbnail = resultData?.thumb;
+
+            if (thumbnail) {
+                previewImg.src = thumbnail;
+                previewImg.classList.remove('hidden');
+                previewIcon.classList.add('hidden');
+            }
+
+            resultTitle.textContent = '✅ داونلۆد ئامادەیە!';
+            resultPlatform.textContent = `${platform.label} • Full HD Quality`;
+
+            dlOptions.innerHTML = `
+                <button onclick="triggerNativeDownload('${downloadUrl}', 'ProDown_${platform.label}_${Date.now()}.mp4')" 
+                        class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold p-3.5 rounded-xl flex justify-between items-center orange-glow-btn shadow-lg cursor-pointer">
+                    <span class="flex items-center gap-2.5 text-xs sm:text-sm">
+                        <i class="fa-solid fa-circle-down text-lg"></i> Download Video HD
+                    </span>
+                    <span class="text-[10px] bg-black/40 px-2 py-1 rounded-md font-mono">MP4</span>
+                </button>
+                ${audioUrl ? `
+                <button onclick="triggerNativeDownload('${audioUrl}', 'ProDown_Audio_${Date.now()}.mp3')" 
+                        class="w-full bg-white/10 hover:bg-white/20 text-slate-200 font-extrabold p-3.5 rounded-xl flex justify-between items-center transition-all cursor-pointer border border-white/10">
+                    <span class="flex items-center gap-2.5 text-xs sm:text-sm">
+                        <i class="fa-solid fa-music text-lg text-amber-400"></i> Download Audio MP3
+                    </span>
+                    <span class="text-[10px] bg-black/40 px-2 py-1 rounded-md font-mono">MP3</span>
+                </button>
+                ` : ''}
+            `;
+
+            saveToHistory({ url: targetUrl, platform: platform.label, timestamp: Date.now() });
+            renderHistory();
+        }
+
+        // History Management
+        const HISTORY_KEY = 'prodown_history_v4';
+
+        function saveToHistory(entry) {
+            let history = loadHistory();
+            history = history.filter(h => h.url !== entry.url);
+            history.unshift(entry);
+            try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 8))); } catch (_) {}
+        }
+
+        function loadHistory() {
+            try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch (_) { return []; }
+        }
+
+        function clearHistory() {
+            localStorage.removeItem(HISTORY_KEY);
+            renderHistory();
+            showAlert('مێژووی داونلۆدەکان سڕایەوە!', 'info');
+        }
+
+        function renderHistory() {
+            const section = document.getElementById('historySection');
+            const list = document.getElementById('historyList');
+            if (!section || !list) return;
+
+            const history = loadHistory();
+            if (!history.length) { section.classList.add('hidden'); return; }
+
+            section.classList.remove('hidden');
+            list.innerHTML = '';
+
+            history.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'glass-card p-3 rounded-2xl flex items-center justify-between text-xs border border-white/5 hover:border-orange-500/30 transition-all';
+                div.innerHTML = `
+                    <div class="truncate pr-2">
+                        <p class="font-bold text-orange-400">${item.platform}</p>
+                        <p class="text-[10px] text-slate-400 truncate">${item.url}</p>
+                    </div>
+                    <button onclick="document.getElementById('inputUrl').value='${item.url}';processDownload();" class="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all flex-shrink-0">
+                        <i class="fa-solid fa-rotate-right text-xs"></i>
+                    </button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function shareVia(platform) {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('Download social media videos for free with ProDown!');
+            let shareUrl = '';
+
+            if (platform === 'whatsapp') shareUrl = `https://api.whatsapp.com/send?text=${text}%20${url}`;
+            if (platform === 'telegram') shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
+            if (platform === 'facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+
+            if (shareUrl) window.open(shareUrl, '_blank');
+            toggleShareMenu();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initAppLanguage();
+
+            const input = document.getElementById('inputUrl');
+            if (input) {
+                input.addEventListener('input', () => {
+                    const val = input.value.trim();
+                    if (!val) return;
+                    const p = detectPlatform(val);
+                    if (p) selectTab(p.key);
+                });
+
+                input.addEventListener('keydown', e => { if (e.key === 'Enter') processDownload(); });
+            }
+
+            renderHistory();
+        });
+    </script>
 </body>
 </html>
+
