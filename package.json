@@ -1,18 +1,43 @@
 {
-  "name": "prodown-backend",
-  "version": "6.0.0",
-  "description": "ProDown Social Media Extractor API Server",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
-  },
-  "dependencies": {
-    "axios": "^1.6.8",
-    "cors": "^2.8.5",
-    "express": "^4.19.2"
-  },
-  "engines": {
-    "node": ">=18.x"
-  }
+"name": "prodown-downloader",
+"version": "8.0.0",
+"description": "ProDown Ultimate Social Media Downloader API & Web Application",
+"main": "server.js",
+"type": "commonjs",
+"scripts": {
+"start": "node server.js",
+"dev": "nodemon server.js",
+"build": "echo 'Build completed successfully'"
+},
+"keywords": [
+"tiktok-downloader",
+"instagram-downloader",
+"facebook-downloader",
+"youtube-downloader",
+"snapchat-downloader",
+"no-watermark",
+"pwa",
+"social-media-downloader"
+],
+"author": "ProDown Team",
+"license": "ISC",
+"dependencies": {
+"cors": "^2.8.5",
+"express": "^4.19.2"
+},
+"devDependencies": {
+"nodemon": "^3.1.0"
+},
+"engines": {
+"node": ">=18.0.0",
+"npm": ">=9.0.0"
+},
+"repository": {
+"type": "git",
+"url": "https://github.com/prodown/prodown.git"
+},
+"bugs": {
+"url": "https://github.com/prodown/prodown/issues"
+},
+"homepage": "https://prodown.vercel.app"
 }
